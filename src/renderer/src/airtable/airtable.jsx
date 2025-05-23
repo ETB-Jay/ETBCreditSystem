@@ -5,7 +5,6 @@ const base = new Airtable({ apiKey: import.meta.env.VITE_AIRTABLE_API_KEY })
 const customerTable = import.meta.env.VITE_AIRTABLE_CUSTOMER_ID
 const transactionTable = import.meta.env.VITE_AIRTABLE_TRANSACTIONS_ID
 
-
 /**
  * @description getRecords fetches the records from Airtable 
  * @param {*} tableName 
