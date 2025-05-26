@@ -1,7 +1,7 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/ETBFavicon.png?asset'
+import icon from '../../resources/ETBFavicon.ico?asset'
 
 function createWindow() {
   // Create the browser window.
@@ -11,6 +11,7 @@ function createWindow() {
     minWidth: 700,
     minHeight: 400,
     show: false,
+    icon,
     autoHideMenuBar: true,
     alwaysOnTop: true, // Ensures the window stays on top of other windows
     ...(process.platform === 'linux' ? { icon } : {}),

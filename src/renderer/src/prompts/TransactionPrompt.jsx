@@ -56,6 +56,9 @@ function TransactionPrompt() {
             if (!newTransaction.change_balance || isNaN(delta)) {
                 setErrors(errors => ({ ...errors, insufficient: "Amount is required and must be a valid number." }))
                 return false
+            } else if (!payment.add && !payment.sub) {
+                setErrors(errors => ({ ...errors, insufficient: "Indicate transaction type." }))
+                return false
             } else if (!newTransaction.employee_name?.trim()) {
                 setErrors(errors => ({ ...errors, noEmployee: "Please enter your name!" }))
                 return false

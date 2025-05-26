@@ -2,7 +2,7 @@
 const electron = require("electron");
 const path = require("path");
 const utils = require("@electron-toolkit/utils");
-const icon = path.join(__dirname, "../../resources/ETBFavicon.png");
+const icon = path.join(__dirname, "../../resources/ETBFavicon.ico");
 function createWindow() {
   const mainWindow = new electron.BrowserWindow({
     width: 700,
@@ -10,6 +10,7 @@ function createWindow() {
     minWidth: 700,
     minHeight: 400,
     show: false,
+    icon,
     autoHideMenuBar: true,
     alwaysOnTop: true,
     // Ensures the window stays on top of other windows
