@@ -1,5 +1,5 @@
 # ETB Credit System
-Created by Michael Zhang using ReactJS, ElectronJS, and TailwindCSS. Airtable was used as the backend for this project.
+Created by Michael Zhang using ReactJS, ElectronJS, and TailwindCSS. [Airtable](https://airtable.com/) was used as the backend for this project.
 
 https://github.com/elphoun
 
