@@ -1,0 +1,61 @@
+{
+  "name": "etb-credit-system",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "ETB Credit System - A desktop application for managing customer credit transactions",
+  "author": "ETB",
+  "main": "./electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "start": "electron ."
+  },
+  "dependencies": {
+    "@mui/icons-material": "^7.1.0",
+    "airtable": "^0.12.2",
+    "prop-types": "^15.8.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^3.4.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.0",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "autoprefixer": "^10.4.17",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^36.3.1",
+    "electron-builder": "^26.0.12",
+    "eslint": "^9.25.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.0.0",
+    "postcss": "^8.4.35",
+    "vite": "^6.3.5"
+  },
+  "build": {
+    "appId": "com.etb.creditsystem",
+    "productName": "ETB Credit System",
+    "directories": {
+      "output": "release-builds"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "src/ETBFavicon.ico"
+    ],
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis",
+      "signAndEditExecutable": false,
+      "icon": "src/ETBFavicon.ico"
+    }
+  }
+}
