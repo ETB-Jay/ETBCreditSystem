@@ -67,6 +67,7 @@ function TableDisplay() {
         })
     }
     const filteredRows = applyFilters(transaction.filter(row => row.customer_id === customer.customer_id))
+    filteredRows.sort((a, b) => new Date(b.date) - new Date(a.date))
     const hasActiveFilters = () => {
         return filters.date.startDate || filters.date.endDate ||
             filters.amount.minAmount || filters.amount.maxAmount ||

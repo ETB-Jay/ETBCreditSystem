@@ -8,6 +8,11 @@ import { getRecords, customerTable, transactionTable } from './airtable/airtable
 const initializeCustomers = async (setCustomers) => {
     try {
         const data = await getRecords(customerTable)
+        data.sort((a, b) => {
+            const lastNameCompare = a.last_name.localeCompare(b.last_name)
+            if (lastNameCompare !== 0) return lastNameCompare
+            return a.first_name.localeCompare(b.first_name)
+        })
         setCustomers(data)
     } catch (error) {
         console.error('Error fetching customers:', error)
