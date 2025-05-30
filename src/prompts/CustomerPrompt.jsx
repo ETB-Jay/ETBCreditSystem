@@ -1,4 +1,4 @@
-import { createRecord } from '../airtable/airtable'
+import { createRecord } from '../airtable'
 import { useDisplay, useCustomerNames } from '../context/useContext'
 import { useState, useEffect } from 'react'
 import { Prompt, PromptButton, PromptField, PromptInput, PromptTitle } from './components'

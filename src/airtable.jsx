@@ -7,7 +7,7 @@ const transactionTable = import.meta.env.VITE_AIRTABLE_TRANSACTIONS_ID
 
 /**
  * @description getRecords fetches the records from Airtable 
- * @param {*} tableName 
+ * @param {String} tableName 
  * @returns 
  */
 const getRecords = async (tableName) => {
@@ -20,11 +20,6 @@ const getRecords = async (tableName) => {
   }
 }
 
-/**
- * @param {*} transactionData 
- * @param {*} customerData 
- * @returns 
- */
 /**
  * Handles a transaction by validating customer IDs, updating the customer's balance,
  * and recording the transaction.
@@ -56,7 +51,8 @@ const handleTransaction = async (transactionData, customerData) => {
  * @description createRecord inserts the record into Airtable
  * @param {*} tableName 
  * @param {*} data 
- * @returns 
+ * @returns {Object} The added record
+ * @throws {Error} If creating or updating the record fails.
  */
 const createRecord = async (tableName, data) => {
   try {
@@ -74,6 +70,7 @@ const createRecord = async (tableName, data) => {
  * @param {string} recordId - The ID of the record to update
  * @param {object} data - The data to update
  * @returns {Promise<object>} The updated record
+ * @throws {Error} If creating or updating the record fails.
  */
 const updateRecord = async (tableName, recordId, data) => {
   try {

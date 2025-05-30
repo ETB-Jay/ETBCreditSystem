@@ -2,12 +2,11 @@ import { useState } from 'react'
 import { useDisplay } from '../context/useContext'
 import AddCustomer from './components/AddCustomer'
 import ListDisplay from './components/ListDisplay'
-import InfoIcon from '@mui/icons-material/Info';
+import InfoIcon from '@mui/icons-material/Info'
 
 /**
  * Renders the UI for the customer search bar, adding customer button, 
- * information icon, and list of customers. 
- *
+ * information icon, and list of customers.
  * @component
  * @returns {JSX.Element} The rendered customer search bar, adding customer button, information icon, and list of customers. 
  */

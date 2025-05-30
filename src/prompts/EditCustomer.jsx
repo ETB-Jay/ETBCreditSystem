@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { updateRecord, getRecords, customerTable } from '../airtable/airtable'
+import { updateRecord, getRecords, customerTable } from '../airtable'
 import { useCustomer, useDisplay, useCustomerNames } from '../context/useContext'
 import { Prompt, PromptTitle, PromptButton, PromptField, PromptInput } from './components'
 import { initializeCustomers } from '../initializeData'

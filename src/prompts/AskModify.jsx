@@ -9,22 +9,19 @@ import { useDisplay } from '../context/useContext'
 function AskModify() {
     const { setDisplay } = useDisplay()
 
+    const Button = ({ label, onClick }) => {
+        return (
+            <div className="text-[0.8rem] lg:text-[1rem] hover:bg-[#bacbe8] px-2 rounded-sm cursor-pointer select-none transition-colors duration-150"
+            onClick={onClick}>
+                {label}
+            </div>
+        )
+    }
+
     return (
-        <div
-            className="absolute right-5 top-0 bg-[#d7e2f5] font-bold rounded flex flex-col z-10 w-[130px] lg:w-[150px] p-1 transition-all duration-200"
-        >
-            <div
-                className="text-[0.8rem] lg:text-[1rem] hover:bg-[#bacbe8] px-2 rounded-sm cursor-pointer select-none transition-colors duration-150"
-                onClick={() => { setDisplay("transaction") }}
-            >
-                New Transaction
-            </div>
-            <div
-                className="text-[0.8rem] lg:text-[1rem] hover:bg-[#bacbe8] px-2 rounded-sm cursor-pointer select-none transition-colors duration-150"
-                onClick={() => { setDisplay("edit") }}
-            >
-                Edit Customer
-            </div>
+        <div className="absolute right-5 top-0 bg-[#d7e2f5] font-bold rounded flex flex-col z-10 w-[130px] lg:w-[150px] p-1 transition-all duration-200">
+            <Button label="New Transaction" onClick={() => { setDisplay("transaction") }}/>
+            <Button label="Edit Customer" onClick={() => { setDisplay("edit") }}/>
         </div>
     )
 }

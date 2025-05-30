@@ -1,4 +1,4 @@
-import { handleTransaction } from '../airtable/airtable'
+import { handleTransaction } from '../airtable'
 import { useState, useEffect } from 'react'
 import { useDisplay, useCustomer, useCustomerNames, useTransactions } from '../context/useContext'
 import { Prompt, PromptTitle, PromptButton, PromptField, PromptInput } from './components'

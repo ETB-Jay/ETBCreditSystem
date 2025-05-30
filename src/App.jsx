@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import Search from './search/Search'
 import CustomerInfo from './customer-info/CustomerInfo'
 import CustomerPrompt from './prompts/CustomerPrompt'
@@ -6,7 +7,7 @@ import Report from './prompts/Report'
 import EditCustomer from './prompts/EditCustomer'
 import { useDisplay, useCustomerNames, useTransactions } from './context/useContext'
 import { initializeCustomers, initializeTransactions } from './initializeData'
-import { useEffect } from 'react'
+
 
 /**
  * Main application component. Renders the display grid and any prompts.

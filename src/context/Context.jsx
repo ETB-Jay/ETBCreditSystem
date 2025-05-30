@@ -9,6 +9,12 @@ CustomerContext.displayName = "CustomerContext"
 
 /**
  * @description Context for the current Display. 
+ * There are 5 unique displays:
+ * - "default" - the default display when the app loads in
+ * - "user" - the display when adding a new user
+ * - "transaction" - the display when adding a new transaction
+ * - "report" - the display when viewing the report
+ * - "edit" - the display when editing a customer's details
  */
 const DisplayContext = createContext("default")
 DisplayContext.displayName = "DisplayContext"

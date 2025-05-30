@@ -1,4 +1,4 @@
-import icon from '../../../src/ETBBanner.png'
+import icon from '../../assets/ETBBanner.png'
 import { useTransactions, useCustomer, useDisplay } from '../../context/useContext'
 import FilterListIcon from '@mui/icons-material/FilterList'
 import DateFilter from './filters/DateFilter'

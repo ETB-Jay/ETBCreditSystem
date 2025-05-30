@@ -2,7 +2,6 @@ import { useDisplay } from '../../context/useContext'
 
 /**
  * Renders a button that allows the user to add a new customer.
- * Triggers the `setDisplay` function from the `useDisplay` context
  *
  * @component
  * @returns {JSX.Element} A "+" button that triggers "CustomerPrompt.jsx"

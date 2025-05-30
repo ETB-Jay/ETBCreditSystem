@@ -15,27 +15,21 @@ function Amount({ onFilterChange, values }) {
         <FilterContainer>
             <FilterField>
                 <FilterLabel label="Minimum Amount" />
-                <div className="relative flex flex-row items-center justify-center">
-                    <span className="text-gray-500 mr-2">$</span>
-                    <FilterInput
-                        type="text"
-                        value={values.minAmount}
-                        onChange={(e) => handleAmountChange("min", e.target.value)}
-                        placeholder="0.00"
-                    />
-                </div>
+                <FilterInput
+                    type="text"
+                    value={values.minAmount}
+                    onChange={(e) => handleAmountChange("min", e.target.value)}
+                    placeholder="0.00"
+                />
             </FilterField>
             <FilterField>
                 <FilterLabel label="Maximum Amount" />
-                <div className="relative flex flex-row items-center justify-center">
-                    <span className="text-gray-500 mr-2">$</span>
-                    <FilterInput
-                        type="text"
-                        value={values.maxAmount}
-                        onChange={(e) => handleAmountChange("max", e.target.value)}
-                        placeholder="0.00"
-                    />
-                </div>
+                <FilterInput
+                    type="text"
+                    value={values.maxAmount}
+                    onChange={(e) => handleAmountChange("max", e.target.value)}
+                    placeholder="0.00"
+                />
             </FilterField>
         </FilterContainer>
     )

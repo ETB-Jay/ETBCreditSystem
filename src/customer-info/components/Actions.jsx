@@ -27,28 +27,34 @@ function Actions() {
         }, 300)
     }
 
+    const ActionsIcon = () => {
+        return (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+                strokeWidth={2}
+                stroke="white"
+                className="size-5 lg:size-7 hover:stroke-gray-400 cursor-pointer"
+            >
+                <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 
+                0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+                />
+            </svg>
+        )
+    }
+
     return (
-        <div 
+        <div
             className="relative"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
             <div className="flex justify-end">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 20"
-                    strokeWidth={2}
-                    stroke="white"
-                    className="size-5 lg:size-7 hover:stroke-gray-400 cursor-pointer"
-                >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 
-                0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-                    />
-                </svg>
+                <ActionsIcon />
             </div>
             {display === "option" && <AskModify />}
         </div>

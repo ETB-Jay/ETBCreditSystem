@@ -35,14 +35,17 @@ FilterLabel.propTypes = {
 const FilterInput = ({
     type, value, onChange, placeholder
 }) => (
-    <input
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className="px-2 py-1 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        onClick={(e) => e.stopPropagation()}
-    />
+    <div className="relative flex flex-row items-center justify-center">
+        <span className="text-gray-500 mr-2">$</span>
+        <input
+            type={type}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            className="px-2 py-1 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onClick={(e) => e.stopPropagation()}
+        />
+    </div>
 )
 
 FilterInput.propTypes = {

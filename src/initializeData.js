@@ -1,9 +1,8 @@
-import { getRecords, customerTable, transactionTable } from './airtable/airtable'
+import { getRecords, customerTable, transactionTable } from './airtable'
 
 /**
  * Fetches and initializes customer data
  * @param {Function} setCustomers - Updates customer state
- * @returns {Promise<void>}
  */
 const initializeCustomers = async (setCustomers) => {
     try {
@@ -22,7 +21,6 @@ const initializeCustomers = async (setCustomers) => {
 /**
  * Fetches and initializes transaction data
  * @param {Function} setTransaction - Updates transaction state
- * @returns {Promise<void>}
  */
 const initializeTransactions = async (setTransaction) => {
     try {

@@ -4,7 +4,7 @@ import PhoneInfo from './components/PhoneInfo'
 import Balance from './components/Balance'
 import TableDisplay from './components/TableDisplay'
 import { useCustomer } from '../context/useContext'
-import icon from '../../src/ETBBanner.png'
+import icon from '../assets/ETBBanner.png'
 
 /**
  * CustomerInfo component displays customer-related information. It shows the banner if no info is available
@@ -22,19 +22,17 @@ function CustomerInfo() {
         )
     }
     return (
-        <>
-            <div className="flex align-center flex-col bg-[#303030] p-2">
-                <div className="relative grid grid-cols-[95%_5%] sm:mb-[2vh] md:mb-[1vw] xl:mb-[0.5vw] md:h-1/12 ">
-                    <div className="flex flex-row items-center ml-3 w-[95%]">
-                        <EmailInfo />
-                        <PhoneInfo />
-                        <Balance />
-                    </div>
-                    <Actions />
+        <div className="flex align-center flex-col bg-[#303030] p-2">
+            <div className="relative grid grid-cols-[95%_5%] sm:mb-[2vh] md:mb-[1vw] xl:mb-[0.5vw] md:h-1/12 ">
+                <div className="flex flex-row items-center ml-3 w-[95%]">
+                    <EmailInfo />
+                    <PhoneInfo />
+                    <Balance />
                 </div>
-                <TableDisplay />
+                <Actions />
             </div>
-        </>
+            <TableDisplay />
+        </div>
     )
 }
 
