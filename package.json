@@ -1,11 +1,13 @@
 {
-  "name": "etb-credit-system",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "name": "etbcredit",
   "description": "ETB Credit System - A desktop application for managing customer credit transactions",
-  "author": "ETB",
+  "author": "Michael Zhang <kale.mzhang7132@gmail.com>",
+  "homepage": "https://github.com/ETB-Jay/ETBCreditSystem",
+  "private": true,
+  "version": "1.2.0",
+  "type": "module",
   "main": "./electron/main.js",
+  "license": "UNLICENSED",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -56,7 +58,7 @@
     "win": {
       "target": "nsis",
       "signAndEditExecutable": false,
-      "icon": "src/ETBFavicon.ico"
+      "icon": "src/assets/ETBFavicon.ico"
     }
   }
 }
