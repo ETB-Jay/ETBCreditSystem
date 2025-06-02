@@ -23,6 +23,7 @@
     "@mui/icons-material": "^7.1.0",
     "@tailwindcss/vite": "^4.1.7",
     "airtable": "^0.12.2",
+    "electron-updater": "^6.6.2",
     "prop-types": "^15.8.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -47,14 +48,14 @@
   },
   "build": {
     "appId": "com.etb.creditsystem",
-    "productName": "ETB Credit System",
+    "productName": "ETBCredit",
     "directories": {
       "output": "release-builds"
     },
     "files": [
       "dist/**/*",
       "electron/**/*",
-      "src/ETBFavicon.ico"
+      "src/assets/ETBFavicon.ico"
     ],
     "mac": {
       "target": "dmg"
@@ -62,7 +63,8 @@
     "win": {
       "target": "nsis",
       "signAndEditExecutable": false,
-      "icon": "src/assets/ETBFavicon.ico"
+      "icon": "src/assets/ETBFavicon.ico",
+      "publish": "github"
     }
   }
 }

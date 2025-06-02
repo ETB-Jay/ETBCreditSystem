@@ -1,12 +1,14 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { updateElectronApp } from 'update-electron-app';
+import { autoUpdater, AppUpdater } from 'electron-updater';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let mainWindow;
+autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = true;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -25,6 +27,7 @@ function createWindow() {
     });
 
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+    autoUpdater.checkForUpdates();
 }
 
 app.whenReady().then(() => {
@@ -37,5 +40,3 @@ app.on('window-all-closed', () => {
         app.quit()
     }
 })
-
-updateElectronApp()
