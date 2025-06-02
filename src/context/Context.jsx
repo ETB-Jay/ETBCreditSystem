@@ -31,9 +31,16 @@ CustomerNamesContext.displayName = "CustomerNamesContext"
 const TransactionContext = createContext()
 TransactionContext.displayName = "TransactionContext"
 
+/**
+ * @description Context to store the Filter Data.
+ */
+const FilterContext = createContext()
+FilterContext.displayName = "FilterContext"
+
 export { 
     CustomerContext, 
     DisplayContext, 
     CustomerNamesContext, 
-    TransactionContext 
+    TransactionContext,
+    FilterContext
 }

@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { CustomerProvider, DisplayProvider, CustomerNamesProvider, TransactionProvider } from './context/Providers'
+import { CustomerProvider, DisplayProvider, CustomerNamesProvider, TransactionProvider, FilterProvider } from './context/Providers'
 import App from './App'
 import './container.css'
 
@@ -10,7 +10,9 @@ createRoot(document.getElementById("root")).render(
 			<CustomerProvider>
 				<CustomerNamesProvider>
 					<TransactionProvider>
-						<App />
+						<FilterProvider>
+							<App />
+						</FilterProvider>
 					</TransactionProvider>
 				</CustomerNamesProvider>
 			</CustomerProvider>

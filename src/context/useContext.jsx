@@ -1,4 +1,4 @@
-import { CustomerContext, DisplayContext, CustomerNamesContext, TransactionContext} from './Context'
+import { CustomerContext, DisplayContext, CustomerNamesContext, TransactionContext, FilterContext} from './Context'
 import { useContext } from 'react'
 
 const useCustomer = () => {
@@ -34,5 +34,11 @@ const useTransactions = () => {
     return context
 }
 
-
-export { useCustomer, useDisplay, useCustomerNames, useTransactions }
+const useFilters = () => {
+    const context = useContext(FilterContext)
+    if (!context) {
+        throw new Error("useFilters must be used in the FilterProvider")
+    }
+    return context
+}
+export { useCustomer, useDisplay, useCustomerNames, useTransactions, useFilters }  

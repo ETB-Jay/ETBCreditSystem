@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { CustomerContext, DisplayContext, CustomerNamesContext, TransactionContext } from './Context'
+import { CustomerContext, DisplayContext, CustomerNamesContext, TransactionContext, FilterContext } from './Context'
 import PropTypes from 'prop-types'
 
 const CustomerProvider = ({ children }) => {
@@ -60,4 +60,18 @@ TransactionProvider.propTypes = {
   children: PropTypes.node.isRequired
 }
 
-export { CustomerProvider, DisplayProvider, CustomerNamesProvider, TransactionProvider }
+const FilterProvider = ({ children }) => {
+  const [filters, setFilters] = useState({})
+  const FilterObject = useMemo(() => ({ filters, setFilters }), [filters, setFilters])
+  return (
+    <FilterContext.Provider value={FilterObject}>
+      {children}
+    </FilterContext.Provider>
+  )
+}
+
+FilterProvider.propTypes = {
+  children: PropTypes.node.isRequired
+}
+
+export { CustomerProvider, DisplayProvider, CustomerNamesProvider, TransactionProvider, FilterProvider }

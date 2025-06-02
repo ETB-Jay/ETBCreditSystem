@@ -1,14 +1,17 @@
 import { FilterContainer, FilterField, FilterLabel, FilterInput } from './components'
-import PropTypes from 'prop-types'
+import { useFilters } from '../../../context/useContext'
 
-function DateFilter({ onFilterChange, values }) {
+function DateFilter() {
+    const { filters, setFilters } = useFilters()
+    
     const handleDateChange = (type, value) => {
-        if (onFilterChange) {
-            onFilterChange({
-                startDate: type === "start" ? value : values.startDate,
-                endDate: type === "end" ? value : values.endDate
-            })
-        }
+        setFilters(prev => ({
+            ...prev,
+            date: {
+                ...prev.date,
+                [type === "start" ? "startDate" : "endDate"]: value
+            }
+        }))
     }
 
     return (
@@ -17,28 +20,22 @@ function DateFilter({ onFilterChange, values }) {
                 <FilterLabel label="Start Date" />
                 <FilterInput
                     type="date"
-                    value={values.startDate}
+                    value={filters.date?.startDate || ""}
                     onChange={(e) => handleDateChange("start", e.target.value)}
+                    max={filters.date?.endDate || undefined}
                 />
             </FilterField>
             <FilterField>
                 <FilterLabel label="End Date" />
                 <FilterInput
                     type="date"
-                    value={values.endDate}
+                    value={filters.date?.endDate || ""}
                     onChange={(e) => handleDateChange("end", e.target.value)}
+                    min={filters.date?.startDate || undefined}
                 />
             </FilterField>
         </FilterContainer>
-    )
+    );
 }
 
-DateFilter.propTypes = {
-    onFilterChange: PropTypes.func,
-    values: PropTypes.shape({
-        startDate: PropTypes.string,
-        endDate: PropTypes.string
-    })
-}
-
-export default DateFilter
+export default DateFilter;

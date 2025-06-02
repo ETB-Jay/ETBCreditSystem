@@ -1,13 +1,17 @@
 import { FilterContainer, FilterField, FilterLabel, FilterInput } from './components'
-import PropTypes from 'prop-types'
+import { useFilters } from '../../../context/useContext'
 
-function EmployeeName({ onFilterChange, values }) {
+function EmployeeName() {
+    const { filters, setFilters } = useFilters()
+    
     const handleSearchChange = (value) => {
-        if (onFilterChange) {
-            onFilterChange({
-                searchTerm: value
-            })
-        }
+        setFilters(prev => ({
+            ...prev,
+            employee: {
+                ...prev.employee,
+                searchTerm: value.trim().toLowerCase()
+            }
+        }))
     }
 
     return (
@@ -16,20 +20,15 @@ function EmployeeName({ onFilterChange, values }) {
                 <FilterLabel label="Employee Name" />
                 <FilterInput
                     type="text"
-                    value={values.searchTerm}
+                    value={filters.employee?.searchTerm || ""}
                     onChange={(e) => handleSearchChange(e.target.value)}
                     placeholder="Search employee..."
+                    autoComplete="off"
+                    spellCheck="false"
                 />
             </FilterField>
         </FilterContainer>
-    )
+    );
 }
 
-EmployeeName.propTypes = {
-    onFilterChange: PropTypes.func,
-    values: PropTypes.shape({
-        searchTerm: PropTypes.string
-    })
-}
-
-export default EmployeeName
+export default EmployeeName;

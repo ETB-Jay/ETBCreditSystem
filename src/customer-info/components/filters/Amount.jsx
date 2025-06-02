@@ -1,46 +1,35 @@
 import { FilterContainer, FilterField, FilterLabel, FilterInput } from "./components"
-import PropTypes from 'prop-types'
+import { useFilters } from "../../../context/useContext"
 
-function Amount({ onFilterChange, values }) {
-    const handleAmountChange = (type, value) => {
-        const numericValue = value.replace(/[^0-9.-]/g, "")
-        if (onFilterChange) {
-            onFilterChange({
-                minAmount: type === "min" ? numericValue : values.minAmount,
-                maxAmount: type === "max" ? numericValue : values.maxAmount
-            })
-        }
-    }
+function Amount() {
+    const { filters, setFilters } = useFilters()
+    
     return (
         <FilterContainer>
             <FilterField>
                 <FilterLabel label="Minimum Amount" />
                 <FilterInput
-                    type="text"
-                    value={values.minAmount}
-                    onChange={(e) => handleAmountChange("min", e.target.value)}
+                    type="number"
+                    value={filters.amount?.minAmount}
+                    onChange={(e) => setFilters({...filters, amount: {...filters.amount, minAmount: e.target.value}})}
                     placeholder="0.00"
+                    step="0.01"
+                    min="0"
                 />
             </FilterField>
             <FilterField>
                 <FilterLabel label="Maximum Amount" />
                 <FilterInput
-                    type="text"
-                    value={values.maxAmount}
-                    onChange={(e) => handleAmountChange("max", e.target.value)}
+                    type="number"
+                    value={filters.amount?.maxAmount}
+                    onChange={(e) => setFilters({...filters, amount: {...filters.amount, maxAmount: e.target.value}})}
                     placeholder="0.00"
+                    step="0.01"
+                    min="0"
                 />
             </FilterField>
         </FilterContainer>
-    )
+    );
 }
 
-Amount.propTypes = {
-    onFilterChange: PropTypes.func,
-    values: PropTypes.shape({
-        minAmount: PropTypes.string,
-        maxAmount: PropTypes.string
-    })
-}
-
-export default Amount
+export default Amount;

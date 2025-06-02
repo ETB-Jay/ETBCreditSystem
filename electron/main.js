@@ -1,20 +1,26 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { autoUpdater } from "electron-updater";
+import pkg from 'electron-updater';
 import electronLog from 'electron-log';
 import process from 'node:process';
+
+const { autoUpdater } = pkg;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let mainWindow;
-autoUpdater.autoDownload = false;
+// Enable auto-download
+autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
 
 // Configure logging
 autoUpdater.logger = electronLog;
 autoUpdater.logger.transports.file.level = 'info';
+
+// Log all events for debugging
+autoUpdater.logger.info('App starting...');
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -40,36 +46,50 @@ function createWindow() {
 
 // Update event handlers
 autoUpdater.on('checking-for-update', () => {
+    autoUpdater.logger.info('Checking for updates...');
     mainWindow.webContents.send('update-status', 'Checking for updates...');
 });
 
-autoUpdater.on('update-available', () => {
+autoUpdater.on('update-available', (info) => {
+    autoUpdater.logger.info('Update available:', info);
     mainWindow.webContents.send('update-status', 'Update available');
+    mainWindow.webContents.send('update-info', info);
 });
 
-autoUpdater.on('update-not-available', () => {
+autoUpdater.on('update-not-available', (info) => {
+    autoUpdater.logger.info('Update not available:', info);
     mainWindow.webContents.send('update-status', 'Update not available');
 });
 
 autoUpdater.on('error', (err) => {
+    autoUpdater.logger.error('Error in auto-updater:', err);
     mainWindow.webContents.send('update-status', 'Error in auto-updater');
-    mainWindow.webContents.send('update-error', err);
+    mainWindow.webContents.send('update-error', {
+        message: err.message,
+        stack: err.stack,
+        code: err.code
+    });
 });
 
 autoUpdater.on('download-progress', (progressObj) => {
+    autoUpdater.logger.info('Download progress:', progressObj);
     mainWindow.webContents.send('update-progress', progressObj);
 });
 
-autoUpdater.on('update-downloaded', () => {
+autoUpdater.on('update-downloaded', (info) => {
+    autoUpdater.logger.info('Update downloaded:', info);
     mainWindow.webContents.send('update-status', 'Update downloaded');
+    mainWindow.webContents.send('update-info', info);
 });
 
 // IPC handlers for update actions
 ipcMain.on('start-update', () => {
+    autoUpdater.logger.info('Starting update download...');
     autoUpdater.downloadUpdate();
 });
 
 ipcMain.on('install-update', () => {
+    autoUpdater.logger.info('Installing update...');
     autoUpdater.quitAndInstall();
 });
 

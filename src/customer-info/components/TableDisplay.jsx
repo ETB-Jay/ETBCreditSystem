@@ -1,10 +1,10 @@
 import icon from '../../assets/ETBBanner.png'
-import { useTransactions, useCustomer, useDisplay } from '../../context/useContext'
+import { useTransactions, useCustomer, useDisplay, useFilters } from '../../context/useContext'
 import FilterListIcon from '@mui/icons-material/FilterList'
 import DateFilter from './filters/DateFilter'
 import Amount from './filters/Amount'
 import EmployeeName from './filters/Employee_Name'
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 /**
@@ -16,31 +16,31 @@ function TableDisplay() {
     const { transaction } = useTransactions()
     const { customer } = useCustomer()
     const { display, setDisplay } = useDisplay()
-    const [filters, setFilters] = useState({
-        date: { startDate: "", endDate: "" },
-        amount: { minAmount: "", maxAmount: "" },
-        employee: { searchTerm: "" }
-    })
+    const { filters, setFilters } = useFilters()
 
     useEffect(() => {
-        setFilters({
+        // Only reset filters and display when customer changes
+        const defaultFilters = {
             date: { startDate: "", endDate: "" },
             amount: { minAmount: "", maxAmount: "" },
             employee: { searchTerm: "" }
-        })
-        setDisplay("default")
-    }, [customer.customer_id, setDisplay])
+        }
 
-    const handleFilterChange = (filterType, values) => {
-        setFilters(prev => ({
-            ...prev,
-            [filterType]: values
-        }))
-    }
+        // Only update if the filters are different from default
+        if (JSON.stringify(filters) !== JSON.stringify(defaultFilters)) {
+            setFilters(defaultFilters)
+        }
+
+        // Only update display if it's not already default
+        if (display !== "default") {
+            setDisplay("default")
+        }
+    }, [customer.customer_id]) // Only depend on customer ID
+
     const applyFilters = (rows) => {
         return rows.filter(row => {
             // Date filter
-            if (filters.date.startDate || filters.date.endDate) {
+            if (filters.date?.startDate || filters.date?.endDate) {
                 const rowDate = new Date(row.date)
                 if (filters.date.startDate) {
                     const startDate = new Date(filters.date.startDate)
@@ -53,12 +53,14 @@ function TableDisplay() {
                     if (rowDate > endDate) return false
                 }
             }
-            if (filters.amount.minAmount || filters.amount.maxAmount) {
+            // Amount filter
+            if (filters.amount?.minAmount || filters.amount?.maxAmount) {
                 const amount = row.change_balance
                 if (filters.amount.minAmount && amount < parseFloat(filters.amount.minAmount)) return false
                 if (filters.amount.maxAmount && amount > parseFloat(filters.amount.maxAmount)) return false
             }
-            if (filters.employee.searchTerm) {
+            // Employee filter
+            if (filters.employee?.searchTerm) {
                 const searchTerm = filters.employee.searchTerm.toLowerCase()
                 if (!row.employee_name.toLowerCase().includes(searchTerm)) return false
             }
@@ -66,13 +68,16 @@ function TableDisplay() {
             return true
         })
     }
+
     const filteredRows = applyFilters(transaction.filter(row => row.customer_id === customer.customer_id))
     filteredRows.sort((a, b) => new Date(b.date) - new Date(a.date))
+
     const hasActiveFilters = () => {
-        return filters.date.startDate || filters.date.endDate ||
-            filters.amount.minAmount || filters.amount.maxAmount ||
-            filters.employee.searchTerm
+        return filters.date?.startDate || filters.date?.endDate ||
+            filters.amount?.minAmount || filters.amount?.maxAmount ||
+            filters.employee?.searchTerm
     }
+
     if ((!filteredRows || filteredRows.length === 0) && !hasActiveFilters()) {
         return (
             <div className="flex h-full w-full items-center justify-center">
@@ -99,30 +104,6 @@ function TableDisplay() {
                     }}
                 />
             </div>
-            {display === "DateFilter" && label === "Date" && (
-                <div className="absolute z-50 mt-1 left-0">
-                    <DateFilter
-                        onFilterChange={(values) => handleFilterChange("date", values)}
-                        values={filters.date}
-                    />
-                </div>
-            )}
-            {display === "AmountFilter" && label === "Amount" && (
-                <div className="absolute z-50 mt-1 left-0">
-                    <Amount
-                        onFilterChange={(values) => handleFilterChange("amount", values)}
-                        values={filters.amount}
-                    />
-                </div>
-            )}
-            {display === "EmployeeFilter" && label === "Employee" && (
-                <div className="absolute z-50 mt-1 left-0">
-                    <EmployeeName
-                        onFilterChange={(values) => handleFilterChange("employee", values)}
-                        values={filters.employee}
-                    />
-                </div>
-            )}
         </th>
     )
 
@@ -131,39 +112,58 @@ function TableDisplay() {
     }
 
     return (
-        <table className="w-full text-xs md:text-sm lg:text-[1rem] text-black">
-            <thead className="bg-[#808080] top-0 z-10">
-                <tr className="text-left text-black">
-                    <HeaderField label={"Date"} />
-                    <HeaderField label={"Amount"} />
-                    <HeaderField label={"Employee"} />
-                    <th className="w-1/3 px-3 py-1 font-semibold whitespace-nowrap">Notes</th>
-                </tr>
-            </thead>
-            <tbody className="overflow-y-scroll container-snap">
-                {filteredRows.map((row, idx) => (
-                    <tr
-                        key={idx}
-                        className={row.change_balance < 0 ? "bg-red-300" : "bg-green-300"}
-                    >
-                        <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap" title={row.date}>
-                            {new Date(new Date(row.date).getTime()).toISOString().replace("T", " ").slice(0, 19)}
-                        </td>
-                        <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap" title={row.change_balance}>
-                            {row.change_balance < 0 ? "-" : ""}${Number(Math.abs(row.change_balance)).toFixed(2)}
-                        </td>
-                        <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap" title={row.employee_name}>
-                            {row.employee_name}
-                        </td>
-                        <td className="pl-3 pr-0 py-0.5">
-                            <div className="max-w-[230px] max-h-7 overflow-x-auto whitespace-nowrap container-snap" title={row.notes}>
-                                {row.notes}
-                            </div>
-                        </td>
+        <>
+            <table className="w-full text-xs md:text-sm lg:text-[1rem] text-black">
+                <thead className="bg-[#808080] top-0 z-10">
+                    <tr className="text-left text-black">
+                        <HeaderField label={"Date"} />
+                        <HeaderField label={"Amount"} />
+                        <HeaderField label={"Employee"} />
+                        <th className="w-1/3 px-3 py-1 font-semibold whitespace-nowrap">Notes</th>
                     </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                <div className="absolute">
+                    {display === "DateFilter" && (
+                        <div className="absolute z-50 mt-1" style={{ left: "0px", top: "0px" }}>
+                            <DateFilter />
+                        </div>
+                    )}
+                    {display === "AmountFilter" && (
+                        <div className="absolute z-50 mt-1" style={{ left: "120px", top: "0px" }}>
+                            <Amount />
+                        </div>
+                    )}
+                    {display === "EmployeeFilter" && (
+                        <div className="absolute z-50 mt-1" style={{ left: "240px", top: "0px" }}>
+                            <EmployeeName />
+                        </div>
+                    )}
+                </div>
+                <tbody className="overflow-y-scroll container-snap">
+                    {filteredRows.map((row, idx) => (
+                        <tr
+                            key={idx}
+                            className={row.change_balance < 0 ? "bg-red-300" : "bg-green-300"}
+                        >
+                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap" title={row.date}>
+                                {new Date(new Date(row.date).getTime()).toISOString().replace("T", " ").slice(0, 19)}
+                            </td>
+                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap" title={row.change_balance}>
+                                {row.change_balance < 0 ? "-" : ""}${Number(Math.abs(row.change_balance)).toFixed(2)}
+                            </td>
+                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap" title={row.employee_name}>
+                                {row.employee_name}
+                            </td>
+                            <td className="pl-3 pr-0 py-0.5">
+                                <div className="max-w-[230px] max-h-7 overflow-x-auto whitespace-nowrap container-snap" title={row.notes}>
+                                    {row.notes}
+                                </div>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </>
     )
 }
 
