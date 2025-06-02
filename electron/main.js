@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { updateElectronApp } from 'update-electron-app';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,3 +37,5 @@ app.on('window-all-closed', () => {
         app.quit()
     }
 })
+
+updateElectronApp()

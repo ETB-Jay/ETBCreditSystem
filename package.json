@@ -2,7 +2,10 @@
   "name": "etbcredit",
   "description": "ETB Credit System - A desktop application for managing customer credit transactions",
   "author": "Michael Zhang <kale.mzhang7132@gmail.com>",
-  "homepage": "https://github.com/ETB-Jay/ETBCreditSystem",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ETB-Jay/ETBCreditSystem"
+  },
   "private": true,
   "version": "1.2.0",
   "type": "module",
@@ -23,7 +26,8 @@
     "prop-types": "^15.8.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "tailwindcss": "^4.1.7"
+    "tailwindcss": "^4.1.7",
+    "update-electron-app": "^3.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
