@@ -34,4 +34,5 @@ read: [https://github.com/ETB-Jay/ETBCreditLogs](https://github.com/ETB-Jay/ETBC
 
 # UPDATES AND BUG FIXING
 From 2025-06-03 to 2025-08-29, I will be doing updates and bug fixing. Please contact either Jay or Kris to get my contact information.
+
 After this period (post co-op), I will be copying the source files to a different computer but will keep a copy for myself (this includes any enviornment variables). If you are the new "tech guy" and would like to know more about the source material or need help with updates, you can contact Jay or Kris again to get my contact information. I am also open to doing bug fixes during the time when I am back in school so please do not hesitate to contact me.
