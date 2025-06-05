@@ -1,39 +1,41 @@
 {
   "name": "etbcredit",
   "description": "ETB Credit System - A desktop application for managing customer credit transactions",
-  "author": "Michael Zhang <kale.mzhang7132@gmail.com>",
+  "author": "Michael Zhang (ETB)",
   "repository": {
     "type": "git",
     "url": "https://github.com/ETB-Jay/ETBCreditSystem"
   },
-  "version": "1.0.0",
+  "version": "1.0.3",
   "type": "module",
   "main": "./electron/main.js",
   "license": "UNLICENSED",
-  "publisher": "ETB",
+  "publisher": "Michael Zhang (ETB)",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "electron .",
-    "publish": "electron-builder build --win --publish always"
+    "publish": "cross-env electron-builder build --win --publish always"
   },
   "dependencies": {
     "@emotion/styled": "^11.14.0",
+    "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
     "@mui/icons-material": "^7.1.0",
-    "@tailwindcss/vite": "^4.1.7",
-    "airtable": "^0.12.2",
     "electron-log": "^5.4.0",
     "electron-updater": "^6.6.2",
+    "firebase": "^11.8.1",
+    "jszip": "^3.10.1",
     "prop-types": "^15.8.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "tailwindcss": "^4.1.7",
+    "tailwindcss": "^4.1.8",
     "update-electron-app": "^3.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
+    "@tailwindcss/vite": "^4.1.8",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
@@ -57,7 +59,8 @@
     "files": [
       "dist/**/*",
       "electron/**/*",
-      "src/assets/ETBFavicon.ico"
+      "public/ETBFavicon.ico",
+      "!node_modules/@tailwindcss/oxide-*"
     ],
     "mac": {
       "target": "dmg"
@@ -65,7 +68,7 @@
     "win": {
       "target": "nsis",
       "signAndEditExecutable": false,
-      "icon": "src/assets/ETBFavicon.ico"
+      "icon": "public/ETBFavicon.ico"
     },
     "publish": {
       "provider": "github",

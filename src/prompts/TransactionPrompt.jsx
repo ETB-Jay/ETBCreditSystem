@@ -1,36 +1,42 @@
-import { handleTransaction } from '../airtable'
 import { useState, useEffect } from 'react'
-import { useDisplay, useCustomer, useCustomerNames, useTransactions } from '../context/useContext'
+import { useDisplay, useCustomer, useCustomerNames } from '../context/useContext'
 import { Prompt, PromptTitle, PromptButton, PromptField, PromptInput } from './components'
-import { initializeCustomers, initializeTransactions } from '../initializeData'
+import { db } from '../firebase'
+import { doc, getDocs, updateDoc, Timestamp, collection } from 'firebase/firestore'
 
 /**
  * A prompt that allows the user to add a new transaction to the system. It appears only
- * when the state is "transaction"
+ * when the state is "transaction".
+ * 
+ * @component
  * @returns {JSX.Element} The TransactionPrompt prompt
  */
 function TransactionPrompt() {
-    const { customer, setCustomer } = useCustomer()
+    const { customer } = useCustomer()
+    const { setCustomers } = useCustomerNames()
     const [newTransaction, setNewTransaction] = useState({})
     const { setDisplay } = useDisplay()
     const [errors, setErrors] = useState({
-        insufficient: "",
+        invalidValue: "",
         noEmployee: ""
     })
-    const [isSubmitting, setIsSubmitting] = useState()
-    const [payment, setPayment] = useState({ add: false, sub: false })
-    const { setCustomers } = useCustomerNames()
-    const { setTransaction } = useTransactions()
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [payment, setPayment] = useState({
+        add: false,
+        sub: false
+    })
 
     useEffect(() => {
         setNewTransaction({})
         setErrors({
-            insufficient: "",
+            invalidValue: "",
             noEmployee: ""
         })
         setPayment({ add: false, sub: false })
+        console.log(customer.transactions.length)
     }, [])
 
+    //
     const handlePaymentType = (type) => {
         const newPaymentState = {
             add: type === "add",
@@ -46,54 +52,55 @@ function TransactionPrompt() {
         }
     }
 
+    //
     const updateTransaction = async () => {
-        if (isSubmitting) return false
+        if (isSubmitting) {
+            return false
+        }
         setIsSubmitting(true)
-        setErrors("")
-
+        setErrors({
+            invalidValue: "",
+            noEmployee: ""
+        })
         try {
-            const delta = Math.abs(Number(newTransaction.change_balance))
-            if (!newTransaction.change_balance || isNaN(delta)) {
-                setErrors(errors => ({ ...errors, insufficient: "Amount is required and must be a valid number." }))
+            const delta = Number(newTransaction.change_balance)
+            console.log(newTransaction.change_balance)
+            if (!delta || isNaN(delta)) {
+                setErrors(errors => ({ ...errors, invalidValue: "Amount is Required and Must be a Valid Number!" }))
+                return false
+            } else if (!(/^(-)?\d+(\.\d{1,2})?$/.test(delta))) {
+                setErrors(errors => ({ ...errors, invalidValue: "Amount Must Have a Valid Number of Decimal Places!" }))
                 return false
             } else if (!payment.add && !payment.sub) {
-                setErrors(errors => ({ ...errors, insufficient: "Indicate transaction type." }))
+                setErrors(errors => ({ ...errors, invalidValue: "Please Indicate Transaction Type!" }))
                 return false
             } else if (!newTransaction.employee_name?.trim()) {
-                setErrors(errors => ({ ...errors, noEmployee: "Please enter your name!" }))
+                setErrors(errors => ({ ...errors, noEmployee: "Please Enter Your Name!" }))
                 return false
             }
             const transactionData = {
-                ...newTransaction,
-                customer_id: customer.customer_id,
-                date: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+                employee_name: newTransaction.employee_name.trim(),
+                change_balance: Number(delta),
+                notes: newTransaction.notes?.trim() || "",
+                date: Timestamp.now()
             }
-            const result = await handleTransaction(transactionData, customer)
-            if (!result) {
-                setErrors(prev => ({ ...prev, insufficient: "Transaction failed - no response received" }))
-                return false
-            } else if (result.error) {
-                setErrors(prev => ({ ...prev, insufficient: result.error.message || "Transaction failed" }))
-                return false
+            if (!customer) {
+                console.error('Customer is undefined')
+                throw new Error('Customer data is not properly loaded')
             }
-
-            // Update customer data immediately with the new balance
-            const updatedCustomer = {
-                ...customer,
-                balance: customer.balance + transactionData.change_balance
-            }
-            setCustomer(updatedCustomer)
-
-            Promise.all([
-                initializeCustomers(setCustomers),
-                initializeTransactions(setTransaction)
-            ]).catch(error => {
-                console.error('Error updating data:', error)
+            await updateDoc(doc(db, 'users', customer.id), {
+                transactions: [...(customer.transactions || []), transactionData],
+                balance: Number(customer.balance) + transactionData.change_balance
             })
-
+            const customersSnapshot = await getDocs(collection(db, 'users'))
+            const customersData = customersSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+            setCustomers(customersData)
             return true
         } catch (error) {
-            setErrors(prev => ({ ...prev, insufficient: error.message || "An unexpected error occurred during the transaction" }))
+            setErrors(prev => ({ ...prev, invalidValue: error.message || "An unexpected error occurred during the transaction" }))
             return false
         } finally {
             setIsSubmitting(false)
@@ -109,8 +116,8 @@ function TransactionPrompt() {
 
     return (
         <Prompt>
-            <PromptTitle label="New Transaction"></PromptTitle>
-            <PromptField label="Amount" error={errors.insufficient}>
+            <PromptTitle label="New Transaction" />
+            <PromptField label="Amount" error={errors.invalidValue}>
                 <div className="flex items-center gap-2 w-full">
                     <PromptInput
                         type="number"
@@ -127,13 +134,17 @@ function TransactionPrompt() {
                         disabled={isSubmitting}
                     />
                     <button
-                        className={`bg-emerald-500/20 rounded-full h-7 w-7 flex items-center justify-center hover:bg-emerald-500/40 cursor-pointer transition-colors ${payment.add ? "bg-emerald-500/50 ring-2 ring-emerald-500/60" : ""}`}
+                        className={`bg-emerald-500/20 rounded-full h-7 w-7 flex items-center justify-center hover:bg-emerald-500/40 cursor-pointer transition-colors select-none ${payment.add ? "bg-emerald-500/50 ring-2 ring-emerald-500/60" : ""}`}
                         onClick={() => handlePaymentType("add")}
-                    >+</button>
+                    >
+                        +
+                    </button>
                     <button
-                        className={`bg-rose-500/20 rounded-full h-7 w-7 flex items-center justify-center hover:bg-rose-500/40 cursor-pointer transition-colors ${payment.sub ? "bg-rose-500/50 ring-2 ring-rose-500/60" : ""}`}
+                        className={`bg-rose-500/20 rounded-full h-7 w-7 flex items-center justify-center hover:bg-rose-500/40 cursor-pointer transition-colors select-none ${payment.sub ? "bg-rose-500/50 ring-2 ring-rose-500/60" : ""}`}
                         onClick={() => handlePaymentType("sub")}
-                    >-</button>
+                    >
+                        -
+                    </button>
                 </div>
             </PromptField>
             <PromptField label="Employee Name" error={errors.noEmployee}>
@@ -155,7 +166,7 @@ function TransactionPrompt() {
                     onClick={handleSubmit}
                     disabled={isSubmitting}
                 >
-                    {isSubmitting ? "Processing..." : "Save Changes"}
+                    {isSubmitting ? "Processing..." : "Confirm"}
                 </PromptButton>
                 <PromptButton
                     onClick={() => setDisplay("default")}

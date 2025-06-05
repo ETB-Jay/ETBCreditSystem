@@ -1,18 +1,16 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Search from './search/Search'
 import CustomerInfo from './customer-info/CustomerInfo'
+import { useDisplay, useCustomerNames } from './context/useContext'
+import { fetchCustomers } from './firebase'
 import CustomerPrompt from './prompts/CustomerPrompt'
 import TransactionPrompt from './prompts/TransactionPrompt'
 import Report from './prompts/Report'
 import EditCustomer from './prompts/EditCustomer'
-import { useDisplay, useCustomerNames, useTransactions } from './context/useContext'
-import { initializeCustomers, initializeTransactions } from './initializeData'
-
 
 /**
- * Main application component. Renders the display grid and any prompts.
- * It also calls initializeTransactions and initializeCustomers when they are 
- * updated. 
+ * Main application component. Renders the display grid and the main prompts. 
+ * It fetches the list of customers and renders it accordingly. 
  *
  * @component
  * @returns {JSX.Element} The Application UI
@@ -20,19 +18,27 @@ import { initializeCustomers, initializeTransactions } from './initializeData'
 function App() {
 	const { display } = useDisplay()
 	const { setCustomers } = useCustomerNames()
-	const { setTransaction } = useTransactions()
+	const [error, setError] = useState(null)
 
 	useEffect(() => {
-		initializeTransactions(setTransaction)
-	}, [setTransaction])
-
-	useEffect(() => {
-		initializeCustomers(setCustomers)
-	}, [setCustomers])
+		const loadData = async () => {
+			try {
+				const [customersData] = await Promise.all([
+					fetchCustomers()
+				]);
+				console.log('Fetched Customers:', customersData);
+				setCustomers(customersData);
+			} catch (error) {
+				console.error('Error loading data:', error);
+				setError('Failed to load data. Please try again.');
+			}
+		};
+		loadData();
+	}, [setCustomers]);
 
 	return (
 		<>
-			<div className="bg-[#1f1f1f] absolute grid grid-cols-[25%_74%] md:grid-cols-[25%_74.5%] gap-[1%] md:gap-[0.5%] w-full h-full">
+			<div className="bg-gray-900 absolute grid grid-cols-[25%_74%] md:grid-cols-[25%_74.5%] gap-[1%] md:gap-[0.5%] w-full h-full">
 				<Search />
 				<CustomerInfo />
 			</div>
@@ -40,6 +46,7 @@ function App() {
 			{display === "transaction" && <TransactionPrompt />}
 			{display === "report" && <Report />}
 			{display === "edit" && <EditCustomer />}
+			{error && <div className="error-message">{error}</div>}
 		</>
 	)
 }

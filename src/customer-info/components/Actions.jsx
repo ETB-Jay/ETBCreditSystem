@@ -35,7 +35,7 @@ function Actions() {
                 viewBox="0 0 20 20"
                 strokeWidth={2}
                 stroke="white"
-                className="size-5 lg:size-7 hover:stroke-gray-400 cursor-pointer"
+                className="size-5 lg:size-6 hover:stroke-gray-400 cursor-pointer"
             >
                 <path
                     strokeLinecap="round"
@@ -48,14 +48,10 @@ function Actions() {
     }
 
     return (
-        <div
-            className="relative"
+        <div className="relative flex justify-end"
             onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-        >
-            <div className="flex justify-end">
-                <ActionsIcon />
-            </div>
+            onMouseLeave={handleMouseLeave}>
+            <ActionsIcon />
             {display === "option" && <AskModify />}
         </div>
     )

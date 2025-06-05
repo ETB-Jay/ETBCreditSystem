@@ -1,8 +1,8 @@
-import { createRecord } from '../airtable'
 import { useDisplay, useCustomerNames } from '../context/useContext'
 import { useState, useEffect } from 'react'
 import { Prompt, PromptButton, PromptField, PromptInput, PromptTitle } from './components'
-import { initializeCustomers } from '../initializeData'
+import { db } from '../firebase'
+import { collection, addDoc, getDocs } from 'firebase/firestore'
 
 /**
  * A prompt that allows the user to add a new customer to the system. It appears only
@@ -31,14 +31,10 @@ function CustomerPrompt() {
 
         if (!first_name?.trim()) {
             errs.first_name = "First name is required"
-        } else if (first_name.trim().length < 2) {
-            errs.first_name = "First name must be at least 2 characters"
         }
 
         if (!last_name?.trim()) {
             errs.last_name = "Last name is required"
-        } else if (last_name.trim().length < 2) {
-            errs.last_name = "Last name must be at least 2 characters"
         }
 
         const emailTrimmed = email?.trim() || ""
@@ -53,64 +49,67 @@ function CustomerPrompt() {
         return errs
     }
 
-    /**
-     * Calls setCustomers and updates the new list of customers. 
-     * @returns {boolean} If the newCustomer is valid
-     */
-    const updateCustomer = async () => {
-        if (isSubmitting) return false
+    const handleSubmit = async () => {
+        if (isSubmitting) return
         setIsSubmitting(true)
-        setErrors({})
 
-        const validationErrors = validate()
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors)
+        const errs = validate()
+        if (Object.keys(errs).length > 0) {
+            setErrors(errs)
             setIsSubmitting(false)
-            return false
+            return
         }
 
         try {
-            const newCustomerData = {
-                ...newCustomer,
+            const customerData = {
                 first_name: newCustomer.first_name.trim(),
                 last_name: newCustomer.last_name.trim(),
                 email: newCustomer.email?.trim() || "",
                 phone: newCustomer.phone?.trim() || "",
-                balance: 0
+                balance: 0,
+                transactions: []
             }
-            await createRecord("customers", newCustomerData)
-            await initializeCustomers(setCustomers)
-            return true
+
+            await addDoc(collection(db, 'users'), customerData)
+
+            const customersSnapshot = await getDocs(collection(db, 'users'))
+            const customersData = customersSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+            setCustomers(customersData)
+
+            setDisplay("default")
         } catch (error) {
-            setErrors({ submit: "Failed to create customer. Please try again." })
-            console.error(error.message)
-            return false
+            console.error('Error adding customer:', error)
+            setErrors({ submit: "Failed to add customer. Please try again." })
         } finally {
             setIsSubmitting(false)
         }
     }
 
-    const handleSubmit = async () => {
-        const valid = await updateCustomer()
-        if (valid) {
-            setDisplay("default")
-        }
+    const handleCancel = () => {
+        setNewCustomer({})
+        setErrors("")
+        setDisplay("default")
     }
 
     return (
         <Prompt>
-            <PromptTitle label="Add a New Customer"></PromptTitle>
+            <PromptTitle label="New Customer" />
             <PromptField label="First Name" error={errors.first_name}>
                 <PromptInput
+                    type="text"
                     value={newCustomer.first_name}
-                    onChange={(input) => setNewCustomer({ ...newCustomer, first_name: input.target.value })}
+                    onChange={(e) => setNewCustomer({ ...newCustomer, first_name: e.target.value })}
                     disabled={isSubmitting}
                 />
             </PromptField>
             <PromptField label="Last Name" error={errors.last_name}>
                 <PromptInput
+                    type="text"
                     value={newCustomer.last_name}
-                    onChange={(input) => setNewCustomer({ ...newCustomer, last_name: input.target.value })}
+                    onChange={(e) => setNewCustomer({ ...newCustomer, last_name: e.target.value })}
                     disabled={isSubmitting}
                 />
             </PromptField>
@@ -118,26 +117,27 @@ function CustomerPrompt() {
                 <PromptInput
                     type="email"
                     value={newCustomer.email}
-                    onChange={(input) => setNewCustomer({ ...newCustomer, email: input.target.value })}
+                    onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
                     disabled={isSubmitting}
                 />
             </PromptField>
-            <PromptField label="Phone" error={errors.phone}>
+            <PromptField label="Phone Number" error={errors.phone}>
                 <PromptInput
                     type="tel"
                     value={newCustomer.phone}
-                    onChange={(input) => setNewCustomer({ ...newCustomer, phone: input.target.value })}
+                    onChange={(e) => setNewCustomer({ ...newCustomer, phone: e.target.value })}
                     disabled={isSubmitting}
                 />
             </PromptField>
-            <div className="flex justify-center gap-4">
-                <PromptButton 
+            <div className="flex justify-end space-x-3">
+                <PromptButton
                     onClick={handleSubmit}
                     disabled={isSubmitting}>
-                    {isSubmitting ? "Processing..." : "Save Changes"}
+                    {isSubmitting ? "Processing..." : "Add Customer"}
                 </PromptButton>
-                <PromptButton 
-                    onClick={() => setDisplay("default")}
+                <PromptButton
+                    type="button"
+                    onClick={handleCancel}
                     disabled={isSubmitting}>
                     Cancel
                 </PromptButton>

@@ -1,10 +1,12 @@
 import icon from '../../assets/ETBBanner.png'
-import { useTransactions, useCustomer, useDisplay, useFilters } from '../../context/useContext'
+import { useCustomer, useCustomerNames, useDisplay, useFilters } from '../../context/useContext'
 import FilterListIcon from '@mui/icons-material/FilterList'
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import DateFilter from './filters/DateFilter'
 import Amount from './filters/Amount'
 import EmployeeName from './filters/Employee_Name'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 
 /**
@@ -13,64 +15,64 @@ import PropTypes from 'prop-types'
  * @returns {JSX.Element} The rendered table transactions or a placeholder if none exist.
  */
 function TableDisplay() {
-    const { transaction } = useTransactions()
     const { customer } = useCustomer()
+    const { customers } = useCustomerNames()
     const { display, setDisplay } = useDisplay()
     const { filters, setFilters } = useFilters()
+    const [filteredRows, setFilteredRows] = useState([])
 
     useEffect(() => {
-        // Only reset filters and display when customer changes
         const defaultFilters = {
             date: { startDate: "", endDate: "" },
             amount: { minAmount: "", maxAmount: "" },
             employee: { searchTerm: "" }
         }
-
-        // Only update if the filters are different from default
         if (JSON.stringify(filters) !== JSON.stringify(defaultFilters)) {
             setFilters(defaultFilters)
         }
-
-        // Only update display if it's not already default
         if (display !== "default") {
             setDisplay("default")
         }
-    }, [customer.customer_id]) // Only depend on customer ID
+    }, [customer?.id, customer?.transactions?.length])
 
-    const applyFilters = (rows) => {
-        return rows.filter(row => {
-            // Date filter
-            if (filters.date?.startDate || filters.date?.endDate) {
-                const rowDate = new Date(row.date)
-                if (filters.date.startDate) {
-                    const startDate = new Date(filters.date.startDate)
-                    startDate.setHours(0, 0, 0, 0)
-                    if (rowDate < startDate) return false
+    useEffect(() => {
+        const applyFilters = (rows) => {
+            return rows.filter(row => {
+                if (filters.date?.startDate || filters.date?.endDate) {
+                    const rowDate = new Date(row.date.seconds * 1000)
+                    if (filters.date.startDate) {
+                        const startDate = new Date(filters.date.startDate)
+                        startDate.setHours(0, 0, 0, 0)
+                        if (rowDate < startDate) return false
+                    }
+                    if (filters.date.endDate) {
+                        const endDate = new Date(filters.date.endDate)
+                        endDate.setHours(23, 59, 59, 999)
+                        if (rowDate > endDate) return false
+                    }
                 }
-                if (filters.date.endDate) {
-                    const endDate = new Date(filters.date.endDate)
-                    endDate.setHours(23, 59, 59, 999)
-                    if (rowDate > endDate) return false
+                if (filters.amount?.minAmount || filters.amount?.maxAmount) {
+                    const amount = row.change_balance
+                    if (filters.amount.minAmount && amount < parseFloat(filters.amount.minAmount)) return false
+                    if (filters.amount.maxAmount && amount > parseFloat(filters.amount.maxAmount)) return false
                 }
-            }
-            // Amount filter
-            if (filters.amount?.minAmount || filters.amount?.maxAmount) {
-                const amount = row.change_balance
-                if (filters.amount.minAmount && amount < parseFloat(filters.amount.minAmount)) return false
-                if (filters.amount.maxAmount && amount > parseFloat(filters.amount.maxAmount)) return false
-            }
-            // Employee filter
-            if (filters.employee?.searchTerm) {
-                const searchTerm = filters.employee.searchTerm.toLowerCase()
-                if (!row.employee_name.toLowerCase().includes(searchTerm)) return false
-            }
+                if (filters.employee?.searchTerm) {
+                    const searchTerm = filters.employee.searchTerm.toLowerCase()
+                    if (!row.employee_name.toLowerCase().includes(searchTerm)) return false
+                }
 
-            return true
-        })
-    }
+                return true
+            })
+        }
 
-    const filteredRows = applyFilters(transaction.filter(row => row.customer_id === customer.customer_id))
-    filteredRows.sort((a, b) => new Date(b.date) - new Date(a.date))
+        // Find the current customer in the updated customers list
+        const currentCustomer = customers.find(c => c.id === customer?.id)
+        const transactions = currentCustomer?.transactions || []
+        
+        const filtered = applyFilters(transactions)
+        filtered.sort((a, b) => b.date.seconds - a.date.seconds)
+        setFilteredRows(filtered)
+    }, [customers, filters, customer?.id])
 
     const hasActiveFilters = () => {
         return filters.date?.startDate || filters.date?.endDate ||
@@ -92,15 +94,16 @@ function TableDisplay() {
     }
 
     const HeaderField = ({ label }) => (
-        <th className="relative px-3 py-1 font-semibold whitespace-nowrap cursor-pointer group">
+        <th className="relative px-3 py-1 font-semibold whitespace-nowrap cursor-pointer group text-sm bg-gray-800 text-gray-100 hover:bg-gray-700 transition-all duration-200">
             <div className="flex items-center gap-1"
                 onClick={() => setDisplay(display === `${label}Filter` ? null : `${label}Filter`)}>
                 {label}
                 <FilterListIcon
                     sx={{
-                        fontSize: "2vh",
+                        fontSize: "0.9rem",
                         verticalAlign: "middle",
-                        color: display === `${label}Filter` ? "#3b82f6" : "inherit"
+                        color: display === `${label}Filter` ? "#60a5fa" : "#9ca3af",
+                        transition: "color 0.2s ease"
                     }}
                 />
             </div>
@@ -112,14 +115,14 @@ function TableDisplay() {
     }
 
     return (
-        <>
-            <table className="w-full text-xs md:text-sm lg:text-[1rem] text-black">
-                <thead className="bg-[#808080] top-0 z-10">
-                    <tr className="text-left text-black">
+        <div className="rounded-xl overflow-y-scroll container-snap border border-gray-700 shadow-lg bg-gray-900">
+            <table className="w-full text-xs md:text-sm lg:text-[1rem] text-gray-200 select-none">
+                <thead className="sticky top-0 z-10">
+                    <tr className="text-left">
                         <HeaderField label={"Date"} />
                         <HeaderField label={"Amount"} />
                         <HeaderField label={"Employee"} />
-                        <th className="w-1/3 px-3 py-1 font-semibold whitespace-nowrap">Notes</th>
+                        <th className="w-1/3 px-3 py-1 font-semibold whitespace-nowrap text-sm bg-gray-800 text-gray-100 hover:bg-gray-700 transition-all duration-200">Notes</th>
                     </tr>
                 </thead>
                 <div className="absolute">
@@ -139,31 +142,34 @@ function TableDisplay() {
                         </div>
                     )}
                 </div>
-                <tbody className="overflow-y-scroll container-snap">
+                <tbody className="divide-y divide-gray-800">
                     {filteredRows.map((row, idx) => (
                         <tr
                             key={idx}
-                            className={row.change_balance < 0 ? "bg-red-300" : "bg-green-300"}
+                            className="hover:bg-gray-800/50 transition-colors duration-150 ease-in-out"
                         >
-                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap" title={row.date}>
-                                {new Date(new Date(row.date).getTime()).toISOString().replace("T", " ").slice(0, 19)}
+                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap text-xs" title={new Date(row.date.seconds * 1000).toISOString()}>
+                                {new Date(row.date.seconds * 1000).toISOString().replace("T", " ").slice(0, 19)}
                             </td>
-                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap" title={row.change_balance}>
-                                {row.change_balance < 0 ? "-" : ""}${Number(Math.abs(row.change_balance)).toFixed(2)}
+                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap text-xs" title={row.change_balance}>
+                                {row.change_balance < 0 ?
+                                    <ArrowDropDownIcon sx={{ color: '#f87171', transition: 'transform 0.2s ease' }} /> :
+                                    <ArrowDropUpIcon sx={{ color: '#4ade80', transition: 'transform 0.2s ease' }} />
+                                }${Number(Math.abs(row.change_balance)).toFixed(2)}
                             </td>
-                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap" title={row.employee_name}>
+                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap text-xs" title={row.employee_name}>
                                 {row.employee_name}
                             </td>
-                            <td className="pl-3 pr-0 py-0.5">
-                                <div className="max-w-[230px] max-h-7 overflow-x-auto whitespace-nowrap container-snap" title={row.notes}>
-                                    {row.notes}
+                            <td className="px-3 py-0.5">
+                                <div className="max-w-[230px] max-h-6 overflow-x-auto whitespace-nowrap container-snap text-xs text-gray-400" title={row.Notes}>
+                                    {row.Notes}
                                 </div>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-        </>
+        </div>
     )
 }
 

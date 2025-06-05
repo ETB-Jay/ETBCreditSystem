@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { updateRecord, getRecords, customerTable } from '../airtable'
 import { useCustomer, useDisplay, useCustomerNames } from '../context/useContext'
 import { Prompt, PromptTitle, PromptButton, PromptField, PromptInput } from './components'
-import { initializeCustomers } from '../initializeData'
+import { db } from '../firebase'
+import { doc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore'
 
 /**
  * A prompt containing a form that allows the user to edit the customer in question.
@@ -11,7 +11,6 @@ import { initializeCustomers } from '../initializeData'
  * @returns {JSX.Element} The EditCustomer prompt component.
  */
 function EditCustomer() {
-
     const { customer, setCustomer } = useCustomer()
     const { setDisplay } = useDisplay()
     const { setCustomers } = useCustomerNames()
@@ -27,7 +26,6 @@ function EditCustomer() {
         }))
     }
 
-    // Validation function
     const validate = (customer) => {
         const errs = {}
         const { first_name, last_name, email, phone } = customer
@@ -67,21 +65,41 @@ function EditCustomer() {
         }
 
         try {
-            const { id, ...newCustomerData } = {
-                ...temp,
+            const usersRef = collection(db, 'users')
+            const q = query(usersRef, 
+                where('first_name', '==', customer.first_name),
+                where('last_name', '==', customer.last_name)
+            )
+            
+            const querySnapshot = await getDocs(q)
+            if (querySnapshot.empty) {
+                throw new Error('Customer not found in database')
+            }
+
+            const customerDoc = querySnapshot.docs[0]
+
+            const updatedData = {
                 first_name: temp.first_name.trim(),
                 last_name: temp.last_name.trim(),
                 email: temp.email?.trim() || "",
                 phone: temp.phone?.trim() || ""
             }
-            delete newCustomerData.customer_id
-            await updateRecord(customerTable, id, newCustomerData)
+
+            await updateDoc(doc(db, 'users', customerDoc.id), updatedData)
             
-            // Initialize customers data to get fresh data
-            await initializeCustomers(setCustomers)
-            // Update the current customer with the fresh data
-            const updatedCustomers = await getRecords(customerTable, { filterByFormula: `{id} = "${id}"` })
-            setCustomer(updatedCustomers[0])
+            const updatedCustomer = {
+                ...customer,
+                ...updatedData
+            }
+            setCustomer(updatedCustomer)
+            
+            const customersSnapshot = await getDocs(collection(db, 'users'))
+            const customersData = customersSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+            setCustomers(customersData)
+            
             setDisplay("default")
         } catch (error) {
             setErrors({ submit: "Failed to update customer. Please try again." })

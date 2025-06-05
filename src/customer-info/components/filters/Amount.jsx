@@ -15,6 +15,7 @@ function Amount() {
                     placeholder="0.00"
                     step="0.01"
                     min="0"
+                    dollar={true}
                 />
             </FilterField>
             <FilterField>
@@ -26,6 +27,7 @@ function Amount() {
                     placeholder="0.00"
                     step="0.01"
                     min="0"
+                    dollar={true}
                 />
             </FilterField>
         </FilterContainer>

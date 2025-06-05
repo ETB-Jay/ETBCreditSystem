@@ -1,6 +1,44 @@
 # ETB Credit System
-Created by Michael Zhang using ReactJS, ElectronJS, and TailwindCSS. [Airtable](https://airtable.com/) was used as the backend for this project.
-https://github.com/elphoun
+
+Created by Michael Zhang using ReactJS, ElectronJS, and TailwindCSS. [Firebase](https://firebase.google.com/) is used as the backend for this project.
+
+## Features
+
+- Desktop application for managing customer credit transactions
+- Real-time data synchronization with Firebase
+- Customer management (add, edit, view)
+- Transaction tracking
+- Credit balance monitoring
+- Search functionality
+- Data export capabilities
+
+## Tech Stack
+
+- Frontend: ReactJS, ElectronJS
+- Styling: TailwindCSS
+- Backend: Firebase (Firestore)
+- State Management: React Context
+- Build Tools: Vite
+
+## Development
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+4. Build the application:
+   ```bash
+   npm run build
+   ```
+
+## License
+
+UNLICENSED - All rights reserved
 
 # USAGE
 Current Supported Features:

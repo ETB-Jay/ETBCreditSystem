@@ -11,16 +11,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let mainWindow;
-// Enable auto-download
+
+// Configure logging
+electronLog.transports.file.level = 'info';
+autoUpdater.logger = electronLog;
+
+// Enable auto-download and auto-install
 autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
 
-// Configure logging
-autoUpdater.logger = electronLog;
-autoUpdater.logger.transports.file.level = 'info';
-
 // Log all events for debugging
-autoUpdater.logger.info('App starting...');
+electronLog.info('App starting...');
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -28,7 +29,8 @@ function createWindow() {
         height: 400,
         minWidth: 700,
         minHeight: 400,
-        icon: path.join(__dirname, '../src/ETBFavicon.ico'),
+        title: 'ETBCredit',
+        icon: path.join(__dirname, '../src/assets/ETBFavicon.ico'),
         autoHideMenuBar: true,
         webPreferences: {
             preload: path.join(__dirname, '../electron/preload.js'),
@@ -40,31 +42,42 @@ function createWindow() {
 
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
     
-    // Check for updates
-    autoUpdater.checkForUpdatesAndNotify();
+    // Wait for window to be ready before checking for updates
+    mainWindow.webContents.on('did-finish-load', () => {
+        try {
+            electronLog.info('Checking for updates...');
+            autoUpdater.checkForUpdatesAndNotify();
+        } catch (error) {
+            electronLog.error('Failed to check for updates:', error);
+            mainWindow.webContents.send('update-error', {
+                message: 'Failed to check for updates',
+                error: error.message
+            });
+        }
+    });
 }
 
 // Update event handlers
 autoUpdater.on('checking-for-update', () => {
-    autoUpdater.logger.info('Checking for updates...');
-    mainWindow.webContents.send('update-status', 'Checking for updates...');
+    electronLog.info('Checking for updates...');
+    mainWindow?.webContents.send('update-status', 'Checking for updates...');
 });
 
 autoUpdater.on('update-available', (info) => {
-    autoUpdater.logger.info('Update available:', info);
-    mainWindow.webContents.send('update-status', 'Update available');
-    mainWindow.webContents.send('update-info', info);
+    electronLog.info('Update available:', info);
+    mainWindow?.webContents.send('update-status', 'Update available');
+    mainWindow?.webContents.send('update-info', info);
 });
 
 autoUpdater.on('update-not-available', (info) => {
-    autoUpdater.logger.info('Update not available:', info);
-    mainWindow.webContents.send('update-status', 'Update not available');
+    electronLog.info('Update not available:', info);
+    mainWindow?.webContents.send('update-status', 'Update not available');
 });
 
 autoUpdater.on('error', (err) => {
-    autoUpdater.logger.error('Error in auto-updater:', err);
-    mainWindow.webContents.send('update-status', 'Error in auto-updater');
-    mainWindow.webContents.send('update-error', {
+    electronLog.error('Error in auto-updater:', err);
+    mainWindow?.webContents.send('update-status', 'Error in auto-updater');
+    mainWindow?.webContents.send('update-error', {
         message: err.message,
         stack: err.stack,
         code: err.code
@@ -72,33 +85,45 @@ autoUpdater.on('error', (err) => {
 });
 
 autoUpdater.on('download-progress', (progressObj) => {
-    autoUpdater.logger.info('Download progress:', progressObj);
-    mainWindow.webContents.send('update-progress', progressObj);
+    electronLog.info('Download progress:', progressObj);
+    mainWindow?.webContents.send('update-progress', progressObj);
 });
 
 autoUpdater.on('update-downloaded', (info) => {
-    autoUpdater.logger.info('Update downloaded:', info);
-    mainWindow.webContents.send('update-status', 'Update downloaded');
-    mainWindow.webContents.send('update-info', info);
+    electronLog.info('Update downloaded:', info);
+    mainWindow?.webContents.send('update-status', 'Update downloaded');
+    mainWindow?.webContents.send('update-info', info);
+    
+    // Automatically install the update after a short delay
+    setTimeout(() => {
+        autoUpdater.quitAndInstall();
+    }, 1000);
 });
 
 // IPC handlers for update actions
 ipcMain.on('start-update', () => {
-    autoUpdater.logger.info('Starting update download...');
+    electronLog.info('Starting update download...');
     autoUpdater.downloadUpdate();
 });
 
 ipcMain.on('install-update', () => {
-    autoUpdater.logger.info('Installing update...');
+    electronLog.info('Installing update...');
     autoUpdater.quitAndInstall();
 });
 
-app.whenReady().then(() => {
-    //additional logic here
-}).then(createWindow)
+app.whenReady().then(createWindow).catch(error => {
+    electronLog.error('Failed to create window:', error);
+    app.quit();
+});
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-        app.quit()
+        app.quit();
     }
-})
+});
+
+app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+    }
+});

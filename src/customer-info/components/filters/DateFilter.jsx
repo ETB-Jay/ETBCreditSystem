@@ -3,7 +3,7 @@ import { useFilters } from '../../../context/useContext'
 
 function DateFilter() {
     const { filters, setFilters } = useFilters()
-    
+
     const handleDateChange = (type, value) => {
         setFilters(prev => ({
             ...prev,

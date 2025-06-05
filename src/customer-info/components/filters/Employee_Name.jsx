@@ -3,14 +3,14 @@ import { useFilters } from '../../../context/useContext'
 
 function EmployeeName() {
     const { filters, setFilters } = useFilters()
-    
+
     const handleSearchChange = (value) => {
         setFilters(prev => ({
             ...prev,
             employee: {
                 ...prev.employee,
                 searchTerm: value.trim().toLowerCase()
-            }
+        }
         }))
     }
 

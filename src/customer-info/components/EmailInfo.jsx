@@ -9,8 +9,8 @@ import { useCustomer } from "../../context/useContext"
 function EmailInfo() {
     const { customer } = useCustomer()
     return (
-        <div className="flex flex-row items-center justify-start max-w-1/3 h-full mr-4">
-            <EmailIcon className="mr-2" sx={{ color: "white", fontSize: "min(5vw, 5vh, 30px)" }} />
+        <div className="flex flex-row items-center justify-start max-w-1/3 h-2/3 select-none">
+            <EmailIcon className="mr-2" sx={{ color: "white", fontSize: "min(5vw, 5vh, 25px)" }} />
             <div className="text-white font-semibold text-[0.8rem] md:text-[1rem] lg:text-[1.1rem] overflow-x-auto container-snap">{customer.email ? customer.email : "N/A"}</div>
         </div>
     )
