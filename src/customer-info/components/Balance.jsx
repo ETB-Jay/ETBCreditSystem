@@ -14,22 +14,21 @@ function Balance() {
 
     useEffect(() => {
         const updateBalance = () => {
-            // Find the current customer in the updated customers list
-            const currentCustomer = customers.find(c => c.id === customer?.id)
+            const currentCustomer = customers.find(c => c.customer_id === customer?.customer_id)
             if (currentCustomer && typeof currentCustomer.balance !== "undefined") {
                 setFormattedBalance(Number(currentCustomer.balance).toFixed(2))
             }
         }
         updateBalance()
-    }, [customers, customer?.id])
+    }, [customers, customer?.customer_id])
 
     return (
-        <div className="flex flex-row items-center justify-between w-fit bg-gray-400 rounded-2xl lg:h-2/3 select-none">
+        <div className="flex flex-row items-center justify-between w-[200px] bg-gray-400 rounded-2xl h-[40px] select-none">
             <div className="flex flex-row items-center justify-start">
-                <AttachMoneyIcon className="mx-2" sx={{fontSize: "min(5vw, 5vh, 25px)"}} />
-                <p className="text-black font-bold text-[0.9rem] md:text-[1.1rem] lg:text-[1.2rem]  overflow-x-auto container-snap pr-5">{formattedBalance}</p>
+                <AttachMoneyIcon className="mx-2" sx={{fontSize: "25px"}} />
+                <p className="text-black font-bold text-[1.1rem] overflow-x-auto container-snap pr-5">{formattedBalance}</p>
             </div>
-            {Number(formattedBalance) < 0 ? <WarningIcon fontSize="small" /> : <></>}
+            {Number(formattedBalance) < 0 ? <WarningIcon fontSize="small" className="mr-2" /> : <></>}
         </div>
     )
 }

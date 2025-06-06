@@ -1,4 +1,4 @@
-import { CustomerContext, DisplayContext, CustomerNamesContext, TransactionContext, FilterContext} from './Context'
+import { CustomerContext, DisplayContext, CustomerNamesContext, TransactionContext, FilterContext, TotalContext} from './Context'
 import { useContext } from 'react'
 
 const useCustomer = () => {
@@ -25,7 +25,6 @@ const useCustomerNames = () => {
     return context
 }
 
-
 const useTransactions = () => {
     const context = useContext(TransactionContext)
     if (!context) {
@@ -41,4 +40,13 @@ const useFilters = () => {
     }
     return context
 }
-export { useCustomer, useDisplay, useCustomerNames, useTransactions, useFilters }  
+
+const useTotal = () => {
+    const context = useContext(TotalContext)
+    if (!context) {
+        throw new Error("useTotal must be used in the TotalProvider")
+    }
+    return context
+}
+
+export { useCustomer, useDisplay, useCustomerNames, useTransactions, useFilters, useTotal }  

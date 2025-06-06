@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useDisplay, useCustomer, useCustomerNames } from '../context/useContext'
 import { Prompt, PromptTitle, PromptButton, PromptField, PromptInput } from './components'
 import { db } from '../firebase'
-import { doc, getDocs, updateDoc, Timestamp, collection } from 'firebase/firestore'
+import { doc, updateDoc, Timestamp, getDoc } from 'firebase/firestore'
 
 /**
  * A prompt that allows the user to add a new transaction to the system. It appears only
@@ -33,7 +33,6 @@ function TransactionPrompt() {
             noEmployee: ""
         })
         setPayment({ add: false, sub: false })
-        console.log(customer.transactions.length)
     }, [])
 
     //
@@ -88,16 +87,37 @@ function TransactionPrompt() {
                 console.error('Customer is undefined')
                 throw new Error('Customer data is not properly loaded')
             }
-            await updateDoc(doc(db, 'users', customer.id), {
-                transactions: [...(customer.transactions || []), transactionData],
-                balance: Number(customer.balance) + transactionData.change_balance
+            const min = (Math.floor(customer.customer_id / 100) - (customer.customer_id % 100 === 0)) * 100 + 1
+            const max = (Math.floor(customer.customer_id / 100) + (customer.customer_id % 100 !== 0)) * 100
+            const arrayName = `${min}_min_${max}_max`
+            const customerDoc = await getDoc(doc(db, 'customers', arrayName))
+            const currentCustomers = customerDoc.data()?.customers || []
+
+            const updatedCustomers = currentCustomers.map(c => {
+                if (c.customer_id === customer.customer_id) {
+                    return {
+                        ...c,
+                        transactions: [...(c.transactions || []), transactionData],
+                        balance: Number(c.balance) + transactionData.change_balance
+                    }
+                }
+                return c
             })
-            const customersSnapshot = await getDocs(collection(db, 'users'))
-            const customersData = customersSnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }))
-            setCustomers(customersData)
+            await updateDoc(doc(db, 'customers', arrayName), {
+                customers: updatedCustomers
+            })
+            setCustomers(prevCustomers => 
+                prevCustomers.map(c => 
+                    c.customer_id === customer.customer_id 
+                        ? {
+                            ...c,
+                            balance: Number(c.balance) + Number(transactionData.change_balance),
+                            transactions: [...(c.transactions || []), transactionData]
+                        }
+                        : c
+                )
+            )
+
             return true
         } catch (error) {
             setErrors(prev => ({ ...prev, invalidValue: error.message || "An unexpected error occurred during the transaction" }))

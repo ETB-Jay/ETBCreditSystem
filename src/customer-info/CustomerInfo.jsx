@@ -14,7 +14,7 @@ import TableDisplay from './components/TableDisplay'
  */
 function CustomerInfo() {
     const { customer } = useCustomer()
-    if (Object.keys(customer).length === 0) {
+    if (!customer) {
         return (
             <div className="flex align-center flex-col bg-gray-800 p-2 rounded-2xl m-2 ml-0 border border-gray-700">
                 <div className="flex flex-row items-center justify-center h-full">
@@ -25,7 +25,7 @@ function CustomerInfo() {
     }
     return (
         <div className="flex align-center flex-col bg-gray-800 p-2 rounded-2xl m-2 ml-0 border border-gray-700 overflow-y-auto">
-            <div className="relative grid grid-cols-[95%_5%] sm:mb-[2vh] md:mb-[1vw] xl:mb-[0.5vw] md:h-1/12">
+            <div className="sticky top-0 z-10 bg-gray-800 pb-2 relative grid grid-cols-[95%_5%] sm:mb-[2vh] md:mb-[1vw] xl:mb-[0.5vw] md:h-1/12">
                 <div className="flex flex-row items-center ml-3 gap-4 lg:gap-x-12 w-[95%]">
                     <EmailInfo />
                     <PhoneInfo />

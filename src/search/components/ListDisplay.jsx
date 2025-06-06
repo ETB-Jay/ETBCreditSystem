@@ -21,10 +21,8 @@ function ListDisplay({ filter = "" }) {
             (customer.last_name?.toLowerCase() || "").includes(filter.toLowerCase()))
         )
         .sort((a, b) => {
-            // First compare by last name
-            const lastNameCompare = (a.last_name || "").localeCompare(b.last_name || "");
-            // If last names are equal, compare by first name
-            return lastNameCompare !== 0 ? lastNameCompare : (a.first_name || "").localeCompare(b.first_name || "");
+            const lastNameCompare = (a.last_name || "").localeCompare(b.last_name || "")
+            return lastNameCompare !== 0 ? lastNameCompare : (a.first_name || "").localeCompare(b.first_name || "")
         });
 
     const handleClick = (customer, index) => {
@@ -39,7 +37,7 @@ function ListDisplay({ filter = "" }) {
                     <li className={`flex flex-row items-center justify-between text-xs lg:text-sm px-2 py-1 cursor-pointer rounded-sm 
                     hover:bg-gray-600 hover:font-bold hover:transition-colors shadow-[0_2px_4px_rgba(0,0,0,0.5)]
                     ${selectedIndex === index ? "bg-gray-700 font-bold shadow-[0_4px_8px_rgba(0,0,0,0.6)]" : "odd:bg-gray-800 even:bg-gray-700/50"}`}
-                        key={customer.id}
+                        key={`${customer.customer_id}-${index}`}
                         onClick={() => handleClick(customer, index)}>
                         <p className="overflow-x-scroll container-snap">{`${customer.last_name}, ${customer.first_name}`}</p>
                         {Number(customer.balance) < 0 ? <WarningIcon sx={{ fontSize: "100%" }} /> : <></>}

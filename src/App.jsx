@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import Search from './search/Search'
 import CustomerInfo from './customer-info/CustomerInfo'
-import { useDisplay, useCustomerNames } from './context/useContext'
+import { useDisplay, useCustomerNames, useTotal } from './context/useContext'
 import { fetchCustomers } from './firebase'
 import CustomerPrompt from './prompts/CustomerPrompt'
 import TransactionPrompt from './prompts/TransactionPrompt'
@@ -16,6 +16,7 @@ import EditCustomer from './prompts/EditCustomer'
  * @returns {JSX.Element} The Application UI
  */
 function App() {
+	const { setTotal } = useTotal()
 	const { display } = useDisplay()
 	const { setCustomers } = useCustomerNames()
 	const [error, setError] = useState(null)
@@ -25,16 +26,16 @@ function App() {
 			try {
 				const [customersData] = await Promise.all([
 					fetchCustomers()
-				]);
-				console.log('Fetched Customers:', customersData);
-				setCustomers(customersData);
+				])
+				setCustomers(customersData.customers)
+				setTotal(customersData.total)
 			} catch (error) {
-				console.error('Error loading data:', error);
-				setError('Failed to load data. Please try again.');
+				console.error('Error loading data:', error)
+				setError('Failed to load data. Please try again.')
 			}
-		};
-		loadData();
-	}, [setCustomers]);
+		}
+		loadData()
+	}, [setCustomers])
 
 	return (
 		<>

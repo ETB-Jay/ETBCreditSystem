@@ -13,24 +13,38 @@ const __dirname = path.dirname(__filename);
 let mainWindow;
 
 // Configure logging
-electronLog.transports.file.level = 'info';
+electronLog.transports.file.level = 'debug';
+electronLog.transports.file.resolvePathFn = () => path.join(app.getPath('userData'), 'logs/main.log');
 autoUpdater.logger = electronLog;
 
 // Enable auto-download and auto-install
 autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
 
-// Log all events for debugging
+// Add more detailed logging
 electronLog.info('App starting...');
+electronLog.info('Current version:', app.getVersion());
+electronLog.info('Update configuration:', {
+    autoDownload: autoUpdater.autoDownload,
+    autoInstallOnAppQuit: autoUpdater.autoInstallOnAppQuit,
+    allowDowngrade: autoUpdater.allowDowngrade,
+    channel: autoUpdater.channel,
+    currentVersion: app.getVersion(),
+    feedURL: autoUpdater.getFeedURL()
+});
 
 function createWindow() {
+    const iconPath = app.isPackaged
+        ? path.join(process.resourcesPath, 'ETBFavicon.ico')
+        : path.resolve(process.cwd(), 'public', 'ETBFavicon.ico');
+
     mainWindow = new BrowserWindow({
         width: 700,
         height: 400,
         minWidth: 700,
         minHeight: 400,
         title: 'ETBCredit',
-        icon: path.join(__dirname, '../src/assets/ETBFavicon.ico'),
+        icon: iconPath,
         autoHideMenuBar: true,
         webPreferences: {
             preload: path.join(__dirname, '../electron/preload.js'),
@@ -45,13 +59,24 @@ function createWindow() {
     // Wait for window to be ready before checking for updates
     mainWindow.webContents.on('did-finish-load', () => {
         try {
-            electronLog.info('Checking for updates...');
+            electronLog.info('Window loaded, checking for updates...');
+            const feedURL = autoUpdater.getFeedURL();
+            electronLog.info('Update server URL:', feedURL);
+            electronLog.info('Current version:', app.getVersion());
+            electronLog.info('Update configuration:', {
+                autoDownload: autoUpdater.autoDownload,
+                autoInstallOnAppQuit: autoUpdater.autoInstallOnAppQuit,
+                allowDowngrade: autoUpdater.allowDowngrade,
+                channel: autoUpdater.channel
+            });
             autoUpdater.checkForUpdatesAndNotify();
         } catch (error) {
             electronLog.error('Failed to check for updates:', error);
+            electronLog.error('Error stack:', error.stack);
             mainWindow.webContents.send('update-error', {
                 message: 'Failed to check for updates',
-                error: error.message
+                error: error.message,
+                stack: error.stack
             });
         }
     });

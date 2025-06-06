@@ -37,10 +37,17 @@ TransactionContext.displayName = "TransactionContext"
 const FilterContext = createContext()
 FilterContext.displayName = "FilterContext"
 
+/**
+ * @description Context to store the total number of customers.
+ */
+const TotalContext = createContext(0)
+TotalContext.displayName = "TotalContext"
+
 export { 
     CustomerContext, 
     DisplayContext, 
     CustomerNamesContext, 
     TransactionContext,
-    FilterContext
+    FilterContext,
+    TotalContext
 }

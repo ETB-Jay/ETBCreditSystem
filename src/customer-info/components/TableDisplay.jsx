@@ -33,7 +33,7 @@ function TableDisplay() {
         if (display !== "default") {
             setDisplay("default")
         }
-    }, [customer?.id, customer?.transactions?.length])
+    }, [customer?.customer_id, customer?.transactions?.length])
 
     useEffect(() => {
         const applyFilters = (rows) => {
@@ -64,15 +64,13 @@ function TableDisplay() {
                 return true
             })
         }
-
-        // Find the current customer in the updated customers list
-        const currentCustomer = customers.find(c => c.id === customer?.id)
+        const currentCustomer = customers.find(c => c.customer_id === customer?.customer_id)
         const transactions = currentCustomer?.transactions || []
         
         const filtered = applyFilters(transactions)
         filtered.sort((a, b) => b.date.seconds - a.date.seconds)
         setFilteredRows(filtered)
-    }, [customers, filters, customer?.id])
+    }, [customers, filters, customer?.customer_id])
 
     const hasActiveFilters = () => {
         return filters.date?.startDate || filters.date?.endDate ||
@@ -115,7 +113,7 @@ function TableDisplay() {
     }
 
     return (
-        <div className="rounded-xl overflow-y-scroll container-snap border border-gray-700 shadow-lg bg-gray-900">
+        <div className="max-h-9/10 rounded-xl overflow-y-scroll container-snap border border-gray-700 shadow-lg bg-gray-900">
             <table className="w-full text-xs md:text-sm lg:text-[1rem] text-gray-200 select-none">
                 <thead className="sticky top-0 z-10">
                     <tr className="text-left">
@@ -148,8 +146,8 @@ function TableDisplay() {
                             key={idx}
                             className="hover:bg-gray-800/50 transition-colors duration-150 ease-in-out"
                         >
-                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap text-xs" title={new Date(row.date.seconds * 1000).toISOString()}>
-                                {new Date(row.date.seconds * 1000).toISOString().replace("T", " ").slice(0, 19)}
+                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap text-xs" title={row.date?.seconds ? new Date(row.date.seconds * 1000).toISOString() : 'Invalid date'}>
+                                {row.date?.seconds ? new Date(row.date.seconds * 1000).toISOString().replace("T", " ").slice(0, 19) : 'Invalid date'}
                             </td>
                             <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap text-xs" title={row.change_balance}>
                                 {row.change_balance < 0 ?

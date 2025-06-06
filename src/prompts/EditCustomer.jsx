@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useCustomer, useDisplay, useCustomerNames } from '../context/useContext'
 import { Prompt, PromptTitle, PromptButton, PromptField, PromptInput } from './components'
 import { db } from '../firebase'
-import { doc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore'
+import { doc, updateDoc, getDoc } from 'firebase/firestore'
 
 /**
  * A prompt containing a form that allows the user to edit the customer in question.
@@ -14,7 +14,12 @@ function EditCustomer() {
     const { customer, setCustomer } = useCustomer()
     const { setDisplay } = useDisplay()
     const { setCustomers } = useCustomerNames()
-    const [temp, setTemp] = useState(customer)
+    const [temp, setTemp] = useState({
+        first_name: customer?.first_name || '',
+        last_name: customer?.last_name || '',
+        email: customer?.email || '',
+        phone: customer?.phone || ''
+    })
     const [errors, setErrors] = useState({})
     const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -65,18 +70,15 @@ function EditCustomer() {
         }
 
         try {
-            const usersRef = collection(db, 'users')
-            const q = query(usersRef, 
-                where('first_name', '==', customer.first_name),
-                where('last_name', '==', customer.last_name)
-            )
-            
-            const querySnapshot = await getDocs(q)
-            if (querySnapshot.empty) {
-                throw new Error('Customer not found in database')
+            if (!customer) {
+                throw new Error('Customer data is not properly loaded')
             }
 
-            const customerDoc = querySnapshot.docs[0]
+            const min = (Math.floor(customer.customer_id / 100) - (customer.customer_id % 100 === 0)) * 100 + 1
+            const max = (Math.floor(customer.customer_id / 100) + (customer.customer_id % 100 !== 0)) * 100
+            const arrayName = `${min}_min_${max}_max`
+            const customerDoc = await getDoc(doc(db, 'customers', arrayName))
+            const currentCustomers = customerDoc.data()?.customers || []
 
             const updatedData = {
                 first_name: temp.first_name.trim(),
@@ -84,26 +86,39 @@ function EditCustomer() {
                 email: temp.email?.trim() || "",
                 phone: temp.phone?.trim() || ""
             }
-
-            await updateDoc(doc(db, 'users', customerDoc.id), updatedData)
-            
-            const updatedCustomer = {
-                ...customer,
-                ...updatedData
-            }
-            setCustomer(updatedCustomer)
-            
-            const customersSnapshot = await getDocs(collection(db, 'users'))
-            const customersData = customersSnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }))
-            setCustomers(customersData)
+            const updatedCustomers = currentCustomers.map(c => {
+                if (c.customer_id === customer.customer_id) {
+                    return {
+                        ...c,
+                        ...updatedData
+                    }
+                }
+                return c
+            })
+            await updateDoc(doc(db, 'customers', arrayName), {
+                customers: updatedCustomers
+            })
+            setCustomers(prevCustomers => 
+                prevCustomers.map(c => 
+                    c.customer_id === customer.customer_id 
+                        ? {
+                            ...c,
+                            first_name: temp.first_name,
+                            last_name: temp.last_name,
+                            email: temp.email,
+                            phone: temp.phone
+                        }
+                        : c
+                )
+            )
+            setCustomer(updatedCustomers.find(c => c.customer_id === customer.customer_id))
             
             setDisplay("default")
+            return true
         } catch (error) {
             setErrors({ submit: "Failed to update customer. Please try again." })
             console.error(error.message)
+            return false
         } finally {
             setIsSubmitting(false)
         }
