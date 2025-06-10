@@ -36,7 +36,7 @@ function App() {
 		}
 		loadData()
 	}, [setCustomers])
-
+	
 	return (
 		<>
 			<div className="bg-gray-900 absolute grid grid-cols-[25%_74%] md:grid-cols-[25%_74.5%] gap-[1%] md:gap-[0.5%] w-full h-full">

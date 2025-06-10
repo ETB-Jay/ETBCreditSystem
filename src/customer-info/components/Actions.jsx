@@ -1,5 +1,6 @@
 import { useDisplay } from '../../context/useContext'
-import AskModify from '../../prompts/AskModify'
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 
 /**
  * Displays the triple dot icon that gives the user a list of potential actions related to the customer
@@ -8,51 +9,32 @@ import AskModify from '../../prompts/AskModify'
  * @returns {JSX.Element} The Action component
  */
 function Actions() {
-    const { display, setDisplay } = useDisplay()
-    let hideTimeout = null
+    const { setDisplay } = useDisplay()
 
-    const handleMouseEnter = () => {
-        if (hideTimeout) {
-            clearTimeout(hideTimeout)
-            hideTimeout = null
-        }
-        setDisplay("option")
-    }
-
-    const handleMouseLeave = () => {
-        hideTimeout = setTimeout(() => {
-            if (display === "option") {
-                setDisplay("default")
-            }
-        }, 300)
-    }
-
-    const ActionsIcon = () => {
+    const AddTransactionButton = () => {
         return (
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 20 20"
-                strokeWidth={2}
-                stroke="white"
-                className="size-5 lg:size-6 hover:stroke-gray-400 cursor-pointer"
-            >
-                <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 
-                0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-                />
-            </svg>
-        )
+            <div className="stroke-white hover:brightness-50 cursor-pointer"
+                onClick={() => setDisplay("transaction")}>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2.5} stroke="inherit" className="size-7">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v10m5-5h-10" />
+                </svg>
+            </div>
+        );
+    }
+
+    const EditCustomerButton = () => {
+        return (
+            <EditIcon className="cursor-pointer hover:brightness-50" onClick={() => setDisplay("edit")} sx={{ color: "white", fontSize: "20px" }} />
+        );
     }
 
     return (
-        <div className="relative flex justify-end"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}>
-            <ActionsIcon />
-            {display === "option" && <AskModify />}
+        <div className="relative flex flex-row items-start justify-end">
+            <AddTransactionButton />
+            <EditCustomerButton />
         </div>
     )
 }

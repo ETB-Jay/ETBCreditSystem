@@ -16,7 +16,7 @@ CustomerContext.displayName = "CustomerContext"
  * - "report" - the display when viewing the report
  * - "edit" - the display when editing a customer's details
  */
-const DisplayContext = createContext("default")
+const DisplayContext = createContext("login")
 DisplayContext.displayName = "DisplayContext"
 
 /**

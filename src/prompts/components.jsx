@@ -41,7 +41,7 @@ PromptField.propTypes = {
 
 const PromptInput = ({ value, onChange, type = "text", step, disabled, name, placeholder }) => (
     <input
-        className="text-gray-200 text-[0.8rem] bg-gray-800 rounded-md px-3 py-1.5 h-7 w-full outline-none transition-colors focus:bg-gray-700 hover:bg-gray-700 border border-gray-700 placeholder-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="disabled:bg-gray-200 disabled:cursor-not-allowed text-gray-200 text-[0.8rem] bg-gray-800 rounded-md px-3 py-1.5 h-7 w-full outline-none transition-colors focus:bg-gray-500 hover:bg-gray-700 border border-gray-700 placeholder-gray-500"
         type={type}
         step={step}
         value={value || ""}
@@ -64,7 +64,7 @@ PromptInput.propTypes = {
 
 const PromptButton = ({ onClick, disabled, children }) => (
     <button
-        className={`flex flex-row gap-x-1 text-sm font-bold bg-gray-800 text-gray-200 rounded-md px-4 py-1.5 w-fit cursor-pointer transition-colors select-none hover:bg-gray-700 active:bg-gray-600 border border-gray-700 disabled:opacity-50 disabled:cursor-not-allowed`}
+        className={`flex flex-row gap-x-1 text-sm font-bold bg-gray-800 text-gray-200 rounded-md px-4 py-1.5 w-fit cursor-pointer transition-colors select-none hover:bg-gray-700 active:bg-gray-600 border border-gray-700 disabled:bg-red-50 disabled:cursor-not-allowed`}
         onClick={onClick}
         disabled={disabled}
     >

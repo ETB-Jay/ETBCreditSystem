@@ -35,7 +35,7 @@ FilterLabel.propTypes = {
 const FilterInput = ({
     type, value, onChange, placeholder, dollar=false, min, max
 }) => (
-    <div className="relative flex flex-row items-center justify-center">
+    <div className="relative flex flex-row items-center">
         {dollar ? <span className="text-gray-400 mr-1 text-xs">$</span> : <></>}
         <input
             type={type}

@@ -1,6 +1,6 @@
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 import WarningIcon from '@mui/icons-material/Warning';
-import { useCustomer, useCustomerNames } from '../../context/useContext'
+import { useCustomer, useCustomerNames, useDisplay } from '../../context/useContext'
 import { useEffect, useState } from 'react';
 
 /**
@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 function Balance() {
     const { customer } = useCustomer()
     const { customers } = useCustomerNames()
+    const { setDisplay } = useDisplay()
     const [formattedBalance, setFormattedBalance] = useState("0.00")
 
     useEffect(() => {
@@ -23,7 +24,7 @@ function Balance() {
     }, [customers, customer?.customer_id])
 
     return (
-        <div className="flex flex-row items-center justify-between w-[200px] bg-gray-400 rounded-2xl h-[40px] select-none">
+        <div className="flex flex-row items-center justify-between w-[200px] bg-gray-400 rounded-2xl h-[40px] select-none hover:bg-gray-500 cursor-pointer" onClick={()=>setDisplay("transaction")}>
             <div className="flex flex-row items-center justify-start">
                 <AttachMoneyIcon className="mx-2" sx={{fontSize: "25px"}} />
                 <p className="text-black font-bold text-[1.1rem] overflow-x-auto container-snap pr-5">{formattedBalance}</p>

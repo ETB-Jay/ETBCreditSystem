@@ -190,7 +190,6 @@ function TransactionPrompt() {
                 </PromptButton>
                 <PromptButton
                     onClick={() => setDisplay("default")}
-                    disabled={isSubmitting}
                 >
                     Cancel
                 </PromptButton>

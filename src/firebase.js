@@ -37,7 +37,7 @@ export const fetchCustomers = async () => {
           transactions: (customer.transactions || []).map(transaction => ({
             ...transaction,
             date: transaction.date,
-            Notes: transaction.notes
+            notes: transaction.notes
           }))
         }
       })

@@ -21,26 +21,22 @@ function Report() {
     const { total } = useTotal()
 
     useEffect(() => {
-        const unsubscribe = onSnapshot(collection(db, 'users'), (snapshot) => {
+        const unsubscribe = onSnapshot(collection(db, 'customers'), (snapshot) => {
             const transactions = []
             snapshot.forEach(doc => {
-                const customerData = {
-                    customer_id: doc.id,
-                    first_name: doc.data().first_name,
-                    last_name: doc.data().last_name,
-                    email: doc.data().email || '',
-                    phone: doc.data().phone || '',
-                    balance: doc.data().balance,
-                    transactions: doc.data().transactions || []
-                }
-                if (customerData.transactions && Array.isArray(customerData.transactions)) {
-                    customerData.transactions.forEach(transaction => {
-                        transactions.push({
-                            ...transaction,
-                            customer_id: customerData.customer_id,
-                            first_name: customerData.first_name,
-                            last_name: customerData.last_name
-                        })
+                const data = doc.data()
+                if (data.customers && Array.isArray(data.customers)) {
+                    data.customers.forEach(customer => {
+                        if (customer.transactions && Array.isArray(customer.transactions)) {
+                            customer.transactions.forEach(transaction => {
+                                transactions.push({
+                                    ...transaction,
+                                    customer_id: customer.customer_id,
+                                    first_name: customer.first_name,
+                                    last_name: customer.last_name
+                                })
+                            })
+                        }
                     })
                 }
             })
@@ -61,7 +57,7 @@ function Report() {
     const handleDownload = async () => {
         try {
             const zip = new JSZip()
-            const date = new Date().toISOString().split('T')[0]
+            const date = new Date().toISOString().split('T')[0].replace(',', ';');
 
             const customerHeaders = ['customer_id', 'first_name', 'last_name', 'email', 'phone', 'balance']
             const customerCsvContent = [
@@ -76,7 +72,7 @@ function Report() {
                 ].join(','))
             ].join('\n')
 
-            const transactionHeaders = ['customer_id', 'first_name', 'last_name', 'date', 'change_balance', 'employee_name', 'notes']
+            const transactionHeaders = ['customer_id', 'first_name', 'last_name', 'day', 'time', 'change_balance', 'employee_name', 'notes']
             const transactionCsvContent = [
                 transactionHeaders.join(','),
                 ...allTransactions.map(transaction => [
