@@ -1,7 +1,7 @@
 # ETB Credit System
-A Credit System designed by Michael Zhang using React.js, Electron.js, and tailwindcss. 
+A Credit System designed by Michael Zhang using React.js, Electron.js, and tailwindcss.
 
-[Firebase](https://firebase.google.com/) is used as the backend for this project.
+[Firebase (Firestore)](https://firebase.google.com/) is used as the backend for this project.
 
 # FEATURES AND USAGE
 ![image](https://github.com/user-attachments/assets/835b59c0-2b57-47c2-a291-ac69233d9349)
@@ -19,26 +19,21 @@ A Credit System designed by Michael Zhang using React.js, Electron.js, and tailw
 ## Other Notes
 - The transaction list is sorted by date (most recent at the top)
 - A customer with an outstanding balance will have a warning symbol next to their name in the customer list and their balance.
-- `CTRL + R` reloads the app display. This command is important as the app does not update dynamically if another device creates a transaction (although it will if you create a new customer/transaction).
-  
-**DO NOT SPAM THIS COMMAND. THERE ARE A LIMITED NUMBER OF API CALLS AND WASTING THEM WILL COST A LOT OF MONEY ☹️💸**
+- `CTRL + R` reloads the app display. This command is useful when the app needs to be reloaded to access new data inputted directly into firestore or from another device with the credit system.
 
 ## Getting Logs
-<del>read: [https://github.com/ETB-Jay/ETBCreditLogs](https://github.com/ETB-Jay/ETBCreditLogs)</del>
+The Report contains a download button that allows the user to download a zip file containing two csv files with the customers and transactions. 
 
-The "download" button is located in the information icon prompt. It will download a zip file containing the current list of customers and transactions.
-
-**NOTE:** This format is different from what is displayed in Firebase (since it is a NoSQL, nonrelational database instead of a SQL, relational database). As a result, it cannot be directly plugged into the Firebase database and will require seperate code to change the `.csv` format to a `.json`.
+**NOTE:** This format is different from what is displayed in Firebase (since it is a NoSQL, nonrelational database instead of a SQL, relational database). As a result, it cannot be directly plugged into the Firebase database and will require seperate code to change the `.csv` format to a `.json`. See [https://github.com/ETB-Jay/ETBCreditLogs](https://github.com/ETB-Jay/ETBCreditLogs) for how to upload credit logs from a different system to Firestore. 
 
 # DOWNLOAD
 1. Open the 'Releases' Tab on the right and download `ETBCredit-Setup-<version>.exe`
-2. If necessary, allow permissions to install the `.exe` (I promise there are no viruses and that I'm the publisher 😊)
-3. Begin!
+2. If necessary, allow permissions to install the `.exe` (I promise this app is secure 😊)
 
 # UPDATES AND BUG FIXING
-From 2025-05-05 to 2025-08-29, I will be doing updates and bug fixing. Please ask either Jay or Kris to get my contact information.
+From 2025-05-05 to 2025-08-29, I will be conducting preliminary updates and bug fixing as the store gets used to the system. Please ask either Jay or Kris to get my contact information if you have questions or have noticed any bugs.
 
-After this period (post my co-op), I will be copying the source files to a different computer but will keep a copy for myself (this includes any enviornment variables). If you are the new "tech guy" and would like to know more about the source material or need help with updates, you can contact Jay or Kris again to get my contact information. I am also open to doing bug fixes during the time when I am back in school so please do not hesitate to contact me.
+After this period (post my co-op), I will be copying the source files to a different computer but will keep a copy for myself. If you would like to know more about the source material OR need information that I have not uploaded to github (i.e. Enviornment Variables, API keys), then you can contact Jay or Kris to get my contact information. Please do not hesitate to ask me if you have questions about the code. I am also open to doing bug fixes while I am away and back at school.
 
 ## Tech Stack
 - Frontend: ReactJS, ElectronJS
@@ -61,12 +56,12 @@ After this period (post my co-op), I will be copying the source files to a diffe
    ```bash
    npm run build
    ```
-5. Publishing:
+5. Publishing (need access to enviornment variable):
    ```bash
    Remove-Item -Recurse -Force release-builds; $env:GH_TOKEN = (Get-Content .env | Select-String "GH_TOKEN").ToString().Split("=")[1].Trim()
    npm run publish
    ```
-
+   
 ## License
 
 UNLICENSED - All rights reserved
