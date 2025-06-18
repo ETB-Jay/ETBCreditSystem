@@ -1,7 +1,7 @@
 # ETB Credit System 💰
-The Enter the Battlefield (ETB) credit system designed by Michael Zhang using [React.js](https://react.dev/), (Electron.js)[https://www.electronjs.org/], and (tailwindcss)[https://tailwindcss.com/].
+The Enter the Battlefield (ETB) credit system designed by Michael Zhang using [React.js](https://react.dev/), [Electron.js](https://www.electronjs.org/), and [tailwindcss](https://tailwindcss.com/).
 
-[Firebase (Firestore)](https://firebase.google.com/) is used as the backend for this project. The app was packaged with (Electron-Builder)[https://www.electron.build/index.html]
+[Firebase (Firestore)](https://firebase.google.com/) is used as the backend for this project. The app was built and packaged with [Electron-Builder](https://www.electron.build/index.html)
 
 # FEATURES AND USAGE 📝
 ![ETB Diagram](https://github.com/user-attachments/assets/64bd72c6-ff43-454d-9896-3495e631d3b9)
