@@ -1,6 +1,7 @@
 import { useDisplay } from '../../context/useContext'
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
+import AddCardIcon from '@mui/icons-material/AddCard';
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
 
 /**
  * Displays the triple dot icon that gives the user a list of potential actions related to the customer
@@ -11,30 +12,22 @@ import EditIcon from '@mui/icons-material/Edit';
 function Actions() {
     const { setDisplay } = useDisplay()
 
-    const AddTransactionButton = () => {
+    const UserButton = ({icon, display}) => {
+        const IconComponent = icon;
         return (
-            <div className="stroke-white hover:brightness-50 cursor-pointer"
-                onClick={() => setDisplay("transaction")}>
-                <svg xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2.5} stroke="inherit" className="size-7">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v10m5-5h-10" />
-                </svg>
-            </div>
-        );
-    }
-
-    const EditCustomerButton = () => {
-        return (
-            <EditIcon className="cursor-pointer hover:brightness-50" onClick={() => setDisplay("edit")} sx={{ color: "white", fontSize: "20px" }} />
-        );
+            <IconComponent
+                className="cursor-pointer hover:brightness-50"
+                onClick={() => setDisplay(display)}
+                sx={{ color: "white", fontSize: "18px" }}
+            />
+        )
     }
 
     return (
-        <div className="relative flex flex-row items-start justify-end">
-            <AddTransactionButton />
-            <EditCustomerButton />
+        <div className="bg-blue-950/50 hover:bg-blue-950/75 ring-1 hover:ring-black/90  shadow-md shadow-black rounded-2xl px-2 h-2/3 flex flex-row items-center justify-center gap-2">
+            <UserButton icon={AddCardIcon} display={"transaction"}/>
+            <UserButton icon={EditIcon} display={"edit"}/>
+            <UserButton icon={DeleteIcon} display={"delete"}/>
         </div>
     )
 }

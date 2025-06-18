@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import { useCustomer, useCustomerNames } from '../../context/useContext'
 import WarningIcon from '@mui/icons-material/Warning'
-import { useState } from 'react'
+import { useState, memo, useMemo, useCallback } from 'react'
 
 /**
  * Displays a filtered list of customers based on the provided filter string taken from the search bar
@@ -15,20 +15,25 @@ function ListDisplay({ filter = "" }) {
     const { customers } = useCustomerNames()
     const [selectedIndex, setSelectedIndex] = useState(null)
 
-    const filteredRows = customers
-        .filter(customer =>
-            ((customer.first_name?.toLowerCase() || "").includes(filter.toLowerCase()) ||
-            (customer.last_name?.toLowerCase() || "").includes(filter.toLowerCase()))
-        )
-        .sort((a, b) => {
-            const lastNameCompare = (a.last_name || "").localeCompare(b.last_name || "")
-            return lastNameCompare !== 0 ? lastNameCompare : (a.first_name || "").localeCompare(b.first_name || "")
-        });
+    const filteredRows = useMemo(() => 
+        customers
+            .filter((customer) => {
+                const fullName = (customer.first_name + " " + customer.last_name).toLowerCase()
+                return ((customer.first_name?.toLowerCase() || "").includes(filter.toLowerCase()) ||
+                    (customer.last_name?.toLowerCase() || "").includes(filter.toLowerCase()) ||
+                    (fullName || "").includes(filter.toLowerCase()))
+            })
+            .sort((a, b) => {
+                const lastNameCompare = (a.last_name || "").localeCompare(b.last_name || "")
+                return lastNameCompare !== 0 ? lastNameCompare : (a.first_name || "").localeCompare(b.first_name || "")
+            }),
+        [customers, filter]
+    )
 
-    const handleClick = (customer, index) => {
+    const handleClick = useCallback((customer, index) => {
         setCustomer(customer)
         setSelectedIndex(index)
-    }
+    }, [setCustomer])
 
     return (
         <div className="text-gray-100 h-full overflow-y-auto container-snap">
@@ -39,7 +44,7 @@ function ListDisplay({ filter = "" }) {
                     ${selectedIndex === index ? "bg-gray-700 font-bold shadow-[0_4px_8px_rgba(0,0,0,0.6)]" : "odd:bg-gray-800 even:bg-gray-700/50"}`}
                         key={`${customer.customer_id}-${index}`}
                         onClick={() => handleClick(customer, index)}>
-                        <p className="overflow-x-scroll container-snap">{`${customer.last_name}, ${customer.first_name}`}</p>
+                        <p className="overflow-x-scroll no-scroll">{`${customer.last_name}, ${customer.first_name}`}</p>
                         {Number(customer.balance) < 0 ? <WarningIcon sx={{ fontSize: "100%" }} /> : <></>}
                     </li>
                 ))}
@@ -52,4 +57,4 @@ ListDisplay.propTypes = {
     filter: PropTypes.string
 }
 
-export default ListDisplay
+export default memo(ListDisplay)

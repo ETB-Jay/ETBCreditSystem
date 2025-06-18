@@ -113,63 +113,61 @@ function TableDisplay() {
     }
 
     return (
-        <>
-            <div className="max-h-9/10 rounded-xl overflow-y-scroll container-snap border border-gray-700 shadow-lg bg-gray-900">
-                <div className="absolute">
-                    {display === "DateFilter" && (
-                        <div className="absolute z-50 mt-8 left-[2vw] select-none">
-                            <DateFilter />
-                        </div>
-                    )}
-                    {display === "AmountFilter" && (
-                        <div className="absolute z-50 mt-8 left-[16vw] select-none">
-                            <Amount />
-                        </div>
-                    )}
-                    {display === "EmployeeFilter" && (
-                        <div className="absolute z-50 mt-8 left-[34vw] select-none">
-                            <EmployeeName />
-                        </div>
-                    )}
-                </div>
-                <table className="w-full text-xs md:text-sm lg:text-[1rem] text-gray-200 select-none">
-                    <thead className="sticky top-0 z-10">
-                        <tr className="text-left">
-                            <HeaderField label={"Date"} />
-                            <HeaderField label={"Amount"} />
-                            <HeaderField label={"Employee"} />
-                            <th className="w-1/3 px-3 py-1 font-semibold whitespace-nowrap text-sm bg-gray-800 text-gray-100 hover:bg-gray-700 transition-all duration-200">Notes</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-800">
-                        {filteredRows.map((row, idx) => (
-                            <tr
-                                key={idx}
-                                className="hover:bg-gray-800/50 transition-colors duration-150 ease-in-out"
-                            >
-                                <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap text-xs" title={row.date?.seconds ? new Date(row.date.seconds * 1000).toISOString() : 'Invalid date'}>
-                                    {row.date?.seconds ? new Date(row.date.seconds * 1000).toISOString().replace("T", " ").slice(0, 19) : 'Invalid date'}
-                                </td>
-                                <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap text-xs" title={row.change_balance}>
-                                    {row.change_balance < 0 ?
-                                        <ArrowDropDownIcon sx={{ color: '#f87171', transition: 'transform 0.2s ease' }} /> :
-                                        <ArrowDropUpIcon sx={{ color: '#4ade80', transition: 'transform 0.2s ease' }} />
-                                    }${Number(Math.abs(row.change_balance)).toFixed(2)}
-                                </td>
-                                <td className="px-3 py-0.5 max-w-[120px] overflow-x-auto whitespace-nowrap container-snap text-xs" title={row.employee_name}>
-                                    {row.employee_name}
-                                </td>
-                                <td className="px-3 py-0.5">
-                                    <div className="max-w-[230px] max-h-6 overflow-x-auto whitespace-nowrap container-snap text-xs text-gray-400" title={row.notes}>
-                                        {row.notes}
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+        <div className="max-h-9/10 rounded-xl overflow-y-scroll no-scroll border border-gray-700 shadow-lg bg-gray-900">
+            <div className="absolute">
+                {display === "DateFilter" && (
+                    <div className="absolute z-50 mt-8 left-[2vw] select-none">
+                        <DateFilter />
+                    </div>
+                )}
+                {display === "AmountFilter" && (
+                    <div className="absolute z-50 mt-8 left-[16vw] select-none">
+                        <Amount />
+                    </div>
+                )}
+                {display === "EmployeeFilter" && (
+                    <div className="absolute z-50 mt-8 left-[34vw] select-none">
+                        <EmployeeName />
+                    </div>
+                )}
             </div>
-        </>
+            <table className="w-full text-xs md:text-sm lg:text-[1rem] text-gray-200 select-none">
+                <thead className="sticky top-0 z-10">
+                    <tr className="text-left">
+                        <HeaderField label={"Date"} />
+                        <HeaderField label={"Amount"} />
+                        <HeaderField label={"Employee"} />
+                        <th className="w-1/3 px-3 py-1 font-semibold whitespace-nowrap text-sm bg-gray-800 text-gray-100 hover:bg-gray-700 transition-all duration-200">Notes</th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-800">
+                    {filteredRows.map((row, idx) => (
+                        <tr
+                            key={idx}
+                            className="hover:bg-gray-800/50 transition-colors duration-150 ease-in-out"
+                        >
+                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-scroll no-scroll whitespace-nowrap container-snap text-xs" title={row.date?.seconds ? new Date(row.date.seconds * 1000).toISOString() : 'Invalid date'}>
+                                {row.date?.seconds ? new Date(row.date.seconds * 1000).toISOString().replace("T", " ").slice(0, 19) : 'Invalid date'}
+                            </td>
+                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-scroll no-scroll whitespace-nowrap container-snap text-xs" title={row.change_balance}>
+                                {row.change_balance < 0 ?
+                                    <ArrowDropDownIcon sx={{ color: '#f87171', transition: 'transform 0.2s ease' }} /> :
+                                    <ArrowDropUpIcon sx={{ color: '#4ade80', transition: 'transform 0.2s ease' }} />
+                                }${Number(Math.abs(row.change_balance)).toFixed(2)}
+                            </td>
+                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-scroll no-scroll whitespace-nowrap container-snap text-xs" title={row.employee_name}>
+                                {row.employee_name}
+                            </td>
+                            <td className="px-3 py-0.5">
+                                <div className="max-w-[230px] max-h-6 overflow-x-scroll no-scroll whitespace-nowrap container-snap text-xs text-gray-400" title={row.notes}>
+                                    {row.notes}
+                                </div>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
     )
 }
 

@@ -63,7 +63,6 @@ function TransactionPrompt() {
         })
         try {
             const delta = Number(newTransaction.change_balance)
-            console.log(newTransaction.change_balance)
             if (!delta || isNaN(delta)) {
                 setErrors(errors => ({ ...errors, invalidValue: "Amount is Required and Must be a Valid Number!" }))
                 return false

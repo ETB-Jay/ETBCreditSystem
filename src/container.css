@@ -1,6 +1,25 @@
 @import 'tailwindcss';
 
 .container-snap::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.container-snap::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+}
+
+.container-snap::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+.container-snap::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.no-scroll::-webkit-scrollbar {
     display: none;
 }
 

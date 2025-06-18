@@ -7,6 +7,7 @@ import CustomerPrompt from './prompts/CustomerPrompt'
 import TransactionPrompt from './prompts/TransactionPrompt'
 import Report from './prompts/Report'
 import EditCustomer from './prompts/EditCustomer'
+import DeletePrompt from './prompts/DeletePrompt'
 
 /**
  * Main application component. Renders the display grid and the main prompts. 
@@ -39,7 +40,7 @@ function App() {
 	
 	return (
 		<>
-			<div className="bg-gray-900 absolute grid grid-cols-[25%_74%] md:grid-cols-[25%_74.5%] gap-[1%] md:gap-[0.5%] w-full h-full">
+			<div className="bg-gray-900 absolute grid grid-cols-[25%_75%] w-full h-full">
 				<Search />
 				<CustomerInfo />
 			</div>
@@ -47,6 +48,7 @@ function App() {
 			{display === "transaction" && <TransactionPrompt />}
 			{display === "report" && <Report />}
 			{display === "edit" && <EditCustomer />}
+			{display === "delete" && <DeletePrompt />}
 			{error && <div className="error-message">{error}</div>}
 		</>
 	)

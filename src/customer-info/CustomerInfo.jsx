@@ -5,6 +5,7 @@ import PhoneInfo from './components/PhoneInfo'
 import Balance from './components/Balance'
 import Actions from './components/Actions'
 import TableDisplay from './components/TableDisplay'
+import { MainContainer } from '../components'
 
 /**
  * Displays the customer information and transaction history
@@ -16,17 +17,17 @@ function CustomerInfo() {
     const { customer } = useCustomer()
     if (!customer) {
         return (
-            <div className="flex align-center flex-col bg-gray-800 p-2 rounded-2xl m-2 ml-0 border border-gray-700">
+            <MainContainer>
                 <div className="flex flex-row items-center justify-center h-full">
                     <img src={icon} alt="ETB Banner" className="w-2/3 h-auto opacity-50" />
                 </div>
-            </div>
+            </MainContainer>
         )
     }
     return (
-        <div className="flex align-center flex-col bg-gray-800 p-2 rounded-2xl m-2 ml-0 border border-gray-700 overflow-y-auto">
-            <div className="sticky top-0 z-10 bg-gray-800 pb-2 grid grid-cols-[95%_5%] sm:mb-[2vh] md:mb-[1vw] xl:mb-[0.5vw] md:h-1/12">
-                <div className="flex flex-row items-center ml-3 gap-4 lg:gap-x-12 w-[95%]">
+        <MainContainer>
+            <div className="z-10 bg-gray-800 pb-2 flex flex-row justify-between sm:mb-[2vh] md:mb-[1vw] xl:mb-[0.5vw] md:h-1/12">
+                <div className="flex flex-row items-center ml-3 mt-2 gap-5 md:gap-4 lg:gap-x-12 w-[95%]">
                     <EmailInfo />
                     <PhoneInfo />
                     <Balance />
@@ -34,7 +35,7 @@ function CustomerInfo() {
                 <Actions />
             </div>
             <TableDisplay />
-        </div>
+        </MainContainer>
     )
 }
 

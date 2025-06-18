@@ -86,11 +86,9 @@ function Report() {
                 ].join(','))
             ].join('\n')
 
-            // Add both files to zip
             zip.file('customers.csv', customerCsvContent)
             zip.file('transactions.csv', transactionCsvContent)
 
-            // Generate and download zip file
             const content = await zip.generateAsync({ type: 'blob' })
             const link = document.createElement('a')
             const url = URL.createObjectURL(content)
@@ -128,7 +126,7 @@ function Report() {
             <div className='flex flex-row gap-x-2'>
                 <PromptButton onClick={() => setDisplay("default")} >Close</PromptButton>
                 <PromptButton onClick={handleDownload}>
-                    <DownloadIcon className="cursor-pointer hover:brightness-50 " sx={{ fontSize: "20px" }}/>
+                    <DownloadIcon sx={{ fontSize: "20px" }}/>
                     Download
                 </PromptButton>
             </div>
