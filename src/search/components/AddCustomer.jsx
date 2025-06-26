@@ -1,4 +1,4 @@
-import { useDisplay } from '../../context/useContext'
+import { useDisplay } from '../../context/useContext';
 
 /**
  * Renders a button that allows the user to add a new customer.
@@ -7,10 +7,10 @@ import { useDisplay } from '../../context/useContext'
  * @returns {JSX.Element} A "+" button that triggers "CustomerPrompt.jsx"
  */
 function AddCustomer() {
-    const { setDisplay } = useDisplay()
+    const { setDisplay } = useDisplay();
     return (
         <div className="ml-0.5 stroke-white hover:brightness-50 cursor-pointer"
-            onClick={() => setDisplay("user")}>
+            onClick={() => setDisplay('user')}>
             <svg xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 18"
@@ -18,7 +18,7 @@ function AddCustomer() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v10m5-5h-10" />
             </svg>
         </div>
-    )
+    );
 }
 
-export default AddCustomer
+export default AddCustomer;

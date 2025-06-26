@@ -1,8 +1,8 @@
-import { useDisplay, useCustomerNames, useTotal } from '../context/useContext'
-import { useState, useEffect } from 'react'
-import { Prompt, PromptButton, PromptField, PromptInput, PromptTitle } from './components'
-import { db } from '../firebase'
-import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore'
+import { useDisplay, useCustomerNames, useTotal } from '../context/useContext';
+import { useState, useEffect } from 'react';
+import { Prompt, PromptButton, PromptField, PromptInput, PromptTitle } from './components';
+import { db } from '../firebase';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 
 /**
  * A prompt that allows the user to add a new customer to the system. It appears only
@@ -10,55 +10,55 @@ import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore'
  * @returns {JSX.Element} The TransactionPrompt prompt
  */
 function CustomerPrompt() {
-    const { setCustomers, customers } = useCustomerNames()
-    const [newCustomer, setNewCustomer] = useState({})
-    const [errors, setErrors] = useState({})
-    const { setDisplay } = useDisplay()
-    const { total, setTotal } = useTotal()
-    const [isSubmitting, setIsSubmitting] = useState(false)
+    const { setCustomers, customers } = useCustomerNames();
+    const [newCustomer, setNewCustomer] = useState({});
+    const [errors, setErrors] = useState({});
+    const { setDisplay } = useDisplay();
+    const { total, setTotal } = useTotal();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
-        setNewCustomer({})
-        setErrors("")
-    }, [])
+        setNewCustomer({});
+        setErrors('');
+    }, []);
 
     /**
      * Validates the new Customer
      * @returns {boolean} If the newCustomer is valid
      */
     const validate = () => {
-        const errs = {}
-        const { first_name, last_name, email, phone } = newCustomer
+        const errs = {};
+        const { first_name, last_name, email, phone } = newCustomer;
 
         if (!first_name?.trim()) {
-            errs.first_name = "First name is required"
+            errs.first_name = 'First name is required';
         }
 
         if (!last_name?.trim()) {
-            errs.last_name = "Last name is required"
+            errs.last_name = 'Last name is required';
         }
 
-        const emailTrimmed = email?.trim() || ""
-        const phoneTrimmed = phone?.trim() || ""
-        const phoneDigits = phoneTrimmed.replace(/\D/g, "")
+        const emailTrimmed = email?.trim() || '';
+        const phoneTrimmed = phone?.trim() || '';
+        const phoneDigits = phoneTrimmed.replace(/\D/g, '');
         if (emailTrimmed && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(emailTrimmed)) {
-            errs.email = "Please enter a valid email address"
+            errs.email = 'Please enter a valid email address';
         }
         if (phoneTrimmed && phoneDigits.length !== 10) {
-            errs.phone = "Phone number must be 10 digits"
+            errs.phone = 'Phone number must be 10 digits';
         }
-        return errs
-    }
+        return errs;
+    };
 
     const handleSubmit = async () => {
-        if (isSubmitting) return
-        setIsSubmitting(true)
+        if (isSubmitting) return;
+        setIsSubmitting(true);
 
-        const errs = validate()
+        const errs = validate();
         if (Object.keys(errs).length > 0) {
-            setErrors(errs)
-            setIsSubmitting(false)
-            return
+            setErrors(errs);
+            setIsSubmitting(false);
+            return;
         }
 
         try {
@@ -66,49 +66,49 @@ function CustomerPrompt() {
                 customer_id: total + 1,
                 first_name: newCustomer.first_name.trim(),
                 last_name: newCustomer.last_name.trim(),
-                email: newCustomer.email?.trim() || "",
-                phone: newCustomer.phone?.trim() || "",
+                email: newCustomer.email?.trim() || '',
+                phone: newCustomer.phone?.trim() || '',
                 balance: 0,
                 transactions: []
-            }
+            };
             
-            const min = (Math.floor(customerData.customer_id / 100) - (customerData.customer_id % 100 === 0)) * 100 + 1
-            const max = (Math.floor(customerData.customer_id / 100) + (customerData.customer_id % 100 !== 0)) * 100
-            const arrayName = `${min}_min_${max}_max`
+            const min = (Math.floor(customerData.customer_id / 100) - (customerData.customer_id % 100 === 0)) * 100 + 1;
+            const max = (Math.floor(customerData.customer_id / 100) + (customerData.customer_id % 100 !== 0)) * 100;
+            const arrayName = `${min}_min_${max}_max`;
 
-            const docRef = doc(db, 'customers', arrayName)
-            const docSnap = await getDoc(docRef)
+            const docRef = doc(db, 'customers', arrayName);
+            const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
-                const currentCustomers = docSnap.data().customers || []
+                const currentCustomers = docSnap.data().customers || [];
                 await updateDoc(docRef, {
                     customers: [...currentCustomers, customerData],
                     count: currentCustomers.length + 1
-                })
+                });
             } else {
                 await setDoc(docRef, {
                     customers: [customerData],
                     count: 1
-                })
+                });
             }
 
-            setCustomers([...customers, customerData])
-            setTotal(total + 1)
+            setCustomers([...customers, customerData]);
+            setTotal(total + 1);
 
-            setDisplay("default")
+            setDisplay('default');
         } catch (error) {
-            console.error('Error adding customer:', error)
-            setErrors({ submit: "Failed to add customer. Please try again." })
+            console.error('Error adding customer:', error);
+            setErrors({ submit: 'Failed to add customer. Please try again.' });
         } finally {
-            setIsSubmitting(false)
+            setIsSubmitting(false);
         }
-    }
+    };
 
     const handleCancel = () => {
-        setNewCustomer({})
-        setErrors("")
-        setDisplay("default")
-    }
+        setNewCustomer({});
+        setErrors('');
+        setDisplay('default');
+    };
 
     return (
         <Prompt>
@@ -149,7 +149,7 @@ function CustomerPrompt() {
                 <PromptButton
                     onClick={handleSubmit}
                     disabled={isSubmitting}>
-                    {isSubmitting ? "Processing..." : "Add Customer"}
+                    {isSubmitting ? 'Processing...' : 'Add Customer'}
                 </PromptButton>
                 <PromptButton
                     type="button"
@@ -159,7 +159,7 @@ function CustomerPrompt() {
                 </PromptButton>
             </div>
         </Prompt>
-    )
+    );
 }
 
-export default CustomerPrompt
+export default CustomerPrompt;

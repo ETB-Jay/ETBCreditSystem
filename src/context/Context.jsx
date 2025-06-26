@@ -1,11 +1,11 @@
-import { createContext } from 'react'
+import { createContext } from 'react';
 
 /**
  * @description Context for the Customer's Name. This is used for 
  * controlling the state of the table relative to the selected name on the list.
  */
-const CustomerContext = createContext()
-CustomerContext.displayName = "CustomerContext"
+const CustomerContext = createContext();
+CustomerContext.displayName = 'CustomerContext';
 
 /**
  * @description Context for the current Display. 
@@ -16,32 +16,32 @@ CustomerContext.displayName = "CustomerContext"
  * - "report" - the display when viewing the report
  * - "edit" - the display when editing a customer's details
  */
-const DisplayContext = createContext("login")
-DisplayContext.displayName = "DisplayContext"
+const DisplayContext = createContext('login');
+DisplayContext.displayName = 'DisplayContext';
 
 /**
  * @description Context for the Customer Names.
  */
-const CustomerNamesContext = createContext()
-CustomerNamesContext.displayName = "CustomerNamesContext"
+const CustomerNamesContext = createContext();
+CustomerNamesContext.displayName = 'CustomerNamesContext';
 
 /**
  * @description Context to store the Transactional Data.
  */
-const TransactionContext = createContext()
-TransactionContext.displayName = "TransactionContext"
+const TransactionContext = createContext();
+TransactionContext.displayName = 'TransactionContext';
 
 /**
  * @description Context to store the Filter Data.
  */
-const FilterContext = createContext()
-FilterContext.displayName = "FilterContext"
+const FilterContext = createContext();
+FilterContext.displayName = 'FilterContext';
 
 /**
  * @description Context to store the total number of customers.
  */
-const TotalContext = createContext(0)
-TotalContext.displayName = "TotalContext"
+const TotalContext = createContext(0);
+TotalContext.displayName = 'TotalContext';
 
 export { 
     CustomerContext, 
@@ -50,4 +50,4 @@ export {
     TransactionContext,
     FilterContext,
     TotalContext
-}
+};

@@ -1,52 +1,53 @@
-import { CustomerContext, DisplayContext, CustomerNamesContext, TransactionContext, FilterContext, TotalContext} from './Context'
-import { useContext } from 'react'
+import { CustomerContext, DisplayContext, CustomerNamesContext, TransactionContext, FilterContext, TotalContext} from './Context';
+import { useContext } from 'react';
 
+// Custom hooks for accessing context values. Throws if used outside the correct provider.
 const useCustomer = () => {
-    const context = useContext(CustomerContext)
+    const context = useContext(CustomerContext);
     if (!context) {
-        throw new Error("useCustomer must be used in the CustomerProvider")
+        throw new Error('useCustomer must be used in the CustomerProvider');
     }
-    return context
-}
+    return context;
+};
 
 const useDisplay = () => {
-  const context = useContext(DisplayContext)
+  const context = useContext(DisplayContext);
   if (!context) {
-    throw new Error("useDisplay must be used in the DisplayProvider")
+    throw new Error('useDisplay must be used in the DisplayProvider');
   }
-  return context
-}
+  return context;
+};
 
 const useCustomerNames = () => {
-    const context = useContext(CustomerNamesContext)
+    const context = useContext(CustomerNamesContext);
     if (!context) {
-        throw new Error("useCustomerNames must be used in the CustomerNamesProvider")
+        throw new Error('useCustomerNames must be used in the CustomerNamesProvider');
     }
-    return context
-}
+    return context;
+};
 
 const useTransactions = () => {
-    const context = useContext(TransactionContext)
+    const context = useContext(TransactionContext);
     if (!context) {
-        throw new Error("useTransactions must be used in the TransactionsProvider")
+        throw new Error('useTransactions must be used in the TransactionsProvider');
     }
-    return context
-}
+    return context;
+};
 
 const useFilters = () => {
-    const context = useContext(FilterContext)
+    const context = useContext(FilterContext);
     if (!context) {
-        throw new Error("useFilters must be used in the FilterProvider")
+        throw new Error('useFilters must be used in the FilterProvider');
     }
-    return context
-}
+    return context;
+};
 
 const useTotal = () => {
-    const context = useContext(TotalContext)
+    const context = useContext(TotalContext);
     if (!context) {
-        throw new Error("useTotal must be used in the TotalProvider")
+        throw new Error('useTotal must be used in the TotalProvider');
     }
-    return context
-}
+    return context;
+};
 
-export { useCustomer, useDisplay, useCustomerNames, useTransactions, useFilters, useTotal }  
+export { useCustomer, useDisplay, useCustomerNames, useTransactions, useFilters, useTotal };  

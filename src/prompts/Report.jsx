@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
-import { useDisplay, useCustomerNames, useTotal } from '../context/useContext'
-import { Prompt, PromptButton, PromptField, PromptTitle } from './components'
-import DownloadIcon from '@mui/icons-material/Download'
-import JSZip from 'jszip'
-import { db } from '../firebase'
-import { collection, onSnapshot } from 'firebase/firestore'
+import { useEffect, useState } from 'react';
+import { useDisplay, useCustomerNames, useTotal } from '../context/useContext';
+import { Prompt, PromptButton, PromptField, PromptTitle } from './components';
+import DownloadIcon from '@mui/icons-material/Download';
+import JSZip from 'jszip';
+import { db } from '../firebase';
+import { collection, onSnapshot } from 'firebase/firestore';
 
 /**
  * A prompt containing a report of the current number of customers, total credit
@@ -13,18 +13,18 @@ import { collection, onSnapshot } from 'firebase/firestore'
  * @returns {JSX.Element} The Report prompt
  */
 function Report() {
-    const { customers } = useCustomerNames()
-    const { setDisplay } = useDisplay()
-    const [outstanding, setOutstanding] = useState(0)
-    const [totalCredit, setTotalCredit] = useState(0)
-    const [allTransactions, setAllTransactions] = useState([])
-    const { total } = useTotal()
+    const { customers } = useCustomerNames();
+    const { setDisplay } = useDisplay();
+    const [outstanding, setOutstanding] = useState(0);
+    const [totalCredit, setTotalCredit] = useState(0);
+    const [allTransactions, setAllTransactions] = useState([]);
+    const { total } = useTotal();
 
     useEffect(() => {
         const unsubscribe = onSnapshot(collection(db, 'customers'), (snapshot) => {
-            const transactions = []
+            const transactions = [];
             snapshot.forEach(doc => {
-                const data = doc.data()
+                const data = doc.data();
                 if (data.customers && Array.isArray(data.customers)) {
                     data.customers.forEach(customer => {
                         if (customer.transactions && Array.isArray(customer.transactions)) {
@@ -34,32 +34,32 @@ function Report() {
                                     customer_id: customer.customer_id,
                                     first_name: customer.first_name,
                                     last_name: customer.last_name
-                                })
-                            })
+                                });
+                            });
                         }
-                    })
+                    });
                 }
-            })
-            setAllTransactions(transactions)
-        })
+            });
+            setAllTransactions(transactions);
+        });
 
-        return () => unsubscribe()
-    }, [])
+        return () => unsubscribe();
+    }, []);
 
     useEffect(() => {
-        const negativeBalanceCustomers = customers.filter(customer => Number(customer.balance) < 0)
-        setOutstanding(negativeBalanceCustomers.length)
+        const negativeBalanceCustomers = customers.filter(customer => Number(customer.balance) < 0);
+        setOutstanding(negativeBalanceCustomers.length);
         
-        const total = customers.reduce((sum, customer) => sum + Number(customer.balance), 0)
-        setTotalCredit(total.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' }))
-    }, [customers])
+        const total = customers.reduce((sum, customer) => sum + Number(customer.balance), 0);
+        setTotalCredit(total.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' }));
+    }, [customers]);
     
     const handleDownload = async () => {
         try {
-            const zip = new JSZip()
+            const zip = new JSZip();
             const date = new Date().toISOString().split('T')[0].replace(',', ';');
 
-            const customerHeaders = ['customer_id', 'first_name', 'last_name', 'email', 'phone', 'balance']
+            const customerHeaders = ['customer_id', 'first_name', 'last_name', 'email', 'phone', 'balance'];
             const customerCsvContent = [
                 customerHeaders.join(','),
                 ...customers.map(customer => [
@@ -70,9 +70,9 @@ function Report() {
                     customer.phone || '',
                     customer.balance || 0
                 ].join(','))
-            ].join('\n')
+            ].join('\n');
 
-            const transactionHeaders = ['customer_id', 'first_name', 'last_name', 'day', 'time', 'change_balance', 'employee_name', 'notes']
+            const transactionHeaders = ['customer_id', 'first_name', 'last_name', 'day', 'time', 'change_balance', 'employee_name', 'notes'];
             const transactionCsvContent = [
                 transactionHeaders.join(','),
                 ...allTransactions.map(transaction => [
@@ -84,54 +84,54 @@ function Report() {
                     transaction.employee_name || '',
                     (transaction.notes || '').replace(/,/g, '')
                 ].join(','))
-            ].join('\n')
+            ].join('\n');
 
-            zip.file('customers.csv', customerCsvContent)
-            zip.file('transactions.csv', transactionCsvContent)
+            zip.file('customers.csv', customerCsvContent);
+            zip.file('transactions.csv', transactionCsvContent);
 
-            const content = await zip.generateAsync({ type: 'blob' })
-            const link = document.createElement('a')
-            const url = URL.createObjectURL(content)
+            const content = await zip.generateAsync({ type: 'blob' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(content);
             
-            link.setAttribute('href', url)
-            link.setAttribute('download', `etb_credit_report_${date}.zip`)
-            link.style.visibility = 'hidden'
+            link.setAttribute('href', url);
+            link.setAttribute('download', `etb_credit_report_${date}.zip`);
+            link.style.visibility = 'hidden';
             
-            document.body.appendChild(link)
-            link.click()
-            document.body.removeChild(link)
-            URL.revokeObjectURL(url)
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
         } catch (error) {
-            console.error('Error generating download:', error)
-            alert('There was an error generating the download. Please try again.')
+            console.error('Error generating download:', error);
+            alert('There was an error generating the download. Please try again.');
         }
-    }
+    };
 
     return (
         <Prompt>
-            <PromptTitle label={"SYSTEM INFORMATION"} />
-            <PromptField label={"Number of Customers:"}>
+            <PromptTitle label={'SYSTEM INFORMATION'} />
+            <PromptField label={'Number of Customers:'}>
                 <p className="text-white font-semibold">
                     {total}
                 </p>
             </PromptField>
-            <PromptField label={"Total Credit Across All Customers:"}>
+            <PromptField label={'Total Credit Across All Customers:'}>
                 <p className="text-white font-semibold">
                     {totalCredit}
                 </p>
             </PromptField>
-            <PromptField label={"Number of Outstanding Individuals:"}>
+            <PromptField label={'Number of Outstanding Individuals:'}>
                 <p className="text-white font-semibold">{outstanding}</p>
             </PromptField>
             <div className='flex flex-row gap-x-2'>
-                <PromptButton onClick={() => setDisplay("default")} >Close</PromptButton>
+                <PromptButton onClick={() => setDisplay('default')} >Close</PromptButton>
                 <PromptButton onClick={handleDownload}>
-                    <DownloadIcon sx={{ fontSize: "20px" }}/>
+                    <DownloadIcon sx={{ fontSize: '20px' }}/>
                     Download
                 </PromptButton>
             </div>
         </Prompt>
-    )
+    );
 }
 
-export default Report
+export default Report;

@@ -1,13 +1,13 @@
-import icon from '../../assets/ETBBanner.png'
-import { useCustomer, useCustomerNames, useDisplay, useFilters } from '../../context/useContext'
-import FilterListIcon from '@mui/icons-material/FilterList'
+import icon from '../../assets/ETBBanner.png';
+import { useCustomer, useCustomerNames, useDisplay, useFilters } from '../../context/useContext';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import DateFilter from './filters/DateFilter'
-import Amount from './filters/Amount'
-import EmployeeName from './filters/Employee_Name'
-import { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
+import DateFilter from './filters/DateFilter';
+import Amount from './filters/Amount';
+import EmployeeName from './filters/Employee_Name';
+import { useEffect, useState, useMemo } from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Displays a Table containing the transaction made by the individual
@@ -15,68 +15,72 @@ import PropTypes from 'prop-types'
  * @returns {JSX.Element} The rendered table transactions or a placeholder if none exist.
  */
 function TableDisplay() {
-    const { customer } = useCustomer()
-    const { customers } = useCustomerNames()
-    const { display, setDisplay } = useDisplay()
-    const { filters, setFilters } = useFilters()
-    const [filteredRows, setFilteredRows] = useState([])
+    const { customer } = useCustomer();
+    const { customers } = useCustomerNames();
+    const { display, setDisplay } = useDisplay();
+    const { filters, setFilters } = useFilters();
+    const [filteredRows, setFilteredRows] = useState([]);
+
+    const defaultFilters = {
+        date: { startDate: '', endDate: '' },
+        amount: { minAmount: '', maxAmount: '' },
+        employee: { searchTerm: '' }
+    };
+
+    function deepEqual(obj1, obj2) {
+        return JSON.stringify(obj1) === JSON.stringify(obj2);
+    }
 
     useEffect(() => {
-        const defaultFilters = {
-            date: { startDate: "", endDate: "" },
-            amount: { minAmount: "", maxAmount: "" },
-            employee: { searchTerm: "" }
+        if (!deepEqual(filters, defaultFilters)) {
+            setFilters(defaultFilters);
         }
-        if (JSON.stringify(filters) !== JSON.stringify(defaultFilters)) {
-            setFilters(defaultFilters)
+        if (display !== 'default') {
+            setDisplay('default');
         }
-        if (display !== "default") {
-            setDisplay("default")
-        }
-    }, [customer?.customer_id, customer?.transactions?.length])
+    }, [customer?.customer_id, customer?.transactions?.length]);
+
+    const applyFilters = useMemo(() => (rows) => {
+        return rows.filter(row => {
+            if (filters.date?.startDate || filters.date?.endDate) {
+                const rowDate = new Date(row.date.seconds * 1000);
+                if (filters.date.startDate) {
+                    const startDate = new Date(filters.date.startDate);
+                    startDate.setHours(0, 0, 0, 0);
+                    if (rowDate < startDate) return false;
+                }
+                if (filters.date.endDate) {
+                    const endDate = new Date(filters.date.endDate);
+                    endDate.setHours(23, 59, 59, 999);
+                    if (rowDate > endDate) return false;
+                }
+            }
+            if (filters.amount?.minAmount || filters.amount?.maxAmount) {
+                const amount = row.change_balance;
+                if (filters.amount.minAmount && amount < parseFloat(filters.amount.minAmount)) return false;
+                if (filters.amount.maxAmount && amount > parseFloat(filters.amount.maxAmount)) return false;
+            }
+            if (filters.employee?.searchTerm) {
+                const searchTerm = filters.employee.searchTerm.toLowerCase();
+                if (!row.employee_name.toLowerCase().includes(searchTerm)) return false;
+            }
+            return true;
+        });
+    }, [filters]);
 
     useEffect(() => {
-        const applyFilters = (rows) => {
-            return rows.filter(row => {
-                if (filters.date?.startDate || filters.date?.endDate) {
-                    const rowDate = new Date(row.date.seconds * 1000)
-                    if (filters.date.startDate) {
-                        const startDate = new Date(filters.date.startDate)
-                        startDate.setHours(0, 0, 0, 0)
-                        if (rowDate < startDate) return false
-                    }
-                    if (filters.date.endDate) {
-                        const endDate = new Date(filters.date.endDate)
-                        endDate.setHours(23, 59, 59, 999)
-                        if (rowDate > endDate) return false
-                    }
-                }
-                if (filters.amount?.minAmount || filters.amount?.maxAmount) {
-                    const amount = row.change_balance
-                    if (filters.amount.minAmount && amount < parseFloat(filters.amount.minAmount)) return false
-                    if (filters.amount.maxAmount && amount > parseFloat(filters.amount.maxAmount)) return false
-                }
-                if (filters.employee?.searchTerm) {
-                    const searchTerm = filters.employee.searchTerm.toLowerCase()
-                    if (!row.employee_name.toLowerCase().includes(searchTerm)) return false
-                }
-
-                return true
-            })
-        }
-        const currentCustomer = customers.find(c => c.customer_id === customer?.customer_id)
-        const transactions = currentCustomer?.transactions || []
-
-        const filtered = applyFilters(transactions)
-        filtered.sort((a, b) => b.date.seconds - a.date.seconds)
-        setFilteredRows(filtered)
-    }, [customers, filters, customer?.customer_id])
+        const currentCustomer = customers.find(c => c.customer_id === customer?.customer_id);
+        const transactions = currentCustomer?.transactions || [];
+        const filtered = applyFilters(transactions);
+        filtered.sort((a, b) => b.date.seconds - a.date.seconds);
+        setFilteredRows(filtered);
+    }, [customers, filters, customer?.customer_id, applyFilters]);
 
     const hasActiveFilters = () => {
         return filters.date?.startDate || filters.date?.endDate ||
             filters.amount?.minAmount || filters.amount?.maxAmount ||
-            filters.employee?.searchTerm
-    }
+            filters.employee?.searchTerm;
+    };
 
     if ((!filteredRows || filteredRows.length === 0) && !hasActiveFilters()) {
         return (
@@ -88,7 +92,7 @@ function TableDisplay() {
                 />
                 <p className="absolute text-white z-10 font-bold text-2xl mg:text-3x1 lg:text-4xl bg-black/50 rounded-xl p-5 select-none">NO TRANSACTIONS YET</p>
             </div>
-        )
+        );
     }
 
     const HeaderField = ({ label }) => (
@@ -98,34 +102,34 @@ function TableDisplay() {
                 {label}
                 <FilterListIcon
                     sx={{
-                        fontSize: "0.9rem",
-                        verticalAlign: "middle",
-                        color: display === `${label}Filter` ? "#60a5fa" : "#9ca3af",
-                        transition: "color 0.2s ease"
+                        fontSize: '0.9rem',
+                        verticalAlign: 'middle',
+                        color: display === `${label}Filter` ? '#60a5fa' : '#9ca3af',
+                        transition: 'color 0.2s ease'
                     }}
                 />
             </div>
         </th>
-    )
+    );
 
     HeaderField.propTypes = {
         label: PropTypes.string.isRequired
-    }
+    };
 
     return (
         <div className="max-h-9/10 rounded-xl overflow-y-scroll no-scroll border border-gray-700 shadow-lg bg-gray-900">
             <div className="absolute">
-                {display === "DateFilter" && (
+                {display === 'DateFilter' && (
                     <div className="absolute z-50 mt-8 left-[2vw] select-none">
                         <DateFilter />
                     </div>
                 )}
-                {display === "AmountFilter" && (
+                {display === 'AmountFilter' && (
                     <div className="absolute z-50 mt-8 left-[16vw] select-none">
                         <Amount />
                     </div>
                 )}
-                {display === "EmployeeFilter" && (
+                {display === 'EmployeeFilter' && (
                     <div className="absolute z-50 mt-8 left-[34vw] select-none">
                         <EmployeeName />
                     </div>
@@ -134,9 +138,9 @@ function TableDisplay() {
             <table className="w-full text-xs md:text-sm lg:text-[1rem] text-gray-200 select-none">
                 <thead className="sticky top-0 z-10">
                     <tr className="text-left">
-                        <HeaderField label={"Date"} />
-                        <HeaderField label={"Amount"} />
-                        <HeaderField label={"Employee"} />
+                        <HeaderField label={'Date'} />
+                        <HeaderField label={'Amount'} />
+                        <HeaderField label={'Employee'} />
                         <th className="w-1/3 px-3 py-1 font-semibold whitespace-nowrap text-sm bg-gray-800 text-gray-100 hover:bg-gray-700 transition-all duration-200">Notes</th>
                     </tr>
                 </thead>
@@ -147,7 +151,7 @@ function TableDisplay() {
                             className="hover:bg-gray-800/50 transition-colors duration-150 ease-in-out"
                         >
                             <td className="px-3 py-0.5 max-w-[120px] overflow-x-scroll no-scroll whitespace-nowrap container-snap text-xs" title={row.date?.seconds ? new Date(row.date.seconds * 1000).toISOString() : 'Invalid date'}>
-                                {row.date?.seconds ? new Date(row.date.seconds * 1000).toISOString().replace("T", " ").slice(0, 19) : 'Invalid date'}
+                                {row.date?.seconds ? new Date(row.date.seconds * 1000).toISOString().replace('T', ' ').slice(0, 19) : 'Invalid date'}
                             </td>
                             <td className="px-3 py-0.5 max-w-[120px] overflow-x-scroll no-scroll whitespace-nowrap container-snap text-xs" title={row.change_balance}>
                                 {row.change_balance < 0 ?
@@ -168,7 +172,7 @@ function TableDisplay() {
                 </tbody>
             </table>
         </div>
-    )
+    );
 }
 
-export default TableDisplay
+export default TableDisplay;

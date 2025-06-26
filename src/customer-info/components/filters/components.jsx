@@ -4,11 +4,11 @@ const FilterContainer = ({ children }) => (
     <div className="absolute w-fit bg-gray-800 border border-gray-700 hover:bg-gray-700 rounded p-1 shadow-lg">
         {children}
     </div>
-)
+);
 
 FilterContainer.propTypes = {
     children: PropTypes.node.isRequired
-}
+};
 
 const FilterField = ({ children }) => (
     <div className="flex flex-col gap-1.5 p-1 min-w-[100px]">
@@ -16,21 +16,21 @@ const FilterField = ({ children }) => (
             {children}
         </div>
     </div>
-)
+);
 
 FilterField.propTypes = {
     children: PropTypes.node.isRequired
-}
+};
 
 const FilterLabel = ({ label }) => (
     <p className="text-xs font-medium text-gray-200">
         {label}
     </p>
-)
+);
 
 FilterLabel.propTypes = {
     label: PropTypes.node.isRequired
-}
+};
 
 const FilterInput = ({
     type, value, onChange, placeholder, dollar=false, min, max
@@ -49,7 +49,7 @@ const FilterInput = ({
             onClick={(e) => e.stopPropagation()}
         />
     </div>
-)
+);
 
 FilterInput.propTypes = {
     type: PropTypes.string.isRequired,
@@ -59,6 +59,6 @@ FilterInput.propTypes = {
     dollar: PropTypes.bool,
     min: PropTypes.string,
     max: PropTypes.string
-}
+};
 
-export { FilterContainer, FilterField, FilterLabel, FilterInput }
+export { FilterContainer, FilterField, FilterLabel, FilterInput };

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
-import { useDisplay } from '../context/useContext'
-import AddCustomer from './components/AddCustomer'
-import ListDisplay from './components/ListDisplay'
-import InfoIcon from '@mui/icons-material/Info'
-import { MainContainer } from '../components' 
+import { useState, useEffect } from 'react';
+import { useDisplay } from '../context/useContext';
+import AddCustomer from './components/AddCustomer';
+import ListDisplay from './components/ListDisplay';
+import InfoIcon from '@mui/icons-material/Info';
+import { MainContainer } from '../components'; 
 
 /**
  * Renders the "Search" grid, containing the search bar, the list display, the "AddCustomer" icon, and the Report prompt. 
@@ -12,12 +12,12 @@ import { MainContainer } from '../components'
  * @returns {JSX.Element} The rendered customer search bar, adding customer button, information icon, and list of customers. 
  */
 function Search() {
-    const [search, setSearch] = useState()
-    const { setDisplay } = useDisplay()
+    const [search, setSearch] = useState();
+    const { setDisplay } = useDisplay();
 
     useEffect(() => {
-        setSearch("")
-    }, [])
+        setSearch('');
+    }, []);
 
     return (
         <MainContainer>
@@ -30,11 +30,11 @@ function Search() {
                     onChange={(e) => setSearch(e.target.value)}
                 />
                 <AddCustomer />
-                <InfoIcon className="cursor-pointer hover:brightness-50" onClick={() => setDisplay("report")} sx={{ color: "white", fontSize: "20px" }} />
+                <InfoIcon className="cursor-pointer hover:brightness-50" onClick={() => setDisplay('report')} sx={{ color: 'white', fontSize: '20px' }} />
             </div>
             <ListDisplay filter={search} />
         </MainContainer>
-    )
+    );
 }
 
-export default Search
+export default Search;

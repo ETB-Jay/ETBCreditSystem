@@ -1,64 +1,42 @@
-import { useMemo, useState } from 'react'
-import { CustomerContext, DisplayContext, CustomerNamesContext, TransactionContext, FilterContext, TotalContext } from './Context'
-import PropTypes from 'prop-types'
+import { useMemo, useState } from 'react';
+import { CustomerContext, DisplayContext, CustomerNamesContext, TransactionContext, FilterContext, TotalContext } from './Context';
+import PropTypes from 'prop-types';
 
-const CustomerProvider = ({ children }) => {
-  const [customer, setCustomer] = useState(null)
-  const value = useMemo(() => ({ customer, setCustomer }), [customer])
-  return <CustomerContext.Provider value={value}>{children}</CustomerContext.Provider>
-}
+// Grouped provider to reduce nesting and context switching
+const AppProviders = ({ children }) => {
+  const [customer, setCustomer] = useState(null);
+  const [display, setDisplay] = useState(null);
+  const [customers, setCustomers] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [filters, setFilters] = useState({});
+  const [total, setTotal] = useState(0);
 
-const DisplayProvider = ({ children }) => {
-  const [display, setDisplay] = useState(null)
-  const value = useMemo(() => ({ display, setDisplay }), [display])
-  return <DisplayContext.Provider value={value}>{children}</DisplayContext.Provider>
-}
+  const customerValue = useMemo(() => ({ customer, setCustomer }), [customer]);
+  const displayValue = useMemo(() => ({ display, setDisplay }), [display]);
+  const customersValue = useMemo(() => ({ customers, setCustomers }), [customers]);
+  const transactionsValue = useMemo(() => ({ transactions, setTransactions }), [transactions]);
+  const filtersValue = useMemo(() => ({ filters, setFilters }), [filters]);
+  const totalValue = useMemo(() => ({ total, setTotal }), [total]);
 
-const CustomerNamesProvider = ({ children }) => {
-  const [customers, setCustomers] = useState([])
-  const value = useMemo(() => ({ customers, setCustomers }), [customers])
-  return <CustomerNamesContext.Provider value={value}>{children}</CustomerNamesContext.Provider>
-}
-
-const TransactionProvider = ({ children }) => {
-  const [transactions, setTransactions] = useState([])
-  const value = useMemo(() => ({ transactions, setTransactions }), [transactions])
-  return <TransactionContext.Provider value={value}>{children}</TransactionContext.Provider>
-}
-
-const FilterProvider = ({ children }) => {
-  const [filters, setFilters] = useState({})
-  const value = useMemo(() => ({ filters, setFilters }), [filters])
-  return <FilterContext.Provider value={value}>{children}</FilterContext.Provider>
-}
-
-const TotalProvider = ({ children }) => {
-  const [total, setTotal] = useState(0)
-  const value = useMemo(() => ({ total, setTotal }), [total])
-  return <TotalContext.Provider value={value}>{children}</TotalContext.Provider>
-}
-
-const Providers = ({ children }) => {
   return (
-    <CustomerProvider>
-      <DisplayProvider>
-        <CustomerNamesProvider>
-          <TransactionProvider>
-            <FilterProvider>
-              <TotalProvider>
+    <CustomerContext.Provider value={customerValue}>
+      <DisplayContext.Provider value={displayValue}>
+        <CustomerNamesContext.Provider value={customersValue}>
+          <TransactionContext.Provider value={transactionsValue}>
+            <FilterContext.Provider value={filtersValue}>
+              <TotalContext.Provider value={totalValue}>
                 {children}
-              </TotalProvider>
-            </FilterProvider>
-          </TransactionProvider>
-        </CustomerNamesProvider>
-      </DisplayProvider>
-    </CustomerProvider>
-  )
-}
+              </TotalContext.Provider>
+            </FilterContext.Provider>
+          </TransactionContext.Provider>
+        </CustomerNamesContext.Provider>
+      </DisplayContext.Provider>
+    </CustomerContext.Provider>
+  );
+};
 
-Providers.propTypes = {
+AppProviders.propTypes = {
   children: PropTypes.node.isRequired
-}
+};
 
-export { CustomerProvider, DisplayProvider, CustomerNamesProvider, TransactionProvider, FilterProvider, TotalProvider }
-export default Providers
+export default AppProviders;

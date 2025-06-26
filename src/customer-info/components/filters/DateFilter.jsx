@@ -1,18 +1,18 @@
-import { FilterContainer, FilterField, FilterLabel, FilterInput } from './components'
-import { useFilters } from '../../../context/useContext'
+import { FilterContainer, FilterField, FilterLabel, FilterInput } from './components';
+import { useFilters } from '../../../context/useContext';
 
 function DateFilter() {
-    const { filters, setFilters } = useFilters()
+    const { filters, setFilters } = useFilters();
 
     const handleDateChange = (type, value) => {
         setFilters(prev => ({
             ...prev,
             date: {
                 ...prev.date,
-                [type === "start" ? "startDate" : "endDate"]: value
+                [type === 'start' ? 'startDate' : 'endDate']: value
             }
-        }))
-    }
+        }));
+    };
 
     return (
         <FilterContainer>
@@ -20,8 +20,8 @@ function DateFilter() {
                 <FilterLabel label="Start Date" />
                 <FilterInput
                     type="date"
-                    value={filters.date?.startDate || ""}
-                    onChange={(e) => handleDateChange("start", e.target.value)}
+                    value={filters.date?.startDate || ''}
+                    onChange={(e) => handleDateChange('start', e.target.value)}
                     max={filters.date?.endDate || undefined}
                 />
             </FilterField>
@@ -29,8 +29,8 @@ function DateFilter() {
                 <FilterLabel label="End Date" />
                 <FilterInput
                     type="date"
-                    value={filters.date?.endDate || ""}
-                    onChange={(e) => handleDateChange("end", e.target.value)}
+                    value={filters.date?.endDate || ''}
+                    onChange={(e) => handleDateChange('end', e.target.value)}
                     min={filters.date?.startDate || undefined}
                 />
             </FilterField>

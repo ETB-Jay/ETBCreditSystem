@@ -1,8 +1,8 @@
-import { FilterContainer, FilterField, FilterLabel, FilterInput } from "./components"
-import { useFilters } from "../../../context/useContext"
+import { FilterContainer, FilterField, FilterLabel, FilterInput } from './components';
+import { useFilters } from '../../../context/useContext';
 
 function Amount() {
-    const { filters, setFilters } = useFilters()
+    const { filters, setFilters } = useFilters();
     
     return (
         <FilterContainer>
