@@ -4,21 +4,24 @@ The Enter the Battlefield (ETB) credit system designed by Michael Zhang using [R
 [Firebase (Firestore)](https://firebase.google.com/) is used as the backend for this project. The app was built and packaged with [Electron-Builder](https://www.electron.build/index.html)
 
 # FEATURES AND USAGE 📝
-![ETB Diagram](https://github.com/user-attachments/assets/64bd72c6-ff43-454d-9896-3495e631d3b9)
+![ETB Credit Layout](https://github.com/user-attachments/assets/540441c0-a281-4c25-b97e-62c1e5694e8a)
 
 
 **1 - Search Bar:** Filters by a customer's first and last name. 
 
-**2 - Adding a new Customer:** Adds a new customer to the system. Email and Phone number are not required but must be formatted correctly if inputted.
+**2 - Adding a new Customer:** Adds a new customer to the system. Email and Phone number are not required but must be formatted correctly if inputted (i.e. 9053382209 with no dashes or brackets). 
 
 **3 - Information:** A report containing the system's current number of customers, total credit, and number of outstanding individuals. Also includes the download button that lets the user get the current system's logs. 
 
-**4 - Filters:** Filters the transactions by date, amount transferred, and the employee's name. 
+**4 - Filters:** Filters the transactions by date, amount transferred, and the employee's name
 
-**5 - Customer Specific Changes:** Buttons that add a new transaction, edit the current customer, and delete the customer respectively
+**5 - Customer Notes** Customer notes for each individual. These are universal across all stores
+
+**6 - Customer Specific Changes:** Buttons that add a new transaction, edit the current customer, and delete the customer.
 
 ### <ins>Other Important Notes</ins> 🤔
-- The transaction list is sorted by date (most recent at the top)
+- The table of transactions is sorted by date with the most recent transactions at the top
+- The employee names when creating transactions are stored in localStorage, not in firebase
 - A customer with an outstanding balance will have a warning symbol next to their name in the customer list and their balance.
 - `CTRL + R` reloads the app display. This command is useful when the app needs to be reloaded to access new data inputted directly into firestore or from another device with the credit system. **PLEASE DO NOT SPAM THIS COMMAND ☹️**
 
@@ -36,13 +39,16 @@ From 2025-05-05 to 2025-08-29, I will be conducting preliminary updates and bug 
 
 After this period (post my co-op), I will be copying the source files to a different computer but will keep a copy for myself. If you would like to know more about the source material OR need information that I have not uploaded to github (i.e. Enviornment Variables, API keys), then you can contact Jay or Kris to get my contact information. Please do not hesitate to ask me if you have questions about the code. I am also open to doing bug fixes while I am away and back at school.
 
+## Notes on Firebase 📓
+As of 2025-06-27, firestore offers two payment plans: spark and blaze. ETB is currently on the spark plan, which limits the number of API calls that we can make to firestore. Please make sure to update the system to the blaze plan once the store reaches the spark plan limits. 
+
 ## Tech Stack 📚
-- Frontend: ReactJS, ElectronJS
-- Styling: TailwindCSS
-- Backend: Firebase (Firestore)
-- State Management: React Context
-- Build Tools: Vite
-- Publish Tools: Electron-Builder
+- **Frontend:** ReactJS, ElectronJS
+- **Styling:** TailwindCSS
+- **Backend:** Firebase (Firestore)
+- **State Management:** React Context
+- **Build Tools:** Vite
+- **Publish Tools:** Electron-Builder
 
 ## Development 🛒
 1. Clone the repository
