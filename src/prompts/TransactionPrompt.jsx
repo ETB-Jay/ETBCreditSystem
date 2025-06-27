@@ -26,6 +26,7 @@ function TransactionPrompt() {
     const [employees, setEmployees] = useState([]);
     const [showAddEmployee, setShowAddEmployee] = useState(false);
     const [newEmployeeName, setNewEmployeeName] = useState('');
+    const [showDropdown, setShowDropdown] = useState(false);
 
     useEffect(() => {
         setNewTransaction({});
@@ -115,7 +116,7 @@ function TransactionPrompt() {
     const SideButton = ({ label, color, onClick, disabled, title }) => (
         <button
             type="button"
-            className={`${disabled ? 'opacity-50 cursor-not-allowed': 'cursor-pointer'} flex items-center justify-center ring-2 rounded-full p-0.5 transition-all ${color}`}
+            className={`${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} flex items-center justify-center ring-2 rounded-full p-0.5 transition-all ${color}`}
             onClick={onClick}
             disabled={disabled}
             title={title}
@@ -158,43 +159,60 @@ function TransactionPrompt() {
             <PromptField label="Employee Name" error={errors.noEmployee}>
                 <div className='flex flex-row items-center gap-2 w-full'>
                     {!showAddEmployee ? (
-                        <div className='flex-1 flex flex-row items-center gap-1'>
-                            <select
-                                className='custom-select-arrow flex justify-center items-center disabled:bg-gray-200 disabled:cursor-not-allowed text-gray-200 text-sm bg-gray-800 rounded-md px-2 py-0.5 h-7 w-full outline-none transition-colors focus:bg-gray-500 hover:bg-gray-700 border border-gray-700 placeholder-gray-500 pr-7'
-                                value={newTransaction.employee_name || ''}
-                                onChange={e => {
-                                    if (e.target.value === 'add-new') {
-                                        setShowAddEmployee(true);
-                                    } else {
-                                        setShowAddEmployee(false);
-                                        setNewTransaction({ ...newTransaction, employee_name: e.target.value });
-                                    }
-                                }}
-                                disabled={isSubmitting}
-                            >
-                                <option value='' disabled>Select employee</option>
-                                {employees.map(employee => (
-                                    <option key={employee} value={employee}>{employee}</option>
-                                ))}
-                                <option value="add-new">Add New Employee</option>
-                            </select>
-                            {employees.map(employee => (
+                        <div className='flex-1 flex flex-row items-center gap-1 relative'>
+                            <div className="relative w-full">
+                                <button
+                                    type="button"
+                                    className={`flex justify-between items-center w-full text-gray-200 text-sm bg-gray-800 rounded-md px-2 py-0.5 h-7 outline-none transition-colors focus:bg-gray-500 hover:bg-gray-700 border border-gray-700 placeholder-gray-500 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    onClick={() => !isSubmitting && setShowDropdown(v => !v)}
+                                    disabled={isSubmitting}
+                                >
+                                    {newTransaction.employee_name || 'Select employee'}
+                                    <span className="ml-2">▼</span>
+                                </button>
+                                {showDropdown && !isSubmitting && (
+                                    <div className="absolute z-50 mt-1 w-full max-h-30 overflow-y-scroll container-snap bg-gray-800 border border-gray-700 rounded shadow-lg">
+                                        {employees.length === 0 && (
+                                            <div className="px-3 py-2 text-gray-400 text-xs">No employees</div>
+                                        )}
+                                        {employees.map(employee => (
+                                            <div
+                                                key={employee}
+                                                className={`px-3 py-2 cursor-pointer hover:bg-gray-700 transition-all text-white text-xs ${employee === newTransaction.employee_name ? 'bg-gray-700 font-bold' : ''}`}
+                                                onClick={() => {
+                                                    setNewTransaction({ ...newTransaction, employee_name: employee });
+                                                    setShowDropdown(false);
+                                                }}
+                                            >
+                                                {employee}
+                                            </div>
+                                        ))}
+                                        <div
+                                            className="px-3 py-2 cursor-pointer hover:bg-gray-700 text-white text-xs"
+                                            onClick={() => {
+                                                setShowAddEmployee(true);
+                                                setShowDropdown(false);
+                                            }}
+                                        >
+                                            Add New Employee
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            {newTransaction.employee_name && (
                                 <SideButton
-                                    key={employee + '-delete'}
                                     label={<DeleteIcon fontSize="xs" />}
                                     color="bg-red-800 text-white hover:bg-red-900 active:bg-red-950 ring-red-900 ml-1"
                                     onClick={() => {
-                                        const updated = employees.filter(e => e !== employee);
+                                        const updated = employees.filter(e => e !== newTransaction.employee_name);
                                         setEmployees(updated);
                                         localStorage.setItem('employees', JSON.stringify(updated));
-                                        if (newTransaction.employee_name === employee) {
-                                            setNewTransaction({ ...newTransaction, employee_name: '' });
-                                        }
+                                        setNewTransaction({ ...newTransaction, employee_name: '' });
                                     }}
                                     disabled={isSubmitting}
-                                    title={`Delete ${employee}`}
+                                    title={`Delete ${newTransaction.employee_name}`}
                                 />
-                            ))}
+                            )}
                         </div>
                     ) : (
                         <div className="flex flex-row items-center gap-2 w-full">
