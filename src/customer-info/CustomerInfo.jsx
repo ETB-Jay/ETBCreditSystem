@@ -27,8 +27,8 @@ function CustomerInfo() {
     }
     return (
         <MainContainer>
-            <div className="z-10 bg-gray-800 pb-2 flex flex-row justify-between sm:mb-[2vh] md:mb-[1vw] xl:mb-[0.5vw] md:h-1/12">
-                <div className="flex flex-row items-center ml-3 mt-2 gap-x-3 lg:gap-x-5 w-[95%]">
+            <div className="z-10 bg-gray-800 pb-2 gap-5 flex flex-row justify-between sm:mb-[2vh] md:mb-[1vw] xl:mb-[0.5vw] md:h-1/12">
+                <div className="flex flex-row items-center ml-2 mt-1 gap-x-3 lg:gap-x-4 w-full">
                     <EmailInfo />
                     <PhoneInfo />
                     <Balance />

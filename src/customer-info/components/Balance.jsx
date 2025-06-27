@@ -24,10 +24,10 @@ function Balance() {
     }, [customers, customer?.customer_id]);
 
     return (
-        <div className="flex flex-row items-center justify-between w-fit md:min-w-40 bg-gray-400 rounded-2xl h-full select-none hover:bg-gray-500 ring-2 cursor-pointer" onClick={()=>setDisplay('transaction')}>
+        <div className="flex flex-row items-center justify-between w-fit md:min-w-30 bg-gray-400 rounded-2xl h-full select-none hover:bg-gray-500 ring-2 cursor-pointer" onClick={()=>setDisplay('transaction')}>
             <div className="flex flex-row items-center justify-start">
                 <AttachMoneyIcon className="mx-2" sx={{fontSize: '25px'}} />
-                <p className="text-black font-bold text-[1.1rem] overflow-x-auto container-snap pr-5">{formattedBalance}</p>
+                <p className="text-black font-bold text-md overflow-x-scroll container-snap">{formattedBalance}</p>
             </div>
             {Number(formattedBalance) < 0 ? <WarningIcon fontSize="small" className="mr-2" /> : <></>}
         </div>
