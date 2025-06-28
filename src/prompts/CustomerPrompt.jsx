@@ -1,7 +1,7 @@
 import { useDisplay, useCustomerNames, useTotal } from '../context/useContext';
 import { useState, useEffect } from 'react';
 import { Prompt, PromptButton, PromptField, PromptInput, PromptTitle } from './components';
-import { db } from '../firebase';
+import { db, fetchCustomers, getHighestCustomerId } from '../firebase';
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 
 /**
@@ -10,11 +10,11 @@ import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
  * @returns {JSX.Element} The TransactionPrompt prompt
  */
 function CustomerPrompt() {
-    const { setCustomers, customers } = useCustomerNames();
+    const { setCustomers } = useCustomerNames();
     const [newCustomer, setNewCustomer] = useState({});
     const [errors, setErrors] = useState({});
     const { setDisplay } = useDisplay();
-    const { total, setTotal } = useTotal();
+    const { setTotal } = useTotal();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
@@ -61,9 +61,22 @@ function CustomerPrompt() {
             return;
         }
 
+        const getArrayName = (number) => {
+            const min = (Math.floor(number / 100) - (number % 100 === 0)) * 100 + 1;
+            const max = (Math.floor(number / 100) + (number % 100 !== 0)) * 100;
+            return `${min}_min_${max}_max`;
+        };
+
         try {
+            const highestCustomerId = await getHighestCustomerId();
+            const newCustomerId = highestCustomerId + 1;
+            const arrayName = getArrayName(newCustomerId);
+
+            const docRef = doc(db, 'customers', arrayName);
+            const docSnap = await getDoc(docRef);
+
             const customerData = {
-                customer_id: total + 1,
+                customer_id: newCustomerId,
                 first_name: newCustomer.first_name.trim(),
                 last_name: newCustomer.last_name.trim(),
                 email: newCustomer.email?.trim() || '',
@@ -71,13 +84,6 @@ function CustomerPrompt() {
                 balance: 0,
                 transactions: []
             };
-            
-            const min = (Math.floor(customerData.customer_id / 100) - (customerData.customer_id % 100 === 0)) * 100 + 1;
-            const max = (Math.floor(customerData.customer_id / 100) + (customerData.customer_id % 100 !== 0)) * 100;
-            const arrayName = `${min}_min_${max}_max`;
-
-            const docRef = doc(db, 'customers', arrayName);
-            const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
                 const currentCustomers = docSnap.data().customers || [];
@@ -87,14 +93,19 @@ function CustomerPrompt() {
                 });
             } else {
                 await setDoc(docRef, {
-                    customers: [customerData],
-                    count: 1
+                    count: 1,
+                    customers: [customerData]
                 });
+            };
+            try {
+                const [customersData] = await Promise.all([
+                    fetchCustomers()
+                ]);
+                setCustomers(customersData.customers);
+                setTotal(customersData.total);
+            } catch (error) {
+                console.error(error);
             }
-
-            setCustomers([...customers, customerData]);
-            setTotal(total + 1);
-
             setDisplay('default');
         } catch (error) {
             console.error('Error adding customer:', error);

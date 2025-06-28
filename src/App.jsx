@@ -35,7 +35,7 @@ function App() {
 			}
 		};
 		loadData();
-	}, [setCustomers]);
+	}, []);
 	
 	return (
 		<>

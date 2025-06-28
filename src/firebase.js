@@ -54,4 +54,29 @@ export const fetchCustomers = async () => {
   }
 };
 
+export const getHighestCustomerId = async () => {
+  try {
+    const customersCollection = collection(db, 'customers');
+    const customersDocuments = await getDocs(customersCollection);
+    
+    let highestId = 0;
+    
+    customersDocuments.docs.forEach(doc => {
+      const data = doc.data();
+      if (data.customers && Array.isArray(data.customers)) {
+        data.customers.forEach(customer => {
+          if (customer.customer_id > highestId) {
+            highestId = customer.customer_id;
+          }
+        });
+      }
+    });
+    
+    return highestId;
+  } catch (error) {
+    console.error('Error finding highest customer ID:', error);
+    throw error;
+  }
+};
+
 export { db };

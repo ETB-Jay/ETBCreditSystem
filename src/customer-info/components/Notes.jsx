@@ -29,7 +29,7 @@ const Notes = () => {
     };
 
     return (
-        <div className='h-full w-full relative hidden md:flex flex-row items-center justify-center'>
+        <div className='h-full w-full relative hidden sm:flex flex-row items-center justify-center'>
             <input
                 className='base bg-white/20 rounded-2xl ring-2 text-black pl-2 pr-9.5 text-sm w-full h-full'
                 value={tempNote}
