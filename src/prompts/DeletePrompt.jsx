@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useDisplay, useCustomer, useCustomerNames } from '../context/useContext';
-import { Prompt, PromptTitle, PromptField, PromptInput, PromptButton } from './components';
+import { Prompt, PromptField, PromptInput, PromptButton } from '../components';
 import { db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
@@ -10,6 +10,7 @@ function DeletePrompt() {
     const { customers, setCustomers } = useCustomerNames();
     const [confirm, setConfirm] = useState('');
     const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleDelete = async () => {
         if (confirm !== 'DELETE') {
@@ -18,6 +19,7 @@ function DeletePrompt() {
         }
 
         try {
+            setIsSubmitting(true);
             const min = (Math.floor(customer.customer_id / 100) - (customer.customer_id % 100 === 0)) * 100 + 1;
             const max = (Math.floor(customer.customer_id / 100) + (customer.customer_id % 100 !== 0)) * 100;
             const arrayName = `${min}_min_${max}_max`;
@@ -28,7 +30,7 @@ function DeletePrompt() {
             if (docSnap.exists()) {
                 const currentCustomers = docSnap.data().customers || [];
                 const customerIndex = currentCustomers.findIndex(c => c.customer_id === customer.customer_id);
-                
+
                 if (customerIndex === -1) {
                     setError('Customer not found in database');
                     return;
@@ -49,6 +51,8 @@ function DeletePrompt() {
             }
         } catch (err) {
             setError('Failed to delete customer: ' + err.message);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -59,42 +63,30 @@ function DeletePrompt() {
     };
 
     return (
-        <Prompt>
-            <PromptTitle label="Delete Customer" />
-            <div className="flex flex-col items-center gap-4">
-                <div className="text-gray-200 text-sm whitespace-nowrap">
-                    DO YOU WANT TO DELETE 
-                    <span className='block-inline bg-gray-800/80 ring-2 ring-gray-950 font-bold text-xs rounded py-1 px-2 mx-2'>{customer?.first_name} {customer?.last_name}</span>?
-                </div>
-                <PromptField label="Type 'DELETE' to confirm">
-                    <PromptInput 
-                        placeholder="Type DELETE to confirm"
-                        value={confirm}
-                        onChange={(e) => {
-                            setConfirm(e.target.value);
-                            setError('');
-                        }}
-                    />
-                </PromptField>
-                {error && (
-                    <div className="text-red-500 text-sm">
-                        {error}
-                    </div>
-                )}
-            </div>
-            <div className="flex justify-end space-x-3">
-                <PromptButton
-                    onClick={handleCancel}
-                >
-                    CANCEL
-                </PromptButton>
+        <Prompt title="Delete Customer">
+            <PromptField error={error}>
+                <PromptInput
+                    label={
+                        <div className="w-full flex justify-center mb-2 text-center items-center">
+                            Type <span className='mx-1 bg-white/10 text-red-700 font-bold px-2 py-1 rounded'>{customer.first_name} {customer.last_name}</span> To Delete This Customer
+                        </div>
+                    }
+                    value={confirm}
+                    onChange={e => setConfirm(e.target.value)}
+                    disabled={isSubmitting}
+                />
+            </PromptField>
+            <div className="flex flex-row gap-5 justify-end">
                 <PromptButton
                     onClick={handleDelete}
-                    warning={true}
-                    disabled={confirm !== 'DELETE'}
-                >
-                    DELETE
-                </PromptButton>
+                    disabled={isSubmitting || confirm !== `${customer.first_name} ${customer.last_name}`}
+                    label={isSubmitting ? 'Processing...' : 'Delete'}
+                />
+                <PromptButton
+                    onClick={handleCancel}
+                    disabled={isSubmitting}
+                    label="Cancel"
+                />
             </div>
         </Prompt>
     );

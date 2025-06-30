@@ -21,7 +21,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-export const fetchCustomers = async () => {
+const fetchCustomers = async () => {
   try {
     const customersCollection = collection(db, 'customers');
     const customersDocuments = await getDocs(customersCollection);
@@ -54,7 +54,7 @@ export const fetchCustomers = async () => {
   }
 };
 
-export const getHighestCustomerId = async () => {
+const getHighestCustomerId = async () => {
   try {
     const customersCollection = collection(db, 'customers');
     const customersDocuments = await getDocs(customersCollection);
@@ -79,4 +79,4 @@ export const getHighestCustomerId = async () => {
   }
 };
 
-export { db };
+export { db, fetchCustomers, getHighestCustomerId };

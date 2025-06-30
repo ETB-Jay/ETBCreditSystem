@@ -1,4 +1,4 @@
-import { FilterContainer, FilterField, FilterLabel, FilterInput } from './components';
+import { FilterContainer, FilterField, FilterInput } from '../../../components';
 import { useFilters } from '../../../context/useContext';
 
 function Amount() {
@@ -6,8 +6,7 @@ function Amount() {
     
     return (
         <FilterContainer>
-            <FilterField>
-                <FilterLabel label="Minimum Amount" />
+            <FilterField label="Minimum Amount">
                 <FilterInput
                     type="number"
                     value={filters.amount?.minAmount}
@@ -18,8 +17,7 @@ function Amount() {
                     dollar={true}
                 />
             </FilterField>
-            <FilterField>
-                <FilterLabel label="Maximum Amount" />
+            <FilterField label="Maximum Amount">
                 <FilterInput
                     type="number"
                     value={filters.amount?.maxAmount}

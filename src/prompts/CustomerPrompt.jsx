@@ -1,6 +1,6 @@
 import { useDisplay, useCustomerNames, useTotal } from '../context/useContext';
 import { useState, useEffect } from 'react';
-import { Prompt, PromptButton, PromptField, PromptInput, PromptTitle } from './components';
+import { Prompt, PromptButton, PromptField, PromptInput } from '../components';
 import { db, fetchCustomers, getHighestCustomerId } from '../firebase';
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 
@@ -122,52 +122,61 @@ function CustomerPrompt() {
     };
 
     return (
-        <Prompt>
-            <PromptTitle label="New Customer" />
-            <PromptField label="First Name" error={errors.first_name}>
+        <Prompt title="New Customer">
+            <PromptField error={errors.first_name}>
                 <PromptInput
+                    label="First Name"
                     type="text"
                     value={newCustomer.first_name}
                     onChange={(e) => setNewCustomer({ ...newCustomer, first_name: e.target.value })}
+                    placeholder="Enter your first name"
                     disabled={isSubmitting}
                 />
             </PromptField>
-            <PromptField label="Last Name" error={errors.last_name}>
+            <PromptField error={errors.last_name}>
                 <PromptInput
+                    label="Last Name"
                     type="text"
                     value={newCustomer.last_name}
                     onChange={(e) => setNewCustomer({ ...newCustomer, last_name: e.target.value })}
+                    placeholder="Enter your last name"
                     disabled={isSubmitting}
                 />
             </PromptField>
-            <PromptField label="Email" error={errors.email}>
+            <PromptField error={errors.email}>
                 <PromptInput
+                    label="Email"
+                    name="email"
                     type="email"
                     value={newCustomer.email}
                     onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
+                    placeholder="Enter your email"
                     disabled={isSubmitting}
                 />
             </PromptField>
-            <PromptField label="Phone Number" error={errors.phone}>
+            <PromptField error={errors.phone}>
                 <PromptInput
+                    label="Phone Number"
+                    name="phone"
                     type="tel"
                     value={newCustomer.phone}
                     onChange={(e) => setNewCustomer({ ...newCustomer, phone: e.target.value })}
+                    placeholder="(123) 456-7890"
                     disabled={isSubmitting}
                 />
             </PromptField>
             <div className="flex justify-end space-x-3">
                 <PromptButton
                     onClick={handleSubmit}
-                    disabled={isSubmitting}>
-                    {isSubmitting ? 'Processing...' : 'Add Customer'}
-                </PromptButton>
+                    disabled={isSubmitting}
+                    label={isSubmitting ? 'Processing...' : 'Add Customer'}
+                />
                 <PromptButton
                     type="button"
                     onClick={handleCancel}
-                    disabled={isSubmitting}>
-                    Cancel
-                </PromptButton>
+                    disabled={isSubmitting}
+                    label="Cancel"
+                />
             </div>
         </Prompt>
     );

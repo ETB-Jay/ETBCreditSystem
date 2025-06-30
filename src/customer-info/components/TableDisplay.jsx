@@ -1,4 +1,3 @@
-import icon from '../../assets/ETBBanner.png';
 import { useCustomer, useCustomerNames, useDisplay, useFilters } from '../../context/useContext';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
@@ -87,7 +86,7 @@ function TableDisplay() {
             <div className="flex h-full w-full items-center justify-center">
                 <img
                     className="brightness-30 w-auto max-h-4/5 object-contain mx-auto select-none"
-                    src={icon}
+                    src="./ETBBanner.png"
                     alt="No data"
                 />
                 <p className="absolute text-white z-10 font-bold text-2xl mg:text-3x1 lg:text-4xl bg-black/50 rounded-xl p-5 select-none">NO TRANSACTIONS YET</p>
@@ -117,7 +116,7 @@ function TableDisplay() {
     };
 
     return (
-        <div className="max-h-9/10 rounded-xl overflow-hidden no-scroll border border-gray-700 shadow-lg bg-gray-900">
+        <div className="max-h-9/10 rounded-xl overflow-y-scroll container-snap border border-gray-700 shadow-lg bg-gray-900">
             <div className="absolute">
                 {display === 'DateFilter' && (
                     <div className="absolute z-50 mt-8 left-[2vw] select-none">

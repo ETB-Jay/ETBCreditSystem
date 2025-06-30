@@ -20,6 +20,11 @@
     background: rgba(255, 255, 255, 0.3);
 }
 
+.container-snap::-webkit-scrollbar-corner {
+    background: transparent;
+    display: none;
+}
+
 .no-scroll::-webkit-scrollbar {
     display: none;
 }
@@ -55,14 +60,4 @@ body {
 
 .prompt-animate {
     animation: fade-in 0.35s cubic-bezier(0.33, 1, 0.68, 1);
-}
-
-.custom-select-arrow {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-}
-
-.custom-select-arrow::-ms-expand {
-    display: none;
 }

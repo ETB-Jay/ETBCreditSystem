@@ -4,7 +4,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import { db } from '../../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
-const Notes = () => {
+function Notes() {
     const { customer } = useCustomer();
     const [tempNote, setTempNote] = useState(customer.notes || '');
 

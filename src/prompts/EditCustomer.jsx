@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useCustomer, useDisplay, useCustomerNames } from '../context/useContext';
-import { Prompt, PromptTitle, PromptButton, PromptField, PromptInput } from './components';
+import { Prompt, PromptButton, PromptField, PromptInput } from '../components';
 import { db } from '../firebase';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 
@@ -131,8 +131,7 @@ function EditCustomer() {
     };
 
     return (
-        <Prompt>
-            <PromptTitle label={'Edit Customer Information'} />
+        <Prompt title="Edit Customer Information">
             <PromptField label={'First Name'} error={errors.first_name}>
                 <PromptInput
                     type="text"
@@ -176,15 +175,15 @@ function EditCustomer() {
             <div className="flex justify-end space-x-3">
                 <PromptButton
                     onClick={handleSubmit}
-                    disabled={isSubmitting}>
-                    {isSubmitting ? 'Processing...' : 'Save Changes'}
-                </PromptButton>
+                    disabled={isSubmitting}
+                    label={isSubmitting ? 'Processing...' : 'Save Changes'}
+                />
                 <PromptButton
                     type="button"
                     onClick={handleCancel}
-                    disabled={isSubmitting}>
-                    Cancel
-                </PromptButton>
+                    disabled={isSubmitting}
+                    label="Cancel"
+                />
             </div>
         </Prompt>
     );

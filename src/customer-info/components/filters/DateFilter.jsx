@@ -1,4 +1,4 @@
-import { FilterContainer, FilterField, FilterLabel, FilterInput } from './components';
+import { FilterContainer, FilterField, FilterInput } from '../../../components';
 import { useFilters } from '../../../context/useContext';
 
 function DateFilter() {
@@ -16,8 +16,7 @@ function DateFilter() {
 
     return (
         <FilterContainer>
-            <FilterField>
-                <FilterLabel label="Start Date" />
+            <FilterField label="Start Date">
                 <FilterInput
                     type="date"
                     value={filters.date?.startDate || ''}
@@ -25,8 +24,7 @@ function DateFilter() {
                     max={filters.date?.endDate || undefined}
                 />
             </FilterField>
-            <FilterField>
-                <FilterLabel label="End Date" />
+            <FilterField label="End Date">
                 <FilterInput
                     type="date"
                     value={filters.date?.endDate || ''}

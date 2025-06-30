@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDisplay, useCustomerNames, useTotal } from '../context/useContext';
-import { Prompt, PromptButton, PromptField, PromptTitle } from './components';
+import { Prompt, PromptButton, PromptField } from '../components';
 import DownloadIcon from '@mui/icons-material/Download';
 import JSZip from 'jszip';
 import { db } from '../firebase';
@@ -49,11 +49,11 @@ function Report() {
     useEffect(() => {
         const negativeBalanceCustomers = customers.filter(customer => Number(customer.balance) < 0);
         setOutstanding(negativeBalanceCustomers.length);
-        
+
         const total = customers.reduce((sum, customer) => sum + Number(customer.balance), 0);
         setTotalCredit(total.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' }));
     }, [customers]);
-    
+
     const handleDownload = async () => {
         try {
             const zip = new JSZip();
@@ -92,11 +92,11 @@ function Report() {
             const content = await zip.generateAsync({ type: 'blob' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(content);
-            
+
             link.setAttribute('href', url);
             link.setAttribute('download', `etb_credit_report_${date}.zip`);
             link.style.visibility = 'hidden';
-            
+
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -108,27 +108,28 @@ function Report() {
     };
 
     return (
-        <Prompt>
-            <PromptTitle label={'SYSTEM INFORMATION'} />
-            <PromptField label={'Number of Customers:'}>
-                <p className="text-white font-semibold">
-                    {total}
+        <Prompt title='SYSTEM INFORMATION'>
+            <PromptField>
+                <p className="text-white font-bold bg-white/5 rounded-2xl p-3">
+                    Number of Customers: <span className='ml-1 font-semibold'>{total}</span>
                 </p>
             </PromptField>
-            <PromptField label={'Total Credit Across All Customers:'}>
-                <p className="text-white font-semibold">
-                    {totalCredit}
+            <PromptField>
+                <p className="text-white font-bold bg-white/5 rounded-2xl p-3">
+                    Total Credit: <span className='ml-1 font-semibold'>{totalCredit}</span>
                 </p>
             </PromptField>
-            <PromptField label={'Number of Outstanding Individuals:'}>
-                <p className="text-white font-semibold">{outstanding}</p>
+            <PromptField>
+                <p className="text-white font-semibold bg-white/5 rounded-2xl p-3">
+                    Number of Outstanding Individuals: <span className='ml-1 font-semibold'>{outstanding}</span>
+                </p>
             </PromptField>
             <div className='flex flex-row gap-x-2'>
-                <PromptButton onClick={() => setDisplay('default')} >Close</PromptButton>
-                <PromptButton onClick={handleDownload}>
-                    <DownloadIcon sx={{ fontSize: '20px' }}/>
-                    Download
-                </PromptButton>
+                <PromptButton onClick={() => setDisplay('default')} label="Close" />
+                <PromptButton onClick={handleDownload}
+                    icon={<DownloadIcon sx={{ fontSize: '20px' }} />}
+                    label="Download"
+                />
             </div>
         </Prompt>
     );

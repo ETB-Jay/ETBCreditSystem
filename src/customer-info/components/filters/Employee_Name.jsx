@@ -1,4 +1,4 @@
-import { FilterContainer, FilterField, FilterLabel, FilterInput } from './components';
+import { FilterContainer, FilterField, FilterInput } from '../../../components';
 import { useFilters } from '../../../context/useContext';
 
 function EmployeeName() {
@@ -16,8 +16,7 @@ function EmployeeName() {
 
     return (
         <FilterContainer>
-            <FilterField>
-                <FilterLabel label="Employee Name" />
+            <FilterField label="Employee Name">
                 <FilterInput
                     type="text"
                     value={filters.employee?.searchTerm || ''}

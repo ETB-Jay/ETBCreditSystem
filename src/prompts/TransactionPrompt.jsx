@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDisplay, useCustomer, useCustomerNames } from '../context/useContext';
-import { Prompt, PromptTitle, PromptButton, PromptField, PromptInput } from './components';
+import { Prompt, PromptButton, PromptField, PromptInput } from '../components';
 import { db } from '../firebase';
 import { doc, updateDoc, Timestamp, getDoc } from 'firebase/firestore';
 import AddIcon from '@mui/icons-material/Add';
@@ -126,37 +126,41 @@ function TransactionPrompt() {
     );
 
     return (
-        <Prompt>
-            <PromptTitle label="New Transaction" />
-            <PromptField label="Amount" error={errors.invalidValue}>
-                <div className="flex items-center gap-2 w-full">
-                    <PromptInput
-                        type="number"
-                        step="0.01"
-                        value={newTransaction.change_balance ? Math.abs(Number(newTransaction.change_balance)) : ''}
-                        onChange={input => {
-                            const value = input.target.value;
-                            const amount = value ? Math.abs(Number(value)) : '';
-                            setNewTransaction({
-                                ...newTransaction,
-                                change_balance: payment.sub ? -amount : amount
-                            });
-                        }}
-                        disabled={isSubmitting}
-                    />
-                    <SideButton
-                        label={<AddIcon fontSize='xs' />}
-                        color={`bg-emerald-700/30 text-white hover:bg-emerald-800/60 active:bg-emerald-900 ring-emerald-950 ${payment.add ? ' bg-emerald-800' : ''}`}
-                        onClick={() => handlePaymentType('add')}
-                    />
-                    <SideButton
-                        label={<RemoveIcon fontSize='xs' />}
-                        color={`bg-red-800/30 text-white hover:bg-red-900/60 active:bg-red-950 ring-red-950 ${payment.sub ? ' bg-red-900' : ''}`}
-                        onClick={() => handlePaymentType('sub')}
-                    />
-                </div>
+        <Prompt title="New Transaction">
+            <PromptField error={errors.invalidValue}>
+                <PromptInput
+                    label={
+                        <div className="flex flex-row gap-2 mt-2">
+                            Amount
+                            <SideButton
+                                label={<AddIcon fontSize='xs' />}
+                                color={`bg-emerald-700/30 text-white hover:bg-emerald-800/60 active:bg-emerald-900 ring-emerald-950 ${payment.add ? ' bg-emerald-800' : ''}`}
+                                onClick={() => handlePaymentType('add')}
+                            />
+                            <SideButton
+                                label={<RemoveIcon fontSize='xs' />}
+                                color={`bg-red-800/30 text-white hover:bg-red-900/60 active:bg-red-950 ring-red-950 ${payment.sub ? ' bg-red-900' : ''}`}
+                                onClick={() => handlePaymentType('sub')}
+                            />
+                        </div>
+                    }
+                    type="number"
+                    step="0.01"
+                    value={newTransaction.change_balance ? Math.abs(Number(newTransaction.change_balance)) : ''}
+                    onChange={input => {
+                        const value = input.target.value;
+                        const amount = value ? Math.abs(Number(value)) : '';
+                        setNewTransaction({
+                            ...newTransaction,
+                            change_balance: payment.sub ? -amount : amount
+                        });
+                    }}
+                    disabled={isSubmitting}
+                />
+
             </PromptField>
-            <PromptField label="Employee Name" error={errors.noEmployee}>
+            <PromptField error={errors.noEmployee}>
+                <label className="text-gray-200 font-medium text-sm mb-1">Employee Name</label>
                 <div className='flex flex-row items-center gap-2 w-full'>
                     {!showAddEmployee ? (
                         <div className='flex-1 flex flex-row items-center gap-1 relative'>
@@ -252,25 +256,24 @@ function TransactionPrompt() {
                     )}
                 </div>
             </PromptField>
-            <PromptField label="Notes">
+            <PromptField>
                 <PromptInput
+                    label="Notes"
                     value={newTransaction.notes}
                     onChange={input => setNewTransaction({ ...newTransaction, notes: input.target.value })}
                     disabled={isSubmitting}
                 />
             </PromptField>
-            <div className="flex justify-center gap-4 mt-2">
+            <div className="flex flex-row gap-5 justify-end mt-4">
                 <PromptButton
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                >
-                    {isSubmitting ? 'Processing...' : 'Confirm'}
-                </PromptButton>
+                    label={isSubmitting ? 'Processing...' : 'Confirm'}
+                />
                 <PromptButton
                     onClick={() => setDisplay('default')}
-                >
-                    Cancel
-                </PromptButton>
+                    label="Cancel"
+                />
             </div>
         </Prompt>
     );

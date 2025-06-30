@@ -36,7 +36,7 @@ function ListDisplay({ filter = '' }) {
     }, [setCustomer]);
 
     return (
-        <div className="text-gray-100 h-full overflow-y-auto container-snap">
+        <div className="text-gray-100 overflow-y-scroll container-snap">
             <ul className="list-none">
                 {filteredRows.map((customer, index) => (
                     <li className={`base flex flex-row items-center justify-between text-xs lg:text-sm px-2 py-1 cursor-pointer rounded-sm 
