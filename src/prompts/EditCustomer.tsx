@@ -4,27 +4,22 @@ import { Prompt, PromptButton, PromptField, PromptInput } from '../components';
 import { db } from '../firebase';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { getDocumentName, validateCustomerInfo } from './scripts';
+import { Customer } from '../types';
 
-/**
- * A prompt containing a form that allows the user to edit the customer in question.
- * 
- * @component
- * @returns {JSX.Element} The EditCustomer prompt component.
- */
 function EditCustomer() {
     const { customer, setCustomer } = useCustomer();
     const { setDisplay } = useDisplay();
     const { setCustomers } = useCustomerNames();
-    const [temp, setTemp] = useState({
+    const [temp, setTemp] = useState<{ first_name: string; last_name: string; email: string; phone: string }>({
         first_name: customer?.first_name || '',
         last_name: customer?.last_name || '',
         email: customer?.email || '',
         phone: customer?.phone || ''
     });
-    const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setTemp(prev => ({
             ...prev,
@@ -40,6 +35,11 @@ function EditCustomer() {
 
         console.log(temp);
         const errs = validateCustomerInfo(temp);
+        if (typeof errs === 'string') {
+            setErrors({ submit: errs });
+            setIsSubmitting(false);
+            return false;
+        }
         if (Object.keys(errs).length > 0) {
             setErrors(errs);
             setIsSubmitting(false);
@@ -61,7 +61,7 @@ function EditCustomer() {
                 email: temp.email?.trim() || '',
                 phone: temp.phone?.trim() || ''
             };
-            const updatedCustomers = currentCustomers.map(c => {
+            const updatedCustomers = currentCustomers.map((c: any) => {
                 if (c.customer_id === customer.customer_id) {
                     return {
                         ...c,
@@ -73,8 +73,8 @@ function EditCustomer() {
             await updateDoc(doc(db, 'customers', arrayName), {
                 customers: updatedCustomers
             });
-            setCustomers(prevCustomers => 
-                prevCustomers.map(c => 
+            setCustomers((prevCustomers: any[]) => 
+                prevCustomers.map((c: any) => 
                     c.customer_id === customer.customer_id 
                         ? {
                             ...c,
@@ -86,13 +86,17 @@ function EditCustomer() {
                         : c
                 )
             );
-            setCustomer(updatedCustomers.find(c => c.customer_id === customer.customer_id));
+            setCustomer(updatedCustomers.find((c: any) => c.customer_id === customer.customer_id));
             
             setDisplay('default');
             return true;
         } catch (error) {
             setErrors({ submit: 'Failed to update customer. Please try again.' });
-            console.error(error.message);
+            if (error instanceof Error) {
+                console.error(error.message);
+            } else {
+                console.error(error);
+            }
             return false;
         } finally {
             setIsSubmitting(false);
@@ -100,8 +104,8 @@ function EditCustomer() {
     };
 
     const handleCancel = () => {
-        setTemp({});
-        setErrors('');
+        setTemp({ first_name: customer?.first_name || '', last_name: customer?.last_name || '', email: customer?.email || '', phone: customer?.phone || '' });
+        setErrors({});
         setDisplay('default');
     };
 
@@ -153,16 +157,16 @@ function EditCustomer() {
             </PromptField>
             <div className="flex justify-end space-x-3">
                 <PromptButton
-                    type="button"
                     onClick={handleSubmit}
                     disabled={isSubmitting}
                     label={isSubmitting ? 'Processing...' : 'Save Changes'}
+                    icon={null}
                 />
                 <PromptButton
-                    type="button"
                     onClick={handleCancel}
                     disabled={isSubmitting}
                     label="Cancel"
+                    icon={null}
                 />
             </div>
         </Prompt>

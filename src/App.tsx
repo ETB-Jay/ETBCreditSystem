@@ -14,13 +14,13 @@ import DeletePrompt from './prompts/DeletePrompt';
  * It fetches the list of customers and renders it accordingly. 
  *
  * @component
- * @returns {JSX.Element} The Application UI
+ * @returns {TSX.Element} The Application UI
  */
-function App() {
+function App(): React.ReactElement {
 	const { setTotal } = useTotal();
 	const { display } = useDisplay();
 	const { setCustomers } = useCustomerNames();
-	const [error, setError] = useState(null);
+	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		const loadData = async () => {

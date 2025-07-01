@@ -6,7 +6,7 @@ import { useDisplay } from '../../context/useContext';
  * @component
  * @returns {JSX.Element} A "+" button that triggers "CustomerPrompt.jsx"
  */
-function AddCustomer() {
+function AddCustomer(): React.ReactElement {
     const { setDisplay } = useDisplay();
     return (
         <div className="ml-0.5 stroke-white hover:brightness-50 cursor-pointer"

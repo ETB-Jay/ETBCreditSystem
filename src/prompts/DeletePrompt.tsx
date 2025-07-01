@@ -21,14 +21,14 @@ function DeletePrompt() {
 
         try {
             setIsSubmitting(true);
-            const arrayName = getDocumentName(customer.customer_id);
+            const arrayName = getDocumentName(customer?.customer_id ?? 0);
             
             const docRef = doc(db, 'customers', arrayName);
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
                 const currentCustomers = docSnap.data().customers || [];
-                const customerIndex = currentCustomers.findIndex(c => c.customer_id === customer.customer_id);
+                const customerIndex = currentCustomers.findIndex((c: any) => c.customer_id === customer?.customer_id);
 
                 if (customerIndex === -1) {
                     setError('Customer not found in database');
@@ -41,7 +41,7 @@ function DeletePrompt() {
                     count: currentCustomers.length
                 });
 
-                const updatedCustomers = customers.filter(c => c.customer_id !== customer.customer_id);
+                const updatedCustomers = customers.filter((c: any) => c.customer_id !== customer?.customer_id);
                 setCustomers(updatedCustomers);
                 setCustomer(null);
                 setDisplay('default');
@@ -49,7 +49,7 @@ function DeletePrompt() {
                 setError('Customer document not found');
             }
         } catch (err) {
-            setError('Failed to delete customer: ' + err.message);
+            setError('Failed to delete customer: ' + (err instanceof Error ? err.message : 'Unknown error'));
         } finally {
             setIsSubmitting(false);
         }
@@ -65,11 +65,7 @@ function DeletePrompt() {
         <Prompt title="Delete Customer">
             <PromptField error={error}>
                 <PromptInput
-                    label={
-                        <div className="w-full flex justify-center mb-2 text-center items-center">
-                            Type <span className='mx-1 bg-white/10 text-red-700 font-bold px-2 py-1 rounded'>{customer.first_name} {customer.last_name}</span> To Delete This Customer
-                        </div>
-                    }
+                    label={`Type ${customer ? customer.first_name + ' ' + customer.last_name : ''} To Delete This Customer`}
                     value={confirm}
                     onChange={e => setConfirm(e.target.value)}
                     disabled={isSubmitting}
@@ -78,13 +74,15 @@ function DeletePrompt() {
             <div className="flex flex-row gap-5 justify-end">
                 <PromptButton
                     onClick={handleDelete}
-                    disabled={isSubmitting || confirm !== `${customer.first_name} ${customer.last_name}`}
+                    disabled={isSubmitting || !customer || confirm !== `${customer.first_name} ${customer.last_name}`}
                     label={isSubmitting ? 'Processing...' : 'Delete'}
+                    icon={null}
                 />
                 <PromptButton
                     onClick={handleCancel}
                     disabled={isSubmitting}
                     label="Cancel"
+                    icon={null}
                 />
             </div>
         </Prompt>

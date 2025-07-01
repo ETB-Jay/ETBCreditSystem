@@ -4,7 +4,7 @@ import AppProviders from './context/Providers';
 import App from './App';
 import './container.css';
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById('root')!).render(
 	<StrictMode>
 		<AppProviders>
 			<App />

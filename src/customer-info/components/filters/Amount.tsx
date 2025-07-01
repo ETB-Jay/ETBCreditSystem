@@ -13,7 +13,6 @@ function Amount() {
                     onChange={(e) => setFilters({...filters, amount: {...filters.amount, minAmount: e.target.value}})}
                     placeholder="0.00"
                     step="0.01"
-                    min="0"
                     dollar={true}
                 />
             </FilterField>
@@ -24,7 +23,7 @@ function Amount() {
                     onChange={(e) => setFilters({...filters, amount: {...filters.amount, maxAmount: e.target.value}})}
                     placeholder="0.00"
                     step="0.01"
-                    min="0"
+                    min={filters.amount?.minAmount}
                     dollar={true}
                 />
             </FilterField>

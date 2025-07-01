@@ -1,14 +1,19 @@
 import { useMemo, useState } from 'react';
 import { CustomerContext, DisplayContext, CustomerNamesContext, TransactionContext, FilterContext, TotalContext } from './Context';
 import PropTypes from 'prop-types';
+import { Customer, Display, Filters, Transaction } from '../types';
 
 // Grouped provider to reduce nesting and context switching
-const AppProviders = ({ children }) => {
-  const [customer, setCustomer] = useState(null);
-  const [display, setDisplay] = useState(null);
-  const [customers, setCustomers] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-  const [filters, setFilters] = useState({});
+const AppProviders = ({ children }: {children: React.ReactElement}) => {
+  const [customer, setCustomer] = useState<Customer | null>(null);
+  const [display, setDisplay] = useState<Display>('default');
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [filters, setFilters] = useState<Filters>({
+    date: { startDate: '', endDate: '' },
+    amount: { minAmount: '', maxAmount: '' },
+    employee: { searchTerm: '' }
+  });
   const [total, setTotal] = useState(0);
 
   const customerValue = useMemo(() => ({ customer, setCustomer }), [customer]);

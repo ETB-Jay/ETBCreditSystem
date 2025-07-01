@@ -10,7 +10,7 @@ const { autoUpdater } = pkg;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let mainWindow;
+let mainWindow: BrowserWindow | null;
 
 // Configure logging
 electronLog.transports.file.level = 'debug';
@@ -49,8 +49,7 @@ function createWindow() {
         webPreferences: {
             preload: path.join(__dirname, '../electron/preload.js'),
             nodeIntegration: false,
-            contextIsolation: true,
-            enableRemoteModule: false,
+            contextIsolation: true
         }
     });
 
@@ -72,12 +71,16 @@ function createWindow() {
             autoUpdater.checkForUpdatesAndNotify();
         } catch (error) {
             electronLog.error('Failed to check for updates:', error);
-            electronLog.error('Error stack:', error.stack);
-            mainWindow.webContents.send('update-error', {
-                message: 'Failed to check for updates',
-                error: error.message,
-                stack: error.stack
-            });
+            if (typeof error === 'object' && error && 'stack' in error && 'message' in error) {
+                electronLog.error('Error stack:', (error as any).stack);
+                if (mainWindow) {
+                    mainWindow.webContents.send('update-error', {
+                        message: 'Failed to check for updates',
+                        error: (error as any).message,
+                        stack: (error as any).stack
+                    });
+                }
+            }
         }
     });
 }
@@ -88,18 +91,18 @@ autoUpdater.on('checking-for-update', () => {
     mainWindow?.webContents.send('update-status', 'Checking for updates...');
 });
 
-autoUpdater.on('update-available', (info) => {
+autoUpdater.on('update-available', (info: any) => {
     electronLog.info('Update available:', info);
     mainWindow?.webContents.send('update-status', 'Update available');
     mainWindow?.webContents.send('update-info', info);
 });
 
-autoUpdater.on('update-not-available', (info) => {
+autoUpdater.on('update-not-available', (info: any) => {
     electronLog.info('Update not available:', info);
     mainWindow?.webContents.send('update-status', 'Update not available');
 });
 
-autoUpdater.on('error', (err) => {
+autoUpdater.on('error', (err: any) => {
     electronLog.error('Error in auto-updater:', err);
     mainWindow?.webContents.send('update-status', 'Error in auto-updater');
     mainWindow?.webContents.send('update-error', {
@@ -109,12 +112,12 @@ autoUpdater.on('error', (err) => {
     });
 });
 
-autoUpdater.on('download-progress', (progressObj) => {
+autoUpdater.on('download-progress', (progressObj: any) => {
     electronLog.info('Download progress:', progressObj);
     mainWindow?.webContents.send('update-progress', progressObj);
 });
 
-autoUpdater.on('update-downloaded', (info) => {
+autoUpdater.on('update-downloaded', (info: any) => {
     electronLog.info('Update downloaded:', info);
     mainWindow?.webContents.send('update-status', 'Update downloaded');
     mainWindow?.webContents.send('update-info', info);

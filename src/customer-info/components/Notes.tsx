@@ -4,21 +4,20 @@ import CheckIcon from '@mui/icons-material/Check';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import { db } from '../../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { getDocumentName } from '../../prompts/scripts';
 
 function Notes() {
     const { customer } = useCustomer();
-    const [tempNote, setTempNote] = useState(customer.notes || '');
+    const [tempNote, setTempNote] = useState(customer?.notes || '');
 
     const handleNoteSubmit = async () => {
-        if (!tempNote) {
+        if (!tempNote || !customer) {
             return;
-        };
-        const min = (Math.floor(customer.customer_id / 100) - (customer.customer_id % 100 === 0)) * 100 + 1;
-        const max = (Math.floor(customer.customer_id / 100) + (customer.customer_id % 100 !== 0)) * 100;
-        const arrayName = `${min}_min_${max}_max`;
+        }
+        const arrayName = getDocumentName(customer.customer_id);
         const customerDoc = await getDoc(doc(db, 'customers', arrayName));
         const currentCustomers = customerDoc.data()?.customers || [];
-        const updatedCustomers = currentCustomers.map(c =>
+        const updatedCustomers = currentCustomers.map((c: any) =>
             c.customer_id === customer.customer_id
                 ? {
                     ...c,
@@ -45,7 +44,7 @@ function Notes() {
                 disabled={!tempNote}
             >
                 <CheckIcon
-                    fontSize='xs'
+                    fontSize='small'
                     className={`${tempNote ? 'text-emerald-400' : 'text-gray-400'}`}
                 />
             </button>

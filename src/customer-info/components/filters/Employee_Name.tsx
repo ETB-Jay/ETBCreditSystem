@@ -4,7 +4,7 @@ import { useFilters } from '../../../context/useContext';
 function EmployeeName() {
     const { filters, setFilters } = useFilters();
 
-    const handleSearchChange = (value) => {
+    const handleSearchChange = (value: string) => {
         setFilters(prev => ({
             ...prev,
             employee: {
@@ -22,8 +22,6 @@ function EmployeeName() {
                     value={filters.employee?.searchTerm || ''}
                     onChange={(e) => handleSearchChange(e.target.value)}
                     placeholder="Search employee..."
-                    autoComplete="off"
-                    spellCheck="false"
                 />
             </FilterField>
         </FilterContainer>

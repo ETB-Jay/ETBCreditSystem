@@ -5,30 +5,31 @@ import DownloadIcon from '@mui/icons-material/Download';
 import JSZip from 'jszip';
 import { db } from '../firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
+import { Transaction } from '../types';
 
-/**
- * A prompt containing a report of the current number of customers, total credit
- * across those customers, and the total number of outstanding individuals in the
- * system. 
- * @returns {JSX.Element} The Report prompt
- */
+type TransactionWithCustomer = Transaction & {
+    customer_id: number;
+    first_name: string;
+    last_name: string;
+};
+
 function Report() {
     const { customers } = useCustomerNames();
     const { setDisplay } = useDisplay();
     const [outstanding, setOutstanding] = useState(0);
-    const [totalCredit, setTotalCredit] = useState(0);
-    const [allTransactions, setAllTransactions] = useState([]);
+    const [totalCredit, setTotalCredit] = useState('0');
+    const [allTransactions, setAllTransactions] = useState<TransactionWithCustomer[]>([]);
     const { total } = useTotal();
 
     useEffect(() => {
         const unsubscribe = onSnapshot(collection(db, 'customers'), (snapshot) => {
-            const transactions = [];
+            const transactions: TransactionWithCustomer[] = [];
             snapshot.forEach(doc => {
                 const data = doc.data();
                 if (data.customers && Array.isArray(data.customers)) {
                     data.customers.forEach(customer => {
                         if (customer.transactions && Array.isArray(customer.transactions)) {
-                            customer.transactions.forEach(transaction => {
+                            customer.transactions.forEach((transaction: Transaction) => {
                                 transactions.push({
                                     ...transaction,
                                     customer_id: customer.customer_id,
@@ -79,7 +80,9 @@ function Report() {
                     transaction.customer_id || '',
                     transaction.first_name || '',
                     transaction.last_name || '',
-                    transaction.date?.toDate?.()?.toLocaleString() || '',
+                    (transaction.date && typeof transaction.date === 'object' && 'seconds' in transaction.date)
+                        ? new Date(transaction.date.seconds * 1000).toLocaleString()
+                        : (transaction.date instanceof Date ? transaction.date.toLocaleString() : ''),
                     transaction.change_balance || 0,
                     transaction.employee_name || '',
                     (transaction.notes || '').replace(/,/g, '')
@@ -130,10 +133,11 @@ function Report() {
                 </p>
             </PromptField>
             <div className='flex flex-row gap-x-2'>
-                <PromptButton onClick={() => setDisplay('default')} label="Close" />
+                <PromptButton onClick={() => setDisplay('default')} label="Close" disabled={false} icon={null} />
                 <PromptButton onClick={handleDownload}
                     icon={<DownloadIcon sx={{ fontSize: '20px' }} />}
                     label="Download"
+                    disabled={false}
                 />
             </div>
         </Prompt>

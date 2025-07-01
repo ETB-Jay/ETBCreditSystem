@@ -4,7 +4,7 @@ import { useFilters } from '../../../context/useContext';
 function DateFilter() {
     const { filters, setFilters } = useFilters();
 
-    const handleDateChange = (type, value) => {
+    const handleDateChange = (type: string, value: string) => {
         setFilters(prev => ({
             ...prev,
             date: {
@@ -22,6 +22,7 @@ function DateFilter() {
                     value={filters.date?.startDate || ''}
                     onChange={(e) => handleDateChange('start', e.target.value)}
                     max={filters.date?.endDate || undefined}
+                    placeholder="Start date"
                 />
             </FilterField>
             <FilterField label="End Date">
@@ -30,6 +31,7 @@ function DateFilter() {
                     value={filters.date?.endDate || ''}
                     onChange={(e) => handleDateChange('end', e.target.value)}
                     min={filters.date?.startDate || undefined}
+                    placeholder="End date"
                 />
             </FilterField>
         </FilterContainer>

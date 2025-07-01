@@ -2,6 +2,7 @@ import { useDisplay } from '../../context/useContext';
 import AddCardIcon from '@mui/icons-material/AddCard';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Display } from '../../types';
 
 /**
  * Displays the triple dot icon that gives the user a list of potential actions related to the customer
@@ -9,10 +10,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
  * @component
  * @returns {JSX.Element} The Action component
  */
-function Actions() {
+interface ActionsProps {
+    icon: React.ElementType;
+    display: Display
+}
+function Actions(): React.ReactElement {
     const { setDisplay } = useDisplay();
 
-    const UserButton = ({icon, display}) => {
+    const UserButton = ({icon, display}: ActionsProps) => {
         const IconComponent = icon;
         return (
             <IconComponent

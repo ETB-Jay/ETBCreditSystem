@@ -10,7 +10,7 @@ import { useState, memo, useMemo, useCallback } from 'react';
  * @param {string} filter - The filter string used to match customer first or last names (case-insensitive).
  * @returns {JSX.Element} A scrollable list of customer names. Clicking a name sets the selected customer.
  */
-function ListDisplay({ filter = '' }) {
+function ListDisplay({ filter = '' }): React.ReactElement {
     const { setCustomer } = useCustomer();
     const { customers } = useCustomerNames();
     const [selectedIndex, setSelectedIndex] = useState(null);
@@ -30,7 +30,7 @@ function ListDisplay({ filter = '' }) {
         [customers, filter]
     );
 
-    const handleClick = useCallback((customer, index) => {
+    const handleClick = useCallback((customer: any, index: any) => {
         setCustomer(customer);
         setSelectedIndex(index);
     }, [setCustomer]);

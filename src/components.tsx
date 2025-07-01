@@ -1,10 +1,17 @@
-const MainContainer = ({ children }) => (
+interface MainContainerProps {
+    children: React.ReactNode;
+}
+const MainContainer = ({ children }: MainContainerProps) => (
     <div className="flex flex-col bg-gray-800 p-2 overflow-y-scroll container-snap rounded-2xl my-2 mx-1 border border-gray-700 ">
         {children}
     </div>
 );
 
-const Prompt = ({ children, title }) => (
+interface PromptProps {
+    children: React.ReactNode;
+    title: string;
+}
+const Prompt = ({ children, title }: PromptProps) => (
     <div className="fixed inset-0 flex items-center justify-center z-10 backdrop-blur-[2px] select-none">
         <div className="relative flex flex-col items-center justify-center rounded-xl bg-gray-900 w-2/3 md:w-7/12 lg:w-1/2 xl:w-1/3 p-4 border border-gray-700 shadow-xl prompt-animate">
             <p className="text-gray-100 font-bold text-lg mb-2">{title}</p>
@@ -13,14 +20,28 @@ const Prompt = ({ children, title }) => (
     </div>
 );
 
-const PromptField = ({ children, error = undefined }) => (
+interface PromptFieldProps {
+    children: React.ReactNode;
+    error?: string;
+}
+const PromptField = ({ children, error = undefined }: PromptFieldProps) => (
     <div className="flex flex-col w-full mb-3">
         {children}
         {error ? <div className="text-red-500 text-xs mt-1 ml-1">{error}</div> : null}
     </div>
 );
 
-const PromptInput = ({ label, value, onChange, type = 'text', step, disabled, name, placeholder }) => (
+interface PromptInputProps {
+    label: string | React.ReactElement;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    type?: string;
+    step?: string;
+    disabled?: boolean;
+    name?: string;
+    placeholder?: string;
+}
+const PromptInput = ({ label, value, onChange, type = 'text', step, disabled, name, placeholder }: PromptInputProps) => (
     <div className="flex flex-col w-full min-w-2/5 gap-0.5">
         <div className="text-gray-200 font-medium text-sm mb-1">{label}</div>
         <input
@@ -36,7 +57,14 @@ const PromptInput = ({ label, value, onChange, type = 'text', step, disabled, na
     </div>
 );
 
-const PromptButton = ({ onClick, disabled, warning = false, label, icon }) => (
+interface PromptButtonProps {
+    onClick: () => void;
+    disabled: boolean;
+    warning?: boolean;
+    label: string;
+    icon: React.ReactNode;
+}
+const PromptButton = ({ onClick, disabled, warning = false, label, icon }: PromptButtonProps) => (
     <button
         className={`text-sm font-bold items-center justify-center px-4 py-1.5 rounded-md w-fit border border-gray-700 transition-colors cursor-pointer disabled:cursor-not-allowed text-gray-200 ${warning ? 'bg-red-900 hover:bg-red-800 active:bg-red-950 disabled:bg-red-950/50' : 'bg-gray-800 hover:bg-gray-700 active:bg-gray-600 disabled:bg-gray-700/50'}`}
         onClick={onClick}
@@ -47,13 +75,20 @@ const PromptButton = ({ onClick, disabled, warning = false, label, icon }) => (
     </button>
 );
 
-const FilterContainer = ({ children }) => (
+interface FilterContainerProps {
+    children: React.ReactNode;
+}
+const FilterContainer = ({ children }: FilterContainerProps) => (
     <div className="absolute w-fit bg-gray-800 border border-gray-700 hover:bg-gray-700 rounded p-1 shadow-lg">
         {children}
     </div>
 );
 
-const FilterField = ({ children, label }) => (
+interface FilterFieldProps {
+    children: React.ReactNode;
+    label: string;
+}
+const FilterField = ({ children, label }: FilterFieldProps) => (
     <div className="flex flex-col gap-1.5 p-1 min-w-[100px]">
         <div className="flex flex-col gap-1">
             <p className="text-xs font-medium text-gray-200">{label}</p>
@@ -62,9 +97,19 @@ const FilterField = ({ children, label }) => (
     </div>
 );
 
-const FilterInput = ({ type, value, onChange, placeholder, dollar = false, min, max }) => (
+interface FilterInputProps {
+    type: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    placeholder: string;
+    dollar?: boolean;
+    min?: string;
+    max?: string;
+    step?: string;
+}
+const FilterInput = ({ type, value, onChange, placeholder, dollar = false, min, max }: FilterInputProps) => (
     <div className="relative flex flex-row items-center">
-        {dollar ? <span className="text-gray-400 mr-1 text-xs">$</span> : null}
+        {dollar && <span className="text-gray-400 mr-1 text-xs">$</span>}
         <input
             type={type}
             value={value}

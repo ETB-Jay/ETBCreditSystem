@@ -1,26 +1,22 @@
 import { useDisplay, useCustomerNames, useTotal } from '../context/useContext';
 import { useState, useEffect } from 'react';
 import { Prompt, PromptButton, PromptField, PromptInput } from '../components';
-import { db, fetchCustomers, getHighestCustomerId } from '../firebase';
+import { db, fetchCustomersOnce, getHighestCustomerId } from '../firebase';
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { getDocumentName, validateCustomerInfo } from './scripts';
+import type { Customer } from '../types';
 
-/**
- * A prompt that allows the user to add a new customer to the system. It appears only
- * when the state is "customer"
- * @returns {JSX.Element} The TransactionPrompt prompt
- */
 function CustomerPrompt() {
     const { setCustomers } = useCustomerNames();
-    const [newCustomer, setNewCustomer] = useState({});
-    const [errors, setErrors] = useState({});
+    const [newCustomer, setNewCustomer] = useState<Partial<Customer>>({ first_name: '', last_name: '', email: '', phone: '' });
+    const [errors, setErrors] = useState<Record<string, string>>({});
     const { setDisplay } = useDisplay();
     const { setTotal } = useTotal();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
-        setNewCustomer({});
-        setErrors('');
+        setNewCustomer({ first_name: '', last_name: '', email: '', phone: '' });
+        setErrors({});
     }, []);
 
     const handleSubmit = async () => {
@@ -28,6 +24,11 @@ function CustomerPrompt() {
         setIsSubmitting(true);
 
         const errs = validateCustomerInfo(newCustomer);
+        if (typeof errs === 'string') {
+            setErrors({ submit: errs });
+            setIsSubmitting(false);
+            return;
+        }
         if (Object.keys(errs).length > 0) {
             setErrors(errs);
             setIsSubmitting(false);
@@ -44,10 +45,10 @@ function CustomerPrompt() {
 
             const customerData = {
                 customer_id: newCustomerId,
-                first_name: newCustomer.first_name.trim(),
-                last_name: newCustomer.last_name.trim(),
-                email: newCustomer.email?.trim() || '',
-                phone: newCustomer.phone?.trim() || '',
+                first_name: (newCustomer.first_name ?? '').trim(),
+                last_name: (newCustomer.last_name ?? '').trim(),
+                email: (newCustomer.email ?? '').trim(),
+                phone: (newCustomer.phone ?? '').trim(),
                 balance: 0,
                 transactions: []
             };
@@ -65,9 +66,7 @@ function CustomerPrompt() {
                 });
             };
             try {
-                const [customersData] = await Promise.all([
-                    fetchCustomers()
-                ]);
+                const customersData = await fetchCustomersOnce();
                 setCustomers(customersData.customers);
                 setTotal(customersData.total);
             } catch (error) {
@@ -84,7 +83,7 @@ function CustomerPrompt() {
 
     const handleCancel = () => {
         setNewCustomer({});
-        setErrors('');
+        setErrors({});
         setDisplay('default');
     };
 
@@ -94,7 +93,7 @@ function CustomerPrompt() {
                 <PromptInput
                     label="First Name"
                     type="text"
-                    value={newCustomer.first_name}
+                    value={newCustomer.first_name ?? ''}
                     onChange={(e) => setNewCustomer({ ...newCustomer, first_name: e.target.value })}
                     placeholder="Enter your first name"
                     disabled={isSubmitting}
@@ -104,7 +103,7 @@ function CustomerPrompt() {
                 <PromptInput
                     label="Last Name"
                     type="text"
-                    value={newCustomer.last_name}
+                    value={newCustomer.last_name ?? ''}
                     onChange={(e) => setNewCustomer({ ...newCustomer, last_name: e.target.value })}
                     placeholder="Enter your last name"
                     disabled={isSubmitting}
@@ -115,7 +114,7 @@ function CustomerPrompt() {
                     label="Email"
                     name="email"
                     type="email"
-                    value={newCustomer.email}
+                    value={newCustomer.email ?? ''}
                     onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
                     placeholder="Enter your email"
                     disabled={isSubmitting}
@@ -126,7 +125,7 @@ function CustomerPrompt() {
                     label="Phone Number"
                     name="phone"
                     type="tel"
-                    value={newCustomer.phone}
+                    value={newCustomer.phone ?? ''}
                     onChange={(e) => setNewCustomer({ ...newCustomer, phone: e.target.value })}
                     placeholder="(123) 456-7890"
                     disabled={isSubmitting}
@@ -137,12 +136,13 @@ function CustomerPrompt() {
                     onClick={handleSubmit}
                     disabled={isSubmitting}
                     label={isSubmitting ? 'Processing...' : 'Add Customer'}
+                    icon={null}
                 />
                 <PromptButton
-                    type="button"
                     onClick={handleCancel}
                     disabled={isSubmitting}
                     label="Cancel"
+                    icon={null}
                 />
             </div>
         </Prompt>

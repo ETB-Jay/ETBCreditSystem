@@ -14,22 +14,32 @@ import { getDocumentName } from './scripts';
  * when the state is "transaction".
  * 
  * @component
- * @returns {JSX.Element} The TransactionPrompt prompt
+ * @returns {React.ReactElement} The TransactionPrompt prompt
  */
-function TransactionPrompt() {
+function TransactionPrompt(): React.ReactElement {
     const { customer } = useCustomer();
-    const [newTransaction, setNewTransaction] = useState({});
+    interface TransactionInput {
+        change_balance: number;
+        employee_name: string;
+        notes: string;
+    }
+    const transactionTemplate: TransactionInput = {
+        change_balance: 0,
+        employee_name: '',
+        notes: ''
+    };
+    const [newTransaction, setNewTransaction] = useState<TransactionInput>(transactionTemplate);
     const { setDisplay } = useDisplay();
     const [errors, setErrors] = useState({ invalidValue: '', noEmployee: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [payment, setPayment] = useState({ add: false, sub: false });
-    const [employees, setEmployees] = useState([]);
+    const [employees, setEmployees] = useState<string[]>([]);
     const [showAddEmployee, setShowAddEmployee] = useState(false);
     const [newEmployeeName, setNewEmployeeName] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
 
     useEffect(() => {
-        setNewTransaction({});
+        setNewTransaction(transactionTemplate);
         setErrors({ invalidValue: '', noEmployee: '' });
         setPayment({ add: false, sub: false });
         const stored = localStorage.getItem('employees');
@@ -40,7 +50,7 @@ function TransactionPrompt() {
         console.log('payment state changed:', payment);
     }, [payment]);
 
-    const handlePaymentType = (type) => {
+    const handlePaymentType = (type: 'add' | 'sub') => {
         console.log(type);
         setPayment({ add: type === 'add', sub: type === 'sub' });
     };
@@ -50,11 +60,11 @@ function TransactionPrompt() {
         setIsSubmitting(true);
         setErrors({ invalidValue: '', noEmployee: '' });
         try {
-            const delta = Number(newTransaction.change_balance);
-            if (!delta || isNaN(delta)) {
+            const delta = newTransaction.change_balance;
+            if (!delta) {
                 setErrors(e => ({ ...e, invalidValue: 'Amount is Required and Must be a Valid Number!' }));
                 return false;
-            } else if (!(/^\d+(\.\d{1,2})?$/.test(delta))) {
+            } else if (!/^\d+(\.\d{1,2})?$/.test(String(newTransaction.change_balance))) {
                 setErrors(e => ({ ...e, invalidValue: 'Amount Must Have a Valid Number of Decimal Places!' }));
                 return false;
             } else if (!payment.add && !payment.sub) {
@@ -75,7 +85,7 @@ function TransactionPrompt() {
             const arrayName = getDocumentName(customer.customer_id);
             const customerDoc = await getDoc(doc(db, 'customers', arrayName));
             const currentCustomers = customerDoc.data()?.customers || [];
-            const updatedCustomers = currentCustomers.map(c =>
+            const updatedCustomers = currentCustomers.map((c: any) =>
                 c.customer_id === customer.customer_id
                     ? {
                         ...c,
@@ -87,7 +97,11 @@ function TransactionPrompt() {
             await updateDoc(doc(db, 'customers', arrayName), { customers: updatedCustomers });
             return true;
         } catch (error) {
-            setErrors(e => ({ ...e, invalidValue: error.message || 'An unexpected error occurred during the transaction' }));
+            if (error instanceof Error) {
+                setErrors(e => ({ ...e, invalidValue: error.message || 'An unexpected error occurred during the transaction' }));
+            } else {
+                setErrors(e => ({ ...e, invalidValue: 'An unexpected error occurred during the transaction' }));
+            }
             return false;
         } finally {
             setIsSubmitting(false);
@@ -99,7 +113,14 @@ function TransactionPrompt() {
         if (valid) setDisplay('default');
     };
 
-    const SideButton = ({ label, color, onClick, disabled, title }) => (
+    interface SideButtonProps {
+        label: React.ReactNode;
+        color: string;
+        onClick: () => void;
+        disabled?: boolean;
+        title?: string;
+    }
+    const SideButton = ({ label, color, onClick, disabled = false, title = '' }: SideButtonProps) => (
         <button
             className={`${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} flex items-center justify-center ring-2 rounded-full p-0.5 transition-all ${color}`}
             onClick={onClick}
@@ -118,7 +139,7 @@ function TransactionPrompt() {
                         <div className="flex flex-row gap-3 mt-2">
                             Amount
                             <SideButton
-                                label={<AddIcon fontSize='xs' />} 
+                                label={<AddIcon fontSize='small' />} 
                                 color={`text-white ring-emerald-950 ${payment.add ? ' bg-emerald-800' : 'bg-emerald-700/30 hover:bg-emerald-800/60 active:bg-emerald-900'}`}
                                 onClick={() => {
                                     console.log('Add button clicked');
@@ -126,7 +147,7 @@ function TransactionPrompt() {
                                 }}
                             />
                             <SideButton
-                                label={<RemoveIcon fontSize='xs' />}
+                                label={<RemoveIcon fontSize='small' />}
                                 color={`text-white ring-red-950 ${payment.sub ? ' bg-red-900' : 'bg-red-800/30 hover:bg-red-900/60 active:bg-red-950'}`}
                                 onClick={() => {
                                     console.log('Sub button clicked');
@@ -137,18 +158,17 @@ function TransactionPrompt() {
                     }
                     type="number"
                     step="0.01"
-                    value={newTransaction.change_balance || ''}
+                    value={newTransaction.change_balance ? String(newTransaction.change_balance) : ''}
                     onChange={input => {
                         const value = input.target.value;
-                        const amount = value ? Math.abs(Number(value)) : '';
+                        const amount = value.replace(/[^\d.]/g, '');
                         setNewTransaction({
                             ...newTransaction,
-                            change_balance: amount
+                            change_balance: amount === '' ? 0 : Number(amount)
                         });
                     }}
                     disabled={isSubmitting}
                 />
-
             </PromptField>
             <PromptField error={errors.noEmployee}>
                 <label className="text-gray-200 font-medium text-sm">Employee Name</label>
@@ -196,7 +216,7 @@ function TransactionPrompt() {
                             </div>
                             {newTransaction.employee_name && (
                                 <SideButton
-                                    label={<DeleteIcon fontSize="xs" />}
+                                    label={<DeleteIcon fontSize="small" />}
                                     color="bg-red-800 text-white hover:bg-red-900 active:bg-red-950 ring-red-900 ml-1"
                                     onClick={() => {
                                         const updated = employees.filter(e => e !== newTransaction.employee_name);
@@ -212,6 +232,7 @@ function TransactionPrompt() {
                     ) : (
                         <div className="flex flex-row items-center gap-2 w-full">
                             <PromptInput
+                                label="New Name"
                                 placeholder="New Name"
                                 value={newEmployeeName}
                                 onChange={e => setNewEmployeeName(e.target.value)}
@@ -219,7 +240,7 @@ function TransactionPrompt() {
                             />
                             <SideButton
                                 color={'bg-emerald-700 text-white hover:bg-emerald-800 active:bg-emerald-900 ring-emerald-900'}
-                                label={<AddIcon fontSize='xs' />}
+                                label={<AddIcon fontSize="small" />}
                                 onClick={() => {
                                     const trimmed = newEmployeeName.trim();
                                     if (trimmed && !employees.includes(trimmed)) {
@@ -236,7 +257,7 @@ function TransactionPrompt() {
                             />
                             <SideButton
                                 color={'bg-gray-800 text-gray-200 hover:bg-gray-900 active:bg-black ring-gray-950/50'}
-                                label={<ClearIcon fontSize='xs' />}
+                                label={<ClearIcon fontSize="small" />}
                                 onClick={() => {
                                     setShowAddEmployee(false);
                                     setNewEmployeeName('');
@@ -260,10 +281,13 @@ function TransactionPrompt() {
                     onClick={handleSubmit}
                     disabled={isSubmitting}
                     label={isSubmitting ? 'Processing...' : 'Confirm'}
+                    icon={null}
                 />
                 <PromptButton
                     onClick={() => setDisplay('default')}
                     label="Cancel"
+                    disabled={isSubmitting}
+                    icon={null}
                 />
             </div>
         </Prompt>

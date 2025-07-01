@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs, onSnapshot } from 'firebase/firestore';
+import { Customer } from './types';
 
 // Import additional Firebase SDKs as needed: https://firebase.google.com/docs/web/setup#available-libraries
 // TODO: Add SDKs for Firebase products that you want to use
@@ -23,30 +24,16 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const customersCollection = collection(db, 'customers');
 
-const processRaw = (customer) => {
-  return {
-    customer_id: customer.customer_id,
-    first_name: customer.first_name,
-    last_name: customer.last_name,
-    email: customer.email || '',
-    phone: customer.phone || '',
-    balance: customer.balance || 0,
-    notes: customer.notes || '',
-    transactions: (customer.transactions || []).map(transaction => ({
-      ...transaction,
-      date: transaction.date,
-      notes: transaction.notes
-    }))
-  };
-};
+// Type for the callback used in fetchCustomers
+export type CustomersCallback = (data: { customers: Customer[]; total: number; error?: any }) => void;
 
 // Real-time fetchCustomers: takes a callback, returns unsubscribe
-const fetchCustomers = (callback) => {
+const fetchCustomers = (callback: CustomersCallback) => {
   return onSnapshot(customersCollection, (snapshot) => {
     try {
       const customerData = snapshot.docs.flatMap(doc => {
         const data = doc.data();
-        return (data.customers || []).map(customer => processRaw(customer));
+        return data.customers || [];
       });
       callback({
         customers: customerData,
@@ -68,7 +55,7 @@ const fetchCustomersOnce = async () => {
     const customersDocuments = await getDocs(customersCollection);
     const customerData = customersDocuments.docs.flatMap(doc => {
       const data = doc.data();
-      return (data.customers || []).map(customer => processRaw(customer));
+      return data.customers || [];
     });
     return {
       customers: customerData,
@@ -87,7 +74,7 @@ const getHighestCustomerId = async () => {
     customersDocuments.docs.forEach(doc => {
       const data = doc.data();
       if (data.customers && Array.isArray(data.customers)) {
-        data.customers.forEach(customer => {
+        data.customers.forEach((customer: any) => {
           if (customer.customer_id > highestId) {
             highestId = customer.customer_id;
           }

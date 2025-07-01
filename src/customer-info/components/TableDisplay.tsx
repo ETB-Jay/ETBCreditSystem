@@ -6,18 +6,19 @@ import DateFilter from './filters/DateFilter';
 import Amount from './filters/Amount';
 import EmployeeName from './filters/Employee_Name';
 import { useEffect, useState, useMemo } from 'react';
+import { Customer, Transaction, Display } from '../../types';
 
 /**
  * Displays a Table containing the transaction made by the individual
  * @component
  * @returns {JSX.Element} The rendered table transactions or a placeholder if none exist.
  */
-function TableDisplay() {
+function TableDisplay(): React.ReactElement {
     const { customer } = useCustomer();
     const { customers } = useCustomerNames();
     const { display, setDisplay } = useDisplay();
     const { filters, setFilters } = useFilters();
-    const [filteredRows, setFilteredRows] = useState([]);
+    const [filteredRows, setFilteredRows] = useState<Transaction[]>([]);
 
     const defaultFilters = {
         date: { startDate: '', endDate: '' },
@@ -25,7 +26,7 @@ function TableDisplay() {
         employee: { searchTerm: '' }
     };
 
-    function deepEqual(obj1, obj2) {
+    function deepEqual(obj1: any, obj2: any): boolean {
         return JSON.stringify(obj1) === JSON.stringify(obj2);
     }
 
@@ -38,10 +39,10 @@ function TableDisplay() {
         }
     }, [customer?.customer_id, customer?.transactions?.length]);
 
-    const applyFilters = useMemo(() => (rows) => {
-        return rows.filter(row => {
+    const applyFilters = useMemo(() => (rows: Transaction[]) => {
+        return rows.filter((row: Transaction) => {
             if (filters.date?.startDate || filters.date?.endDate) {
-                const rowDate = new Date(row.date.seconds * 1000);
+                const rowDate = new Date((row.date as { seconds: number }).seconds * 1000);
                 if (filters.date.startDate) {
                     const startDate = new Date(filters.date.startDate);
                     startDate.setHours(0, 0, 0, 0);
@@ -67,10 +68,10 @@ function TableDisplay() {
     }, [filters]);
 
     useEffect(() => {
-        const currentCustomer = customers.find(c => c.customer_id === customer?.customer_id);
-        const transactions = currentCustomer?.transactions || [];
+        const currentCustomer = customers.find((c: Customer) => c.customer_id === customer?.customer_id);
+        const transactions: Transaction[] = currentCustomer?.transactions || [];
         const filtered = applyFilters(transactions);
-        filtered.sort((a, b) => b.date.seconds - a.date.seconds);
+        filtered.sort((a: Transaction, b: Transaction) => (b.date as { seconds: number }).seconds - (a.date as { seconds: number }).seconds);
         setFilteredRows(filtered);
     }, [customers, filters, customer?.customer_id, applyFilters]);
 
@@ -80,10 +81,13 @@ function TableDisplay() {
             filters.employee?.searchTerm;
     };
 
-    const HeaderField = ({ label }) => (
+    interface HeaderFieldProps {
+        label: string;
+    }
+    const HeaderField = ({ label }: HeaderFieldProps) => (
         <th className="relative px-3 py-1 font-semibold whitespace-nowrap cursor-pointer group text-sm bg-gray-800 text-gray-100 hover:bg-gray-700 transition-all duration-200">
             <div className="flex items-center gap-1"
-                onClick={() => setDisplay(display === `${label}Filter` ? null : `${label}Filter`)}>
+                onClick={() => setDisplay(display === `${label}Filter` ? 'default' as Display : `${label}Filter` as Display)}>
                 {label}
                 <FilterListIcon
                     sx={{
@@ -113,17 +117,17 @@ function TableDisplay() {
     return (
         <div className="max-h-9/10 rounded-xl overflow-y-scroll container-snap border border-gray-700 shadow-lg bg-gray-900">
             <div className="absolute">
-                {display === 'DateFilter' && (
+                {display === ('DateFilter' as unknown as Display) && (
                     <div className="absolute z-50 mt-8 left-[2vw] select-none">
                         <DateFilter />
                     </div>
                 )}
-                {display === 'AmountFilter' && (
+                {display === ('AmountFilter' as unknown as Display) && (
                     <div className="absolute z-50 mt-8 left-[16vw] select-none">
                         <Amount />
                     </div>
                 )}
-                {display === 'EmployeeFilter' && (
+                {display === ('EmployeeFilter' as unknown as Display) && (
                     <div className="absolute z-50 mt-8 left-[34vw] select-none">
                         <EmployeeName />
                     </div>
@@ -144,10 +148,10 @@ function TableDisplay() {
                             key={idx}
                             className="hover:bg-gray-800/50 transition-colors duration-150 ease-in-out"
                         >
-                            <td className="px-3 py-0.5 max-w-[200px] overflow-x-scroll no-scroll whitespace-nowrap container-snap text-sm" title={row.date?.seconds ? new Date(row.date.seconds * 1000).toISOString() : 'Invalid date'}>
-                                {row.date?.seconds ? new Date(row.date.seconds * 1000).toLocaleString().replace('T', ' ').slice(0, 19) : 'Invalid date'}
+                            <td className="px-3 py-0.5 max-w-[200px] overflow-x-scroll no-scroll whitespace-nowrap container-snap text-sm" title={row.date && (row.date as { seconds: number }).seconds ? new Date((row.date as { seconds: number }).seconds * 1000).toISOString() : 'Invalid date'}>
+                                {row.date && (row.date as { seconds: number }).seconds ? new Date((row.date as { seconds: number }).seconds * 1000).toLocaleString().replace('T', ' ').slice(0, 19) : 'Invalid date'}
                             </td>
-                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-scroll no-scroll whitespace-nowrap container-snap text-sm" title={row.change_balance}>
+                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-scroll no-scroll whitespace-nowrap container-snap text-sm" title={String(row.change_balance)}>
                                 {row.change_balance < 0 ?
                                     <ArrowDropDownIcon sx={{ color: '#f87171', transition: 'transform 0.2s ease' }} /> :
                                     <ArrowDropUpIcon sx={{ color: '#4ade80', transition: 'transform 0.2s ease' }} />

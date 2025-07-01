@@ -1,5 +1,14 @@
-const validateCustomerInfo = (customer) => {
-    const errs = {};
+import { Customer } from "../types";
+
+type ErrorProp = Record<string, string>;
+
+const validateCustomerInfo = (customer: Partial<Customer>) => {
+    const errs: ErrorProp = {
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone: ''
+    };
 
     console.log(customer);
 
@@ -20,10 +29,12 @@ const validateCustomerInfo = (customer) => {
     return errs;
 };
 
-const getDocumentName = (id) => {
+const getDocumentName = (id: number) => {
     const min = Math.floor((id - 1) / 100) * 100 + 1;
     const max = min + 99;
     return `${min}_min_${max}_max`;
 };
+
+
 
 export { validateCustomerInfo, getDocumentName };

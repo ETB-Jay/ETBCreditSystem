@@ -13,7 +13,7 @@ import { MainContainer } from '../components';
  * @component
  * @returns {JSX.Element} The CustomerInfo component
  */
-function CustomerInfo() {
+function CustomerInfo(): React.ReactElement {
     const { customer } = useCustomer();
     if (!customer) {
         return (

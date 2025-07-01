@@ -1,7 +1,6 @@
 import { CustomerContext, DisplayContext, CustomerNamesContext, TransactionContext, FilterContext, TotalContext} from './Context';
 import { useContext } from 'react';
 
-// Custom hooks for accessing context values. Throws if used outside the correct provider.
 const useCustomer = () => {
     const context = useContext(CustomerContext);
     if (!context) {

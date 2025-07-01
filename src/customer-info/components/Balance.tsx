@@ -5,13 +5,13 @@ import { useEffect, useState } from 'react';
 
 /**
  * Displays the current customer's balance in a container. It updates dynamically
- * @returns {JSX.Element} The Balance component
+ * @returns {React.ReactElement} The Balance component
  */
-function Balance() {
+function Balance(): React.ReactElement {
     const { customer } = useCustomer();
     const { customers } = useCustomerNames();
     const { setDisplay } = useDisplay();
-    const [formattedBalance, setFormattedBalance] = useState(0);
+    const [formattedBalance, setFormattedBalance] = useState('0.00');
 
     useEffect(() => {
         const updateBalance = () => {

@@ -10,8 +10,8 @@ import InfoIcon from '@mui/icons-material/Info';
  * @component
  * @returns {JSX.Element} The rendered customer search bar, adding customer button, information icon, and list of customers. 
  */
-function Search() {
-    const [search, setSearch] = useState();
+function Search(): React.ReactElement {
+    const [search, setSearch] = useState<string>('');
     const { setDisplay } = useDisplay();
 
     useEffect(() => {
