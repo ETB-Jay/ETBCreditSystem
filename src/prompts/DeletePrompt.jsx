@@ -3,6 +3,7 @@ import { useDisplay, useCustomer, useCustomerNames } from '../context/useContext
 import { Prompt, PromptField, PromptInput, PromptButton } from '../components';
 import { db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { getDocumentName } from './scripts';
 
 function DeletePrompt() {
     const { setDisplay } = useDisplay();
@@ -20,10 +21,8 @@ function DeletePrompt() {
 
         try {
             setIsSubmitting(true);
-            const min = (Math.floor(customer.customer_id / 100) - (customer.customer_id % 100 === 0)) * 100 + 1;
-            const max = (Math.floor(customer.customer_id / 100) + (customer.customer_id % 100 !== 0)) * 100;
-            const arrayName = `${min}_min_${max}_max`;
-
+            const arrayName = getDocumentName(customer.customer_id);
+            
             const docRef = doc(db, 'customers', arrayName);
             const docSnap = await getDoc(docRef);
 

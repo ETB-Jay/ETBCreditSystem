@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Prompt, PromptButton, PromptField, PromptInput } from '../components';
 import { db, fetchCustomers, getHighestCustomerId } from '../firebase';
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { getDocumentName, validateCustomerInfo } from './scripts';
 
 /**
  * A prompt that allows the user to add a new customer to the system. It appears only
@@ -22,55 +23,21 @@ function CustomerPrompt() {
         setErrors('');
     }, []);
 
-    /**
-     * Validates the new Customer
-     * @returns {boolean} If the newCustomer is valid
-     */
-    const validate = () => {
-        const errs = {};
-        const { first_name, last_name, email, phone } = newCustomer;
-
-        if (!first_name?.trim()) {
-            errs.first_name = 'First name is required';
-        }
-
-        if (!last_name?.trim()) {
-            errs.last_name = 'Last name is required';
-        }
-
-        const emailTrimmed = email?.trim() || '';
-        const phoneTrimmed = phone?.trim() || '';
-        const phoneDigits = phoneTrimmed.replace(/\D/g, '');
-        if (emailTrimmed && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(emailTrimmed)) {
-            errs.email = 'Please enter a valid email address';
-        }
-        if (phoneTrimmed && phoneDigits.length !== 10) {
-            errs.phone = 'Phone number must be 10 digits';
-        }
-        return errs;
-    };
-
     const handleSubmit = async () => {
         if (isSubmitting) return;
         setIsSubmitting(true);
 
-        const errs = validate();
+        const errs = validateCustomerInfo(newCustomer);
         if (Object.keys(errs).length > 0) {
             setErrors(errs);
             setIsSubmitting(false);
             return;
         }
 
-        const getArrayName = (number) => {
-            const min = (Math.floor(number / 100) - (number % 100 === 0)) * 100 + 1;
-            const max = (Math.floor(number / 100) + (number % 100 !== 0)) * 100;
-            return `${min}_min_${max}_max`;
-        };
-
         try {
             const highestCustomerId = await getHighestCustomerId();
             const newCustomerId = highestCustomerId + 1;
-            const arrayName = getArrayName(newCustomerId);
+            const arrayName = getDocumentName(newCustomerId);
 
             const docRef = doc(db, 'customers', arrayName);
             const docSnap = await getDoc(docRef);

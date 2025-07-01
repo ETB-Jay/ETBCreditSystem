@@ -6,7 +6,7 @@ const MainContainer = ({ children }) => (
 
 const Prompt = ({ children, title }) => (
     <div className="fixed inset-0 flex items-center justify-center z-10 backdrop-blur-[2px] select-none">
-        <div className="flex flex-col items-center justify-center rounded-xl bg-gray-900 w-2/3 md:w-7/12 lg:w-1/2 xl:w-1/3 p-4 border border-gray-700 shadow-xl">
+        <div className="relative flex flex-col items-center justify-center rounded-xl bg-gray-900 w-2/3 md:w-7/12 lg:w-1/2 xl:w-1/3 p-4 border border-gray-700 shadow-xl prompt-animate">
             <p className="text-gray-100 font-bold text-lg mb-2">{title}</p>
             {children}
         </div>
@@ -22,7 +22,7 @@ const PromptField = ({ children, error = undefined }) => (
 
 const PromptInput = ({ label, value, onChange, type = 'text', step, disabled, name, placeholder }) => (
     <div className="flex flex-col w-full min-w-2/5 gap-0.5">
-        <label className="text-gray-200 font-medium text-sm mb-1">{label}</label>
+        <div className="text-gray-200 font-medium text-sm mb-1">{label}</div>
         <input
             className="text-gray-200 text-sm bg-gray-800 rounded-md px-2 py-0.5 h-7 w-full outline-none focus:bg-gray-500 hover:bg-gray-700 border border-gray-700 placeholder-gray-500 disabled:bg-gray-200 disabled:cursor-not-allowed"
             type={type}

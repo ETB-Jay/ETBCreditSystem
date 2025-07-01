@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useDisplay, useCustomer, useCustomerNames } from '../context/useContext';
+import { useDisplay, useCustomer } from '../context/useContext';
 import { Prompt, PromptButton, PromptField, PromptInput } from '../components';
 import { db } from '../firebase';
 import { doc, updateDoc, Timestamp, getDoc } from 'firebase/firestore';
@@ -7,6 +7,7 @@ import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveIcon from '@mui/icons-material/Remove';
+import { getDocumentName } from './scripts';
 
 /**
  * A prompt that allows the user to add a new transaction to the system. It appears only
@@ -17,7 +18,6 @@ import RemoveIcon from '@mui/icons-material/Remove';
  */
 function TransactionPrompt() {
     const { customer } = useCustomer();
-    const { setCustomers } = useCustomerNames();
     const [newTransaction, setNewTransaction] = useState({});
     const { setDisplay } = useDisplay();
     const [errors, setErrors] = useState({ invalidValue: '', noEmployee: '' });
@@ -36,15 +36,13 @@ function TransactionPrompt() {
         setEmployees(stored ? JSON.parse(stored) : []);
     }, []);
 
+    useEffect(() => {
+        console.log('payment state changed:', payment);
+    }, [payment]);
+
     const handlePaymentType = (type) => {
+        console.log(type);
         setPayment({ add: type === 'add', sub: type === 'sub' });
-        if (newTransaction.change_balance) {
-            const amount = Math.abs(Number(newTransaction.change_balance));
-            setNewTransaction({
-                ...newTransaction,
-                change_balance: type === 'add' ? amount : -amount
-            });
-        }
     };
 
     const updateTransaction = async () => {
@@ -56,7 +54,7 @@ function TransactionPrompt() {
             if (!delta || isNaN(delta)) {
                 setErrors(e => ({ ...e, invalidValue: 'Amount is Required and Must be a Valid Number!' }));
                 return false;
-            } else if (!(/^(-)?\d+(\.\d{1,2})?$/.test(delta))) {
+            } else if (!(/^\d+(\.\d{1,2})?$/.test(delta))) {
                 setErrors(e => ({ ...e, invalidValue: 'Amount Must Have a Valid Number of Decimal Places!' }));
                 return false;
             } else if (!payment.add && !payment.sub) {
@@ -66,16 +64,15 @@ function TransactionPrompt() {
                 setErrors(e => ({ ...e, noEmployee: 'Please Enter Your Name!' }));
                 return false;
             }
+            const signedDelta = payment.sub ? -delta : delta;
             const transactionData = {
                 employee_name: newTransaction.employee_name.trim(),
-                change_balance: Number(delta),
+                change_balance: signedDelta,
                 notes: newTransaction.notes?.trim() || '',
                 date: Timestamp.now()
             };
             if (!customer) throw new Error('Customer data is not properly loaded');
-            const min = (Math.floor(customer.customer_id / 100) - (customer.customer_id % 100 === 0)) * 100 + 1;
-            const max = (Math.floor(customer.customer_id / 100) + (customer.customer_id % 100 !== 0)) * 100;
-            const arrayName = `${min}_min_${max}_max`;
+            const arrayName = getDocumentName(customer.customer_id);
             const customerDoc = await getDoc(doc(db, 'customers', arrayName));
             const currentCustomers = customerDoc.data()?.customers || [];
             const updatedCustomers = currentCustomers.map(c =>
@@ -83,22 +80,11 @@ function TransactionPrompt() {
                     ? {
                         ...c,
                         transactions: [...(c.transactions || []), transactionData],
-                        balance: Number(c.balance) + transactionData.change_balance
+                        balance: Math.round((Number(c.balance) + Number(transactionData.change_balance)) * 100) / 100
                     }
                     : c
             );
             await updateDoc(doc(db, 'customers', arrayName), { customers: updatedCustomers });
-            setCustomers(prevCustomers =>
-                prevCustomers.map(c =>
-                    c.customer_id === customer.customer_id
-                        ? {
-                            ...c,
-                            balance: Number(c.balance) + Number(transactionData.change_balance),
-                            transactions: [...(c.transactions || []), transactionData]
-                        }
-                        : c
-                )
-            );
             return true;
         } catch (error) {
             setErrors(e => ({ ...e, invalidValue: error.message || 'An unexpected error occurred during the transaction' }));
@@ -115,7 +101,6 @@ function TransactionPrompt() {
 
     const SideButton = ({ label, color, onClick, disabled, title }) => (
         <button
-            type="button"
             className={`${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} flex items-center justify-center ring-2 rounded-full p-0.5 transition-all ${color}`}
             onClick={onClick}
             disabled={disabled}
@@ -130,29 +115,35 @@ function TransactionPrompt() {
             <PromptField error={errors.invalidValue}>
                 <PromptInput
                     label={
-                        <div className="flex flex-row gap-2 mt-2">
+                        <div className="flex flex-row gap-3 mt-2">
                             Amount
                             <SideButton
-                                label={<AddIcon fontSize='xs' />}
-                                color={`bg-emerald-700/30 text-white hover:bg-emerald-800/60 active:bg-emerald-900 ring-emerald-950 ${payment.add ? ' bg-emerald-800' : ''}`}
-                                onClick={() => handlePaymentType('add')}
+                                label={<AddIcon fontSize='xs' />} 
+                                color={`text-white ring-emerald-950 ${payment.add ? ' bg-emerald-800' : 'bg-emerald-700/30 hover:bg-emerald-800/60 active:bg-emerald-900'}`}
+                                onClick={() => {
+                                    console.log('Add button clicked');
+                                    handlePaymentType('add');
+                                }}
                             />
                             <SideButton
                                 label={<RemoveIcon fontSize='xs' />}
-                                color={`bg-red-800/30 text-white hover:bg-red-900/60 active:bg-red-950 ring-red-950 ${payment.sub ? ' bg-red-900' : ''}`}
-                                onClick={() => handlePaymentType('sub')}
+                                color={`text-white ring-red-950 ${payment.sub ? ' bg-red-900' : 'bg-red-800/30 hover:bg-red-900/60 active:bg-red-950'}`}
+                                onClick={() => {
+                                    console.log('Sub button clicked');
+                                    handlePaymentType('sub');
+                                }}
                             />
                         </div>
                     }
                     type="number"
                     step="0.01"
-                    value={newTransaction.change_balance ? Math.abs(Number(newTransaction.change_balance)) : ''}
+                    value={newTransaction.change_balance || ''}
                     onChange={input => {
                         const value = input.target.value;
                         const amount = value ? Math.abs(Number(value)) : '';
                         setNewTransaction({
                             ...newTransaction,
-                            change_balance: payment.sub ? -amount : amount
+                            change_balance: amount
                         });
                     }}
                     disabled={isSubmitting}
@@ -160,10 +151,10 @@ function TransactionPrompt() {
 
             </PromptField>
             <PromptField error={errors.noEmployee}>
-                <label className="text-gray-200 font-medium text-sm mb-1">Employee Name</label>
+                <label className="text-gray-200 font-medium text-sm">Employee Name</label>
                 <div className='flex flex-row items-center gap-2 w-full'>
                     {!showAddEmployee ? (
-                        <div className='flex-1 flex flex-row items-center gap-1 relative'>
+                        <div className='flex-1 flex flex-row items-center justify-center gap-1 relative'>
                             <div className="relative w-full">
                                 <button
                                     type="button"
@@ -192,7 +183,7 @@ function TransactionPrompt() {
                                             </div>
                                         ))}
                                         <div
-                                            className="px-3 py-2 cursor-pointer hover:bg-gray-700 text-white text-xs"
+                                            className="px-3 py-2 cursor-pointer hover:bg-gray-700 text-red-200 text-xs font-semibold"
                                             onClick={() => {
                                                 setShowAddEmployee(true);
                                                 setShowDropdown(false);
@@ -221,7 +212,7 @@ function TransactionPrompt() {
                     ) : (
                         <div className="flex flex-row items-center gap-2 w-full">
                             <PromptInput
-                                placeholder="New name"
+                                placeholder="New Name"
                                 value={newEmployeeName}
                                 onChange={e => setNewEmployeeName(e.target.value)}
                                 disabled={isSubmitting}

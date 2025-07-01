@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useCustomer } from '../../context/useContext';
 import CheckIcon from '@mui/icons-material/Check';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import { db } from '../../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
@@ -30,9 +31,11 @@ function Notes() {
 
     return (
         <div className='h-full w-full relative hidden sm:flex flex-row items-center justify-center'>
+            <div className='absolute left-2 top-1/2 -translate-y-1/2'><EditNoteIcon className='text-white'/></div>
             <input
-                className='base bg-white/20 rounded-2xl ring-2 text-black pl-2 pr-9.5 text-sm w-full h-full'
+                className='base bg-white/20 rounded-2xl ring-1 ring-gray-900/20 text-white px-9.5 text-xs w-full h-full'
                 value={tempNote}
+                placeholder='Add a note...'
                 onChange={e => setTempNote(e.target.value)}
             />
             <button
@@ -42,7 +45,7 @@ function Notes() {
                 disabled={!tempNote}
             >
                 <CheckIcon
-                    fontSize='small'
+                    fontSize='xs'
                     className={`${tempNote ? 'text-emerald-400' : 'text-gray-400'}`}
                 />
             </button>

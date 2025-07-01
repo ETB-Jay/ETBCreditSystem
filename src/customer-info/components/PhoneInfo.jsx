@@ -20,7 +20,7 @@ function PhoneInfo() {
     return (
         <div className="flex flex-row items-center justify-start h-2/3 select-none">
             <PhoneIcon className="mr-1" sx={{ color: 'white', fontSize: 'max(2vw, 20px)' }} />
-            <div className="text-white font-semibold text-sm whitespace-nowrap max-w-8 md:max-w-20 lg:max-w-30 overflow-x-scroll container-snap">
+            <div className="text-white font-semibold text-sm whitespace-nowrap max-w-7 md:max-w-10 lg:max-w-20 overflow-x-scroll container-snap">
                 {formatPhoneNumber(customer.phone)}
             </div>
         </div>

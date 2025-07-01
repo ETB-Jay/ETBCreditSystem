@@ -3,6 +3,7 @@ import { useCustomer, useDisplay, useCustomerNames } from '../context/useContext
 import { Prompt, PromptButton, PromptField, PromptInput } from '../components';
 import { db } from '../firebase';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { getDocumentName, validateCustomerInfo } from './scripts';
 
 /**
  * A prompt containing a form that allows the user to edit the customer in question.
@@ -31,40 +32,16 @@ function EditCustomer() {
         }));
     };
 
-    const validate = (customer) => {
-        const errs = {};
-        const { first_name, last_name, email, phone } = customer;
-        if (!first_name?.trim()) {
-            errs.first_name = 'First name is required';
-        } else if (first_name.trim().length < 2) {
-            errs.first_name = 'First name must be at least 2 characters';
-        }
-        if (!last_name?.trim()) {
-            errs.last_name = 'Last name is required';
-        } else if (last_name.trim().length < 2) {
-            errs.last_name = 'Last name must be at least 2 characters';
-        }
-
-        const emailTrimmed = email?.trim() || '';
-        const phoneTrimmed = phone?.trim() || '';
-        const phoneDigits = phoneTrimmed.replace(/\D/g, '');
-        if (emailTrimmed && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(emailTrimmed)) {
-            errs.email = 'Please enter a valid email address';
-        }
-        if (phoneTrimmed && phoneDigits.length !== 10) {
-            errs.phone = 'Phone number must be 10 digits';
-        }
-        setErrors(errs);
-        return Object.keys(errs).length === 0;
-    };
-
     const handleSubmit = async () => {
+        console.log('handleSubmit');
         if (isSubmitting) return false;
         setIsSubmitting(true);
         setErrors({});
 
-        const isValid = validate(temp);
-        if (!isValid) {
+        console.log(temp);
+        const errs = validateCustomerInfo(temp);
+        if (Object.keys(errs).length > 0) {
+            setErrors(errs);
             setIsSubmitting(false);
             return false;
         }
@@ -74,9 +51,7 @@ function EditCustomer() {
                 throw new Error('Customer data is not properly loaded');
             }
 
-            const min = (Math.floor(customer.customer_id / 100) - (customer.customer_id % 100 === 0)) * 100 + 1;
-            const max = (Math.floor(customer.customer_id / 100) + (customer.customer_id % 100 !== 0)) * 100;
-            const arrayName = `${min}_min_${max}_max`;
+            const arrayName = getDocumentName(customer.customer_id);
             const customerDoc = await getDoc(doc(db, 'customers', arrayName));
             const currentCustomers = customerDoc.data()?.customers || [];
 
@@ -132,8 +107,9 @@ function EditCustomer() {
 
     return (
         <Prompt title="Edit Customer Information">
-            <PromptField label={'First Name'} error={errors.first_name}>
+            <PromptField error={errors.first_name}>
                 <PromptInput
+                    label={'First Name'} 
                     type="text"
                     name="first_name"
                     value={temp.first_name}
@@ -142,8 +118,9 @@ function EditCustomer() {
                     disabled={isSubmitting}
                 />
             </PromptField>
-            <PromptField label={'Last Name'} error={errors.last_name}>
+            <PromptField error={errors.last_name}>
                 <PromptInput
+                    label={'Last Name'} 
                     type="text"
                     name="last_name"
                     value={temp.last_name}
@@ -152,8 +129,9 @@ function EditCustomer() {
                     disabled={isSubmitting}
                 />
             </PromptField>
-            <PromptField label={'Email'} error={errors.email}>
+            <PromptField error={errors.email}>
                 <PromptInput
+                    label={'Email'} 
                     type="email"
                     name="email"
                     value={temp.email}
@@ -162,8 +140,9 @@ function EditCustomer() {
                     disabled={isSubmitting}
                 />
             </PromptField>
-            <PromptField label={'Phone Number'} error={errors.phone}>
+            <PromptField error={errors.phone}>
                 <PromptInput
+                    label={'Phone Number'} 
                     type="tel"
                     name="phone"
                     value={temp.phone}
@@ -174,6 +153,7 @@ function EditCustomer() {
             </PromptField>
             <div className="flex justify-end space-x-3">
                 <PromptButton
+                    type="button"
                     onClick={handleSubmit}
                     disabled={isSubmitting}
                     label={isSubmitting ? 'Processing...' : 'Save Changes'}

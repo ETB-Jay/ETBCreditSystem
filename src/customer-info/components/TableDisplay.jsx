@@ -6,7 +6,6 @@ import DateFilter from './filters/DateFilter';
 import Amount from './filters/Amount';
 import EmployeeName from './filters/Employee_Name';
 import { useEffect, useState, useMemo } from 'react';
-import PropTypes from 'prop-types';
 
 /**
  * Displays a Table containing the transaction made by the individual
@@ -81,19 +80,6 @@ function TableDisplay() {
             filters.employee?.searchTerm;
     };
 
-    if ((!filteredRows || filteredRows.length === 0) && !hasActiveFilters()) {
-        return (
-            <div className="flex h-full w-full items-center justify-center">
-                <img
-                    className="brightness-30 w-auto max-h-4/5 object-contain mx-auto select-none"
-                    src="./ETBBanner.png"
-                    alt="No data"
-                />
-                <p className="absolute text-white z-10 font-bold text-2xl mg:text-3x1 lg:text-4xl bg-black/50 rounded-xl p-5 select-none">NO TRANSACTIONS YET</p>
-            </div>
-        );
-    }
-
     const HeaderField = ({ label }) => (
         <th className="relative px-3 py-1 font-semibold whitespace-nowrap cursor-pointer group text-sm bg-gray-800 text-gray-100 hover:bg-gray-700 transition-all duration-200">
             <div className="flex items-center gap-1"
@@ -111,9 +97,18 @@ function TableDisplay() {
         </th>
     );
 
-    HeaderField.propTypes = {
-        label: PropTypes.string.isRequired
-    };
+    if ((!filteredRows || filteredRows.length === 0) && !hasActiveFilters()) {
+        return (
+            <div className="flex h-full w-full items-center justify-center">
+                <img
+                    className="brightness-30 w-auto max-h-4/5 object-contain mx-auto select-none"
+                    src="./ETBBanner.png"
+                    alt="No data"
+                />
+                <p className="absolute text-white z-10 font-bold text-2xl mg:text-3x1 lg:text-4xl bg-black/50 rounded-xl p-5 select-none">NO TRANSACTIONS YET</p>
+            </div>
+        );
+    }
 
     return (
         <div className="max-h-9/10 rounded-xl overflow-y-scroll container-snap border border-gray-700 shadow-lg bg-gray-900">
@@ -140,7 +135,7 @@ function TableDisplay() {
                         <HeaderField label={'Date'} />
                         <HeaderField label={'Amount'} />
                         <HeaderField label={'Employee'} />
-                        <th className="w-1/3 px-3 py-1 font-semibold whitespace-nowrap text-sm bg-gray-800 text-gray-100 hover:bg-gray-700 transition-all duration-200">Notes</th>
+                        <th className="w-full max-w-[400px] px-3 py-1 font-semibold whitespace-nowrap text-sm bg-gray-800 text-gray-100 hover:bg-gray-700 transition-all duration-200">Notes</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-800">
@@ -149,8 +144,8 @@ function TableDisplay() {
                             key={idx}
                             className="hover:bg-gray-800/50 transition-colors duration-150 ease-in-out"
                         >
-                            <td className="px-3 py-0.5 max-w-[120px] overflow-x-scroll no-scroll whitespace-nowrap container-snap text-sm" title={row.date?.seconds ? new Date(row.date.seconds * 1000).toISOString() : 'Invalid date'}>
-                                {row.date?.seconds ? new Date(row.date.seconds * 1000).toISOString().replace('T', ' ').slice(0, 19) : 'Invalid date'}
+                            <td className="px-3 py-0.5 max-w-[200px] overflow-x-scroll no-scroll whitespace-nowrap container-snap text-sm" title={row.date?.seconds ? new Date(row.date.seconds * 1000).toISOString() : 'Invalid date'}>
+                                {row.date?.seconds ? new Date(row.date.seconds * 1000).toLocaleString().replace('T', ' ').slice(0, 19) : 'Invalid date'}
                             </td>
                             <td className="px-3 py-0.5 max-w-[120px] overflow-x-scroll no-scroll whitespace-nowrap container-snap text-sm" title={row.change_balance}>
                                 {row.change_balance < 0 ?
@@ -162,7 +157,7 @@ function TableDisplay() {
                                 {row.employee_name}
                             </td>
                             <td className="px-3 py-1">
-                                <div className="max-w-[200px] overflow-x-auto container-snap whitespace-nowrap text-sm text-gray-400" title={row.notes}>
+                                <div className="max-w-[400px] w-full whitespace-nowrap text-sm text-gray-400" title={row.notes}>
                                     {row.notes}
                                 </div>
                             </td>

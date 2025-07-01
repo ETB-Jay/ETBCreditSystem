@@ -109,6 +109,11 @@ function Report() {
 
     return (
         <Prompt title='SYSTEM INFORMATION'>
+            <div className="absolute top-4 right-4">
+                <a href='https://github.com/ETB-Jay/ETBCreditSystem'>
+                    <img className='h-6 hover:brightness-50 active:brightness-75 cursor-pointer transition-all' draggable='false' src='githubLogo.png' alt="GitHub Logo" />
+                </a>
+            </div>
             <PromptField>
                 <p className="text-white font-bold bg-white/5 rounded-2xl p-3">
                     Number of Customers: <span className='ml-1 font-semibold'>{total}</span>

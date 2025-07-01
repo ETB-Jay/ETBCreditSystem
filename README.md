@@ -49,6 +49,7 @@ As of 2025-06-27, firestore offers two payment plans: spark and blaze. ETB is cu
 - **State Management:** React Context
 - **Build Tools:** Vite
 - **Publish Tools:** Electron-Builder
+- **Testing Tools:** Vitest/Jest
 
 ## Development 🛒
 1. Clone the repository

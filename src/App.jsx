@@ -25,11 +25,11 @@ function App() {
 	useEffect(() => {
 		const loadData = async () => {
 			try {
-				const [customersData] = await Promise.all([
-					fetchCustomers()
-				]);
-				setCustomers(customersData.customers);
-				setTotal(customersData.total);
+				const unsubscribe = fetchCustomers(({ customers, total }) => {
+					setCustomers(customers);
+					setTotal(total);
+				});
+				return () => unsubscribe();
 			} catch (error) {
 				setError(`Failed to load data: ${error}`);
 			}
