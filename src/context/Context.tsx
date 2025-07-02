@@ -1,3 +1,4 @@
+import React from 'react';
 import { createContext } from 'react';
 import { Customer, Display, Filters, Transaction } from '../types';
 
@@ -41,7 +42,7 @@ CustomerNamesContext.displayName = 'CustomerNamesContext';
 /** @description Context to store the Transactional Data. */
 interface TransactionContextType {
   transactions: Transaction[];
-  setTransactions: React.Dispatch<React.SetStateAction<any[]>>;
+  setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>;
 }
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
 TransactionContext.displayName = 'TransactionContext';

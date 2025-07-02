@@ -1,11 +1,12 @@
+import React from 'react';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import WarningIcon from '@mui/icons-material/Warning';
 import { useCustomer, useCustomerNames, useDisplay } from '../../context/useContext';
 import { useEffect, useState } from 'react';
 
 /**
- * Displays the current customer's balance in a container. It updates dynamically
- * @returns {React.ReactElement} The Balance component
+ * Displays the current customer's balance in a styled container.
+ * @returns The Balance component.
  */
 function Balance(): React.ReactElement {
     const { customer } = useCustomer();

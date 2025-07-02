@@ -1,11 +1,16 @@
+import React from 'react';
 import { useState } from 'react';
 import { useCustomer, useDisplay, useCustomerNames } from '../context/useContext';
 import { Prompt, PromptButton, PromptField, PromptInput } from '../components';
 import { db } from '../firebase';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
-import { getDocumentName, validateCustomerInfo } from './scripts';
+import { doc, updateDoc } from 'firebase/firestore';
+import { getCustomerDoc, getDocumentName, validateCustomerInfo } from './scripts';
 import { Customer } from '../types';
 
+/**
+ * Displays a prompt for editing customer information.
+ * @returns The EditCustomer component.
+ */
 function EditCustomer() {
     const { customer, setCustomer } = useCustomer();
     const { setDisplay } = useDisplay();
@@ -17,7 +22,7 @@ function EditCustomer() {
         phone: customer?.phone || ''
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -28,7 +33,6 @@ function EditCustomer() {
     };
 
     const handleSubmit = async () => {
-        console.log('handleSubmit');
         if (isSubmitting) return false;
         setIsSubmitting(true);
         setErrors({});
@@ -38,13 +42,15 @@ function EditCustomer() {
         if (typeof errs === 'string') {
             setErrors({ submit: errs });
             setIsSubmitting(false);
-            return false;
+            return;
         }
-        if (Object.keys(errs).length > 0) {
+        console.log(errs);
+        if (Object.values(errs).some(v => v)) {
             setErrors(errs);
             setIsSubmitting(false);
-            return false;
+            return;
         }
+        console.log(errs);
 
         try {
             if (!customer) {
@@ -52,8 +58,7 @@ function EditCustomer() {
             }
 
             const arrayName = getDocumentName(customer.customer_id);
-            const customerDoc = await getDoc(doc(db, 'customers', arrayName));
-            const currentCustomers = customerDoc.data()?.customers || [];
+            const currentCustomers = await getCustomerDoc(arrayName);
 
             const updatedData = {
                 first_name: temp.first_name.trim(),
@@ -61,7 +66,7 @@ function EditCustomer() {
                 email: temp.email?.trim() || '',
                 phone: temp.phone?.trim() || ''
             };
-            const updatedCustomers = currentCustomers.map((c: any) => {
+            const updatedCustomers = currentCustomers.map((c: Customer) => {
                 if (c.customer_id === customer.customer_id) {
                     return {
                         ...c,
@@ -73,9 +78,9 @@ function EditCustomer() {
             await updateDoc(doc(db, 'customers', arrayName), {
                 customers: updatedCustomers
             });
-            setCustomers((prevCustomers: any[]) => 
-                prevCustomers.map((c: any) => 
-                    c.customer_id === customer.customer_id 
+            setCustomers((prevCustomers: Customer[]) =>
+                prevCustomers.map((c: Customer) =>
+                    c.customer_id === customer.customer_id
                         ? {
                             ...c,
                             first_name: temp.first_name,
@@ -86,8 +91,8 @@ function EditCustomer() {
                         : c
                 )
             );
-            setCustomer(updatedCustomers.find((c: any) => c.customer_id === customer.customer_id));
-            
+            setCustomer(updatedCustomers.find((c: Customer) => c.customer_id === customer.customer_id) || null);
+
             setDisplay('default');
             return true;
         } catch (error) {
@@ -113,7 +118,7 @@ function EditCustomer() {
         <Prompt title="Edit Customer Information">
             <PromptField error={errors.first_name}>
                 <PromptInput
-                    label={'First Name'} 
+                    label={'First Name'}
                     type="text"
                     name="first_name"
                     value={temp.first_name}
@@ -124,7 +129,7 @@ function EditCustomer() {
             </PromptField>
             <PromptField error={errors.last_name}>
                 <PromptInput
-                    label={'Last Name'} 
+                    label={'Last Name'}
                     type="text"
                     name="last_name"
                     value={temp.last_name}
@@ -135,7 +140,7 @@ function EditCustomer() {
             </PromptField>
             <PromptField error={errors.email}>
                 <PromptInput
-                    label={'Email'} 
+                    label={'Email'}
                     type="email"
                     name="email"
                     value={temp.email}
@@ -146,7 +151,7 @@ function EditCustomer() {
             </PromptField>
             <PromptField error={errors.phone}>
                 <PromptInput
-                    label={'Phone Number'} 
+                    label={'Phone Number'}
                     type="tel"
                     name="phone"
                     value={temp.phone}

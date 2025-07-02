@@ -2,10 +2,23 @@ import { useDisplay, useCustomerNames, useTotal } from '../context/useContext';
 import { useState, useEffect } from 'react';
 import { Prompt, PromptButton, PromptField, PromptInput } from '../components';
 import { db, fetchCustomersOnce, getHighestCustomerId } from '../firebase';
-import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
-import { getDocumentName, validateCustomerInfo } from './scripts';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
+import { getDocumentName, validateCustomerInfo, getCustomerDoc } from './scripts';
 import type { Customer } from '../types';
 
+/**
+ * Checks if an object is empty (has no own properties and is a plain object).
+ * @param obj The object to check.
+ * @returns True if the object is empty, false otherwise.
+ */
+function isEmptyObject(obj: object) {
+    return obj && Object.keys(obj).length === 0 && obj.constructor === Object;
+}
+
+/**
+ * Displays a prompt for adding a new customer.
+ * @returns The CustomerPrompt component.
+ */
 function CustomerPrompt() {
     const { setCustomers } = useCustomerNames();
     const [newCustomer, setNewCustomer] = useState<Partial<Customer>>({ first_name: '', last_name: '', email: '', phone: '' });
@@ -23,13 +36,14 @@ function CustomerPrompt() {
         if (isSubmitting) return;
         setIsSubmitting(true);
 
+        console.log(newCustomer);
         const errs = validateCustomerInfo(newCustomer);
         if (typeof errs === 'string') {
             setErrors({ submit: errs });
             setIsSubmitting(false);
             return;
         }
-        if (Object.keys(errs).length > 0) {
+        if (Object.values(errs).some(v => v)) {
             setErrors(errs);
             setIsSubmitting(false);
             return;
@@ -39,9 +53,8 @@ function CustomerPrompt() {
             const highestCustomerId = await getHighestCustomerId();
             const newCustomerId = highestCustomerId + 1;
             const arrayName = getDocumentName(newCustomerId);
-
+            const currentCustomers = await getCustomerDoc(arrayName);
             const docRef = doc(db, 'customers', arrayName);
-            const docSnap = await getDoc(docRef);
 
             const customerData = {
                 customer_id: newCustomerId,
@@ -53,8 +66,7 @@ function CustomerPrompt() {
                 transactions: []
             };
 
-            if (docSnap.exists()) {
-                const currentCustomers = docSnap.data().customers || [];
+            if (currentCustomers.length > 0 && !isEmptyObject(currentCustomers[0])) {
                 await updateDoc(docRef, {
                     customers: [...currentCustomers, customerData],
                     count: currentCustomers.length + 1
@@ -64,7 +76,7 @@ function CustomerPrompt() {
                     count: 1,
                     customers: [customerData]
                 });
-            };
+            }
             try {
                 const customersData = await fetchCustomersOnce();
                 setCustomers(customersData.customers);

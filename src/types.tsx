@@ -40,6 +40,6 @@ interface Filters {
     };
 }
 
-type Display = "default" | "user" | "transaction" | "report" | "edit" | "delete";
+type Display = 'default' | 'user' | 'transaction' | 'report' | 'edit' | 'delete' | 'login';
 
 export type { Customer, Transaction, CustomerList, Display, Filters };

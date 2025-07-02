@@ -3,9 +3,8 @@ import EmailIcon from '@mui/icons-material/Email';
 import { useCustomer } from '../../context/useContext';
 
 /**
- * Displays the customer's email in a formatted style with a enail icon
- * @component
- * @returns {React.ReactElement} The EmailInfo component
+ * Displays the customer's email in a formatted style with an email icon.
+ * @returns The EmailInfo component.
  */
 function EmailInfo(): React.ReactElement {
     const { customer } = useCustomer();

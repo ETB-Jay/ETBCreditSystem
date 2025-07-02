@@ -1,10 +1,9 @@
+import React from 'react';
 import { useDisplay } from '../../context/useContext';
 
 /**
  * Renders a button that allows the user to add a new customer.
- *
- * @component
- * @returns {JSX.Element} A "+" button that triggers "CustomerPrompt.jsx"
+ * @returns The AddCustomer button component.
  */
 function AddCustomer(): React.ReactElement {
     const { setDisplay } = useDisplay();

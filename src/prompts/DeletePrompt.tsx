@@ -1,11 +1,17 @@
+import React from 'react';
 import { useState } from 'react';
 import { useDisplay, useCustomer, useCustomerNames } from '../context/useContext';
 import { Prompt, PromptField, PromptInput, PromptButton } from '../components';
 import { db } from '../firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { getDocumentName } from './scripts';
+import { doc, updateDoc } from 'firebase/firestore';
+import { getDocumentName, getCustomerDoc } from './scripts';
+import { Customer } from '../types';
 
-function DeletePrompt() {
+/**
+ * Displays a prompt for confirming and deleting a customer.
+ * @returns The DeletePrompt component.
+ */
+function DeletePrompt(): React.ReactElement {
     const { setDisplay } = useDisplay();
     const { customer, setCustomer } = useCustomer();
     const { customers, setCustomers } = useCustomerNames();
@@ -14,40 +20,27 @@ function DeletePrompt() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleDelete = async () => {
-        if (confirm !== 'DELETE') {
-            setError('Please type DELETE to confirm');
-            return;
-        }
-
         try {
             setIsSubmitting(true);
             const arrayName = getDocumentName(customer?.customer_id ?? 0);
-            
-            const docRef = doc(db, 'customers', arrayName);
-            const docSnap = await getDoc(docRef);
+            const currentCustomers = await getCustomerDoc(arrayName);
+            const customerIndex = currentCustomers.findIndex((c: Customer) => c.customer_id === customer?.customer_id);
 
-            if (docSnap.exists()) {
-                const currentCustomers = docSnap.data().customers || [];
-                const customerIndex = currentCustomers.findIndex((c: any) => c.customer_id === customer?.customer_id);
-
-                if (customerIndex === -1) {
-                    setError('Customer not found in database');
-                    return;
-                }
-
-                currentCustomers.splice(customerIndex, 1);
-                await updateDoc(docRef, {
-                    customers: currentCustomers,
-                    count: currentCustomers.length
-                });
-
-                const updatedCustomers = customers.filter((c: any) => c.customer_id !== customer?.customer_id);
-                setCustomers(updatedCustomers);
-                setCustomer(null);
-                setDisplay('default');
-            } else {
-                setError('Customer document not found');
+            if (customerIndex === -1) {
+                setError('Customer not found in database');
+                return;
             }
+
+            currentCustomers.splice(customerIndex, 1);
+            await updateDoc(doc(db, 'customers', arrayName), {
+                customers: currentCustomers,
+                count: currentCustomers.length
+            });
+
+            const updatedCustomers = customers.filter((c: Customer) => c.customer_id !== customer?.customer_id);
+            setCustomers(updatedCustomers);
+            setCustomer(null);
+            setDisplay('default');
         } catch (err) {
             setError('Failed to delete customer: ' + (err instanceof Error ? err.message : 'Unknown error'));
         } finally {
@@ -61,11 +54,17 @@ function DeletePrompt() {
         setDisplay('default');
     };
 
+    const labelText = (
+        <span className="flex justify-center items-center w-full">
+            Type <span className="mx-1 bg-red-900 text-white px-2 py-0.5 rounded">{customer ? customer.first_name + ' ' + customer.last_name : ''}</span> To Delete This Customer
+        </span>
+    );
+
     return (
         <Prompt title="Delete Customer">
             <PromptField error={error}>
                 <PromptInput
-                    label={`Type ${customer ? customer.first_name + ' ' + customer.last_name : ''} To Delete This Customer`}
+                    label={labelText}
                     value={confirm}
                     onChange={e => setConfirm(e.target.value)}
                     disabled={isSubmitting}

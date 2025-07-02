@@ -1,6 +1,11 @@
 import { CustomerContext, DisplayContext, CustomerNamesContext, TransactionContext, FilterContext, TotalContext} from './Context';
 import { useContext } from 'react';
 
+/**
+ * Custom hook to access the Customer context.
+ * @returns The customer context value.
+ * @throws If used outside of CustomerProvider.
+ */
 const useCustomer = () => {
     const context = useContext(CustomerContext);
     if (!context) {
@@ -9,6 +14,11 @@ const useCustomer = () => {
     return context;
 };
 
+/**
+ * Custom hook to access the Display context.
+ * @returns The display context value.
+ * @throws If used outside of DisplayProvider.
+ */
 const useDisplay = () => {
   const context = useContext(DisplayContext);
   if (!context) {
@@ -17,6 +27,11 @@ const useDisplay = () => {
   return context;
 };
 
+/**
+ * Custom hook to access the CustomerNames context.
+ * @returns The customer names context value.
+ * @throws If used outside of CustomerNamesProvider.
+ */
 const useCustomerNames = () => {
     const context = useContext(CustomerNamesContext);
     if (!context) {
@@ -25,6 +40,11 @@ const useCustomerNames = () => {
     return context;
 };
 
+/**
+ * Custom hook to access the Transactions context.
+ * @returns The transactions context value.
+ * @throws If used outside of TransactionsProvider.
+ */
 const useTransactions = () => {
     const context = useContext(TransactionContext);
     if (!context) {
@@ -33,6 +53,11 @@ const useTransactions = () => {
     return context;
 };
 
+/**
+ * Custom hook to access the Filters context.
+ * @returns The filters context value.
+ * @throws If used outside of FilterProvider.
+ */
 const useFilters = () => {
     const context = useContext(FilterContext);
     if (!context) {
@@ -41,6 +66,11 @@ const useFilters = () => {
     return context;
 };
 
+/**
+ * Custom hook to access the Total context.
+ * @returns The total context value.
+ * @throws If used outside of TotalProvider.
+ */
 const useTotal = () => {
     const context = useContext(TotalContext);
     if (!context) {

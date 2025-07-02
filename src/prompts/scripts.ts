@@ -1,16 +1,21 @@
-import { Customer } from "../types";
+import { Customer } from '../types';
+import { db } from '../firebase';
+import { getDoc, doc } from 'firebase/firestore';
 
 type ErrorProp = Record<string, string>;
 
-const validateCustomerInfo = (customer: Partial<Customer>) => {
+/**
+ * Validates customer information for required fields and format.
+ * @param customer - The customer object to validate.
+ * @returns An object with error messages for each field, or a string if the customer is not loaded.
+ */
+const validateCustomerInfo = (customer: Partial<Customer>): Record<string, string>|string => {
     const errs: ErrorProp = {
         first_name: '',
         last_name: '',
         email: '',
         phone: ''
     };
-
-    console.log(customer);
 
     if (!customer) return 'Customer data is not properly loaded';
 
@@ -29,12 +34,26 @@ const validateCustomerInfo = (customer: Partial<Customer>) => {
     return errs;
 };
 
-const getDocumentName = (id: number) => {
+/**
+ * Generates the Firestore document name for a customer based on their ID.
+ * @param id - The customer ID.
+ * @returns The document name string.
+ */
+const getDocumentName = (id: number): string => {
     const min = Math.floor((id - 1) / 100) * 100 + 1;
     const max = min + 99;
     return `${min}_min_${max}_max`;
 };
 
+/**
+ * Fetches the customer array from Firestore for a given document name.
+ * @param arrayName - The Firestore document name.
+ * @returns The array of customers from the document.
+ */
+const getCustomerDoc = async (arrayName: string): Promise<Customer[]> => {
+    const customerDoc = await getDoc(doc(db, 'customers', arrayName));
+    const currentCustomers = customerDoc.data()?.customers || [];
+    return currentCustomers;
+};
 
-
-export { validateCustomerInfo, getDocumentName };
+export { validateCustomerInfo, getDocumentName, getCustomerDoc };

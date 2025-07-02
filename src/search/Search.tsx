@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { useDisplay } from '../context/useContext';
 import AddCustomer from './components/AddCustomer';
@@ -5,10 +6,8 @@ import ListDisplay from './components/ListDisplay';
 import InfoIcon from '@mui/icons-material/Info';
 
 /**
- * Renders the "Search" grid, containing the search bar, the list display, the "AddCustomer" icon, and the Report prompt. 
- * 
- * @component
- * @returns {JSX.Element} The rendered customer search bar, adding customer button, information icon, and list of customers. 
+ * Renders the customer search grid, including the search bar, add customer button, info icon, and customer list.
+ * @returns The Search component.
  */
 function Search(): React.ReactElement {
     const [search, setSearch] = useState<string>('');

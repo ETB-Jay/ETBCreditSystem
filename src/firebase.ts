@@ -25,9 +25,13 @@ const db = getFirestore(app);
 const customersCollection = collection(db, 'customers');
 
 // Type for the callback used in fetchCustomers
-export type CustomersCallback = (data: { customers: Customer[]; total: number; error?: any }) => void;
+export type CustomersCallback = (_data: { customers: Customer[]; total: number; error?: unknown }) => void;
 
-// Real-time fetchCustomers: takes a callback, returns unsubscribe
+/**
+ * Automatically fetches customers in real-time and makes a callback to handle data and errors in the update
+ * @param callback Callback to handle customer data and errors.
+ * @returns Unsubscribe function for the Firestore listener.
+ */
 const fetchCustomers = (callback: CustomersCallback) => {
   return onSnapshot(customersCollection, (snapshot) => {
     try {
@@ -49,7 +53,10 @@ const fetchCustomers = (callback: CustomersCallback) => {
   });
 };
 
-// One-time fetch if needed
+/**
+ * Fetches all customers once from Firestore.
+ * @returns The customers and total count.
+ */
 const fetchCustomersOnce = async () => {
   try {
     const customersDocuments = await getDocs(customersCollection);
@@ -67,6 +74,10 @@ const fetchCustomersOnce = async () => {
   }
 };
 
+/**
+ * Gets the highest customer ID from all customer documents.
+ * @returns The highest customer ID found.
+ */
 const getHighestCustomerId = async () => {
   try {
     const customersDocuments = await getDocs(customersCollection);
@@ -74,7 +85,7 @@ const getHighestCustomerId = async () => {
     customersDocuments.docs.forEach(doc => {
       const data = doc.data();
       if (data.customers && Array.isArray(data.customers)) {
-        data.customers.forEach((customer: any) => {
+        data.customers.forEach((customer: Customer) => {
           if (customer.customer_id > highestId) {
             highestId = customer.customer_id;
           }

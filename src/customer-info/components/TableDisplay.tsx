@@ -1,3 +1,4 @@
+import React from 'react';
 import { useCustomer, useCustomerNames, useDisplay, useFilters } from '../../context/useContext';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
@@ -9,31 +10,17 @@ import { useEffect, useState, useMemo } from 'react';
 import { Customer, Transaction, Display } from '../../types';
 
 /**
- * Displays a Table containing the transaction made by the individual
- * @component
- * @returns {JSX.Element} The rendered table transactions or a placeholder if none exist.
+ * Displays a table containing the transactions made by the individual customer.
+ * @returns The rendered table of transactions or a placeholder if none exist.
  */
 function TableDisplay(): React.ReactElement {
     const { customer } = useCustomer();
     const { customers } = useCustomerNames();
     const { display, setDisplay } = useDisplay();
-    const { filters, setFilters } = useFilters();
+    const { filters } = useFilters();
     const [filteredRows, setFilteredRows] = useState<Transaction[]>([]);
 
-    const defaultFilters = {
-        date: { startDate: '', endDate: '' },
-        amount: { minAmount: '', maxAmount: '' },
-        employee: { searchTerm: '' }
-    };
-
-    function deepEqual(obj1: any, obj2: any): boolean {
-        return JSON.stringify(obj1) === JSON.stringify(obj2);
-    }
-
     useEffect(() => {
-        if (!deepEqual(filters, defaultFilters)) {
-            setFilters(defaultFilters);
-        }
         if (display !== 'default') {
             setDisplay('default');
         }
@@ -161,7 +148,7 @@ function TableDisplay(): React.ReactElement {
                                 {row.employee_name}
                             </td>
                             <td className="px-3 py-1">
-                                <div className="max-w-[400px] w-full whitespace-nowrap text-sm text-gray-400" title={row.notes}>
+                                <div className="w-full text-sm text-gray-400" title={row.notes}>
                                     {row.notes}
                                 </div>
                             </td>

@@ -1,42 +1,41 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { useDisplay, useCustomer } from '../context/useContext';
 import { Prompt, PromptButton, PromptField, PromptInput } from '../components';
 import { db } from '../firebase';
-import { doc, updateDoc, Timestamp, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, Timestamp } from 'firebase/firestore';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { getDocumentName } from './scripts';
+import { getDocumentName, getCustomerDoc } from './scripts';
+import { Customer } from '../types';
 
 /**
- * A prompt that allows the user to add a new transaction to the system. It appears only
- * when the state is "transaction".
- * 
- * @component
- * @returns {React.ReactElement} The TransactionPrompt prompt
+ * A prompt that allows the user to add a new transaction to the system. It appears only when the state is 'transaction'.
+ * @returns The TransactionPrompt component.
  */
 function TransactionPrompt(): React.ReactElement {
-    const { customer } = useCustomer();
+    const { customer, setCustomer } = useCustomer();
     interface TransactionInput {
-        change_balance: number;
+        change_balance: string;
         employee_name: string;
         notes: string;
     }
     const transactionTemplate: TransactionInput = {
-        change_balance: 0,
+        change_balance: '',
         employee_name: '',
         notes: ''
     };
     const [newTransaction, setNewTransaction] = useState<TransactionInput>(transactionTemplate);
     const { setDisplay } = useDisplay();
     const [errors, setErrors] = useState({ invalidValue: '', noEmployee: '' });
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [payment, setPayment] = useState({ add: false, sub: false });
     const [employees, setEmployees] = useState<string[]>([]);
-    const [showAddEmployee, setShowAddEmployee] = useState(false);
-    const [newEmployeeName, setNewEmployeeName] = useState('');
-    const [showDropdown, setShowDropdown] = useState(false);
+    const [showAddEmployee, setShowAddEmployee] = useState<boolean>(false);
+    const [newEmployeeName, setNewEmployeeName] = useState<string>('');
+    const [showDropdown, setShowDropdown] = useState<boolean>(false);
 
     useEffect(() => {
         setNewTransaction(transactionTemplate);
@@ -61,11 +60,8 @@ function TransactionPrompt(): React.ReactElement {
         setErrors({ invalidValue: '', noEmployee: '' });
         try {
             const delta = newTransaction.change_balance;
-            if (!delta) {
-                setErrors(e => ({ ...e, invalidValue: 'Amount is Required and Must be a Valid Number!' }));
-                return false;
-            } else if (!/^\d+(\.\d{1,2})?$/.test(String(newTransaction.change_balance))) {
-                setErrors(e => ({ ...e, invalidValue: 'Amount Must Have a Valid Number of Decimal Places!' }));
+            if (!delta || !/^\d*(\.\d{1,2})?$/.test(delta)) {
+                setErrors(e => ({ ...e, invalidValue: !delta ? 'Amount is Required and Must be a Valid Number!' : 'Amount Must Have a Valid Number of Decimal Places!' }));
                 return false;
             } else if (!payment.add && !payment.sub) {
                 setErrors(e => ({ ...e, invalidValue: 'Please Indicate Transaction Type!' }));
@@ -74,7 +70,7 @@ function TransactionPrompt(): React.ReactElement {
                 setErrors(e => ({ ...e, noEmployee: 'Please Enter Your Name!' }));
                 return false;
             }
-            const signedDelta = payment.sub ? -delta : delta;
+            const signedDelta = payment.sub ? -Number(delta) : Number(delta);
             const transactionData = {
                 employee_name: newTransaction.employee_name.trim(),
                 change_balance: signedDelta,
@@ -83,9 +79,8 @@ function TransactionPrompt(): React.ReactElement {
             };
             if (!customer) throw new Error('Customer data is not properly loaded');
             const arrayName = getDocumentName(customer.customer_id);
-            const customerDoc = await getDoc(doc(db, 'customers', arrayName));
-            const currentCustomers = customerDoc.data()?.customers || [];
-            const updatedCustomers = currentCustomers.map((c: any) =>
+            const currentCustomers = await getCustomerDoc(arrayName);
+            const updatedCustomers = currentCustomers.map((c: Customer) =>
                 c.customer_id === customer.customer_id
                     ? {
                         ...c,
@@ -95,6 +90,8 @@ function TransactionPrompt(): React.ReactElement {
                     : c
             );
             await updateDoc(doc(db, 'customers', arrayName), { customers: updatedCustomers });
+            const updatedCustomer = updatedCustomers.find((c: Customer) => c.customer_id === customer.customer_id);
+            if (updatedCustomer) setCustomer(updatedCustomer);
             return true;
         } catch (error) {
             if (error instanceof Error) {
@@ -136,10 +133,10 @@ function TransactionPrompt(): React.ReactElement {
             <PromptField error={errors.invalidValue}>
                 <PromptInput
                     label={
-                        <div className="flex flex-row gap-3 mt-2">
+                        <div className="flex flex-row gap-3 items-center">
                             Amount
                             <SideButton
-                                label={<AddIcon fontSize='small' />} 
+                                label={<AddIcon fontSize='small' />}
                                 color={`text-white ring-emerald-950 ${payment.add ? ' bg-emerald-800' : 'bg-emerald-700/30 hover:bg-emerald-800/60 active:bg-emerald-900'}`}
                                 onClick={() => {
                                     console.log('Add button clicked');
@@ -154,24 +151,42 @@ function TransactionPrompt(): React.ReactElement {
                                     handlePaymentType('sub');
                                 }}
                             />
+                            <div className='flex flex-row gap-3 ml-auto'>
+                                <span className="bg-gray-800 text-gray-200 px-2 py-1 rounded font-mono text-xs border border-gray-700">
+                                    Current: <span className="font-bold">{Number(customer?.balance).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })}</span>
+                                </span>
+                                {(payment.add || payment.sub) &&
+                                    <span className={`${payment.add && 'bg-emerald-700/30 ring-emerald-950'} ${payment.sub && 'bg-red-800/30 ring-red-950'} transition-all px-2 py-1 rounded font-mono text-xs ring-2 `}>
+                                        New: <span className="font-bold">{(Number(customer?.balance) + (payment.sub ? -Number(newTransaction.change_balance) : Number(newTransaction.change_balance))).toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })}</span>
+                                    </span>
+                                }
+                            </div>
                         </div>
                     }
-                    type="number"
+                    type="text"
                     step="0.01"
-                    value={newTransaction.change_balance ? String(newTransaction.change_balance) : ''}
+                    value={newTransaction.change_balance}
                     onChange={input => {
-                        const value = input.target.value;
-                        const amount = value.replace(/[^\d.]/g, '');
+                        let value = input.target.value;
+                        value = value.replace(/[^0-9.]/g, '');
+                        const parts = value.split('.');
+                        if (parts.length > 2) {
+                            value = parts[0] + '.' + parts.slice(1).join('');
+                        }
+                        if (value.includes('.')) {
+                            const [intPart, decPart] = value.split('.');
+                            value = intPart + '.' + decPart.slice(0, 2);
+                        }
                         setNewTransaction({
                             ...newTransaction,
-                            change_balance: amount === '' ? 0 : Number(amount)
+                            change_balance: value
                         });
                     }}
                     disabled={isSubmitting}
                 />
             </PromptField>
             <PromptField error={errors.noEmployee}>
-                <label className="text-gray-200 font-medium text-sm">Employee Name</label>
+                <div className="text-gray-200 font-medium text-sm mb-1">Employee Name</div>
                 <div className='flex flex-row items-center gap-2 w-full'>
                     {!showAddEmployee ? (
                         <div className='flex-1 flex flex-row items-center justify-center gap-1 relative'>
@@ -232,7 +247,6 @@ function TransactionPrompt(): React.ReactElement {
                     ) : (
                         <div className="flex flex-row items-center gap-2 w-full">
                             <PromptInput
-                                label="New Name"
                                 placeholder="New Name"
                                 value={newEmployeeName}
                                 onChange={e => setNewEmployeeName(e.target.value)}

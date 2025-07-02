@@ -1,3 +1,4 @@
+import React from 'react';
 import { useCustomer } from '../context/useContext';
 import EmailInfo from './components/EmailInfo';
 import PhoneInfo from './components/PhoneInfo';
@@ -8,10 +9,8 @@ import TableDisplay from './components/TableDisplay';
 import { MainContainer } from '../components';
 
 /**
- * Displays the customer information and transaction history
- * 
- * @component
- * @returns {JSX.Element} The CustomerInfo component
+ * Displays the customer information and transaction history.
+ * @returns The CustomerInfo component.
  */
 function CustomerInfo(): React.ReactElement {
     const { customer } = useCustomer();

@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useState } from 'react';
 import Search from './search/Search';
 import CustomerInfo from './customer-info/CustomerInfo';
@@ -8,13 +9,14 @@ import TransactionPrompt from './prompts/TransactionPrompt';
 import Report from './prompts/Report';
 import EditCustomer from './prompts/EditCustomer';
 import DeletePrompt from './prompts/DeletePrompt';
+import LoginPrompt from './prompts/LoginPrompt';
 
 /**
  * Main application component. Renders the display grid and the main prompts. 
  * It fetches the list of customers and renders it accordingly. 
  *
  * @component
- * @returns {TSX.Element} The Application UI
+ * @returns The Application UI
  */
 function App(): React.ReactElement {
 	const { setTotal } = useTotal();
@@ -48,6 +50,7 @@ function App(): React.ReactElement {
 			{display === 'report' && <Report />}
 			{display === 'edit' && <EditCustomer />}
 			{display === 'delete' && <DeletePrompt />}
+			{display === 'login' && <LoginPrompt />}
 			{error && <div className="error-message">{error}</div>}
 		</>
 	);

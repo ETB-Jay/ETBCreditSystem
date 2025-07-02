@@ -1,19 +1,19 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useCustomer, useCustomerNames } from '../../context/useContext';
 import WarningIcon from '@mui/icons-material/Warning';
 import { useState, memo, useMemo, useCallback } from 'react';
+import { Customer } from '../../types';
 
 /**
- * Displays a filtered list of customers based on the provided filter string taken from the search bar
- * 
- * @component
- * @param {string} filter - The filter string used to match customer first or last names (case-insensitive).
- * @returns {JSX.Element} A scrollable list of customer names. Clicking a name sets the selected customer.
+ * Displays a filtered list of customers based on the provided filter string.
+ * @param props The filter string used to match customer names.
+ * @returns A scrollable list of customer names.
  */
 function ListDisplay({ filter = '' }): React.ReactElement {
     const { setCustomer } = useCustomer();
     const { customers } = useCustomerNames();
-    const [selectedIndex, setSelectedIndex] = useState(null);
+    const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
     const filteredRows = useMemo(() =>
         customers
@@ -30,7 +30,7 @@ function ListDisplay({ filter = '' }): React.ReactElement {
         [customers, filter]
     );
 
-    const handleClick = useCallback((customer: any, index: any) => {
+    const handleClick = useCallback((customer: Customer, index: number) => {
         setCustomer(customer);
         setSelectedIndex(index);
     }, [setCustomer]);

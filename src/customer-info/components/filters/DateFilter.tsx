@@ -1,7 +1,12 @@
+import React from 'react';
 import { FilterContainer, FilterField, FilterInput } from '../../../components';
 import { useFilters } from '../../../context/useContext';
 
-function DateFilter() {
+/**
+ * Filter component for selecting a date range for transactions.
+ * @returns The DateFilter filter component.
+ */
+function DateFilter(): React.ReactElement {
     const { filters, setFilters } = useFilters();
 
     const handleDateChange = (type: string, value: string) => {

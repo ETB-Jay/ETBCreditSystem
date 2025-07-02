@@ -1,7 +1,12 @@
+import React from 'react';
 import { FilterContainer, FilterField, FilterInput } from '../../../components';
 import { useFilters } from '../../../context/useContext';
 
-function Amount() {
+/**
+ * Filter component for specifying minimum and maximum transaction amounts.
+ * @returns The Amount filter component.
+ */
+function Amount(): React.ReactElement {
     const { filters, setFilters } = useFilters();
     
     return (

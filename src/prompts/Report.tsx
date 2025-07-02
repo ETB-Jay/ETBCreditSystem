@@ -13,6 +13,10 @@ type TransactionWithCustomer = Transaction & {
     last_name: string;
 };
 
+/**
+ * Displays a system information report and allows downloading customer and transaction data as CSV files.
+ * @returns The Report component.
+ */
 function Report() {
     const { customers } = useCustomerNames();
     const { setDisplay } = useDisplay();

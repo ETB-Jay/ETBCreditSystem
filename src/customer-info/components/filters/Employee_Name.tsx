@@ -1,7 +1,12 @@
+import React from 'react';
 import { FilterContainer, FilterField, FilterInput } from '../../../components';
 import { useFilters } from '../../../context/useContext';
 
-function EmployeeName() {
+/**
+ * Filter component for searching transactions by employee name.
+ * @returns The EmployeeName filter component.
+ */
+function EmployeeName(): React.ReactElement  {
     const { filters, setFilters } = useFilters();
 
     const handleSearchChange = (value: string) => {

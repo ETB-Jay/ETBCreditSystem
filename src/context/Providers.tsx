@@ -1,12 +1,17 @@
+import React from 'react';
 import { useMemo, useState } from 'react';
 import { CustomerContext, DisplayContext, CustomerNamesContext, TransactionContext, FilterContext, TotalContext } from './Context';
 import PropTypes from 'prop-types';
 import { Customer, Display, Filters, Transaction } from '../types';
 
-// Grouped provider to reduce nesting and context switching
+/**
+ * Groups all context providers for the application to reduce nesting and context switching.
+ * @param props The children to be wrapped by providers.
+ * @returns The wrapped children with all providers.
+ */
 const AppProviders = ({ children }: {children: React.ReactElement}) => {
   const [customer, setCustomer] = useState<Customer | null>(null);
-  const [display, setDisplay] = useState<Display>('default');
+  const [display, setDisplay] = useState<Display>('login');
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filters, setFilters] = useState<Filters>({

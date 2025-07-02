@@ -1,3 +1,4 @@
+import React from 'react';
 import { useDisplay } from '../../context/useContext';
 import AddCardIcon from '@mui/icons-material/AddCard';
 import EditIcon from '@mui/icons-material/Edit';
@@ -5,10 +6,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Display } from '../../types';
 
 /**
- * Displays the triple dot icon that gives the user a list of potential actions related to the customer
- * 
- * @component
- * @returns {JSX.Element} The Action component
+ * Displays action buttons for customer-related actions (transaction, edit, delete).
+ * @returns The Actions component.
  */
 interface ActionsProps {
     icon: React.ElementType;
