@@ -1,42 +1,47 @@
-import React from 'react';
-import { useCustomer } from '../context/useContext';
-import EmailInfo from './components/EmailInfo';
-import PhoneInfo from './components/PhoneInfo';
-import Balance from './components/Balance';
-import Actions from './components/Actions';
-import Notes from './components/Notes';
-import TableDisplay from './components/TableDisplay';
-import { MainContainer } from '../components';
+import { ReactElement } from "react";
+
+import { MainContainer } from "../components";
+import { useCustomer } from "../context/useContext";
+import Actions from "./components/Actions";
+import Balance from "./components/Balance";
+import EmailInfo from "./components/EmailInfo";
+import Notes from "./components/Notes";
+import PhoneInfo from "./components/PhoneInfo";
+import TableDisplay from "./components/TableDisplay";
+import cn from "../components/utils";
 
 /**
  * Displays the customer information and transaction history.
  * @returns The CustomerInfo component.
  */
-function CustomerInfo(): React.ReactElement {
-    const { customer } = useCustomer();
-    if (!customer) {
-        return (
-            <MainContainer>
-                <div className="flex flex-row items-center justify-center h-full">
-                    <img src="./ETBBanner.png" alt="ETB Banner" className="w-2/3 h-auto opacity-50" />
-                </div>
-            </MainContainer>
-        );
-    }
+function CustomerInfo(): ReactElement {
+  const { customer } = useCustomer();
+  if (!customer) {
     return (
-        <MainContainer>
-            <div className="z-10 bg-gray-800 pb-2 gap-5 flex flex-row justify-between sm:mb-[2vh] md:mb-[1vw] xl:mb-[0.5vw] md:h-1/12">
-                <div className="flex flex-row items-center ml-2 mt-1 py-0.5 gap-x-3 lg:gap-x-4 w-full">
-                    <EmailInfo />
-                    <PhoneInfo />
-                    <Balance />
-                    <Notes />
-                </div>
-                <Actions />
-            </div>
-            <TableDisplay />
-        </MainContainer>
+      <MainContainer>
+        <div className="flex h-full flex-row items-center justify-center">
+          <img src="./ETBBanner.png" alt="" className="h-auto w-2/3 opacity-50" />
+        </div>
+      </MainContainer>
     );
+  }
+  return (
+    <MainContainer>
+      <div
+        className={cn("z-10 flex flex-row justify-between gap-5 bg-gray-800 pb-2",
+          "sm:mb-[2vh] md:mb-[1vw] md:h-1/12 xl:mb-[0.5vw]")}
+      >
+        <div className="mt-1 ml-2 flex w-full flex-row items-center gap-x-3 py-0.5 lg:gap-x-4">
+          <EmailInfo />
+          <PhoneInfo />
+          <Balance />
+          <Notes />
+        </div>
+        <Actions />
+      </div>
+      <TableDisplay />
+    </MainContainer>
+  );
 }
 
 export default CustomerInfo;

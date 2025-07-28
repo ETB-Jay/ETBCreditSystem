@@ -1,6 +1,8 @@
-import { Customer } from '../types';
-import { db } from '../firebase';
-import { getDoc, doc } from 'firebase/firestore';
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
+import { getDoc, doc } from "firebase/firestore";
+
+import { db } from "../firebase";
+import { Customer } from "../types";
 
 type ErrorProp = Record<string, string>;
 
@@ -9,29 +11,31 @@ type ErrorProp = Record<string, string>;
  * @param customer - The customer object to validate.
  * @returns An object with error messages for each field, or a string if the customer is not loaded.
  */
-const validateCustomerInfo = (customer: Partial<Customer>): Record<string, string>|string => {
-    const errs: ErrorProp = {
-        first_name: '',
-        last_name: '',
-        email: '',
-        phone: ''
-    };
+const validateCustomerInfo = (customer: Partial<Customer>): Record<string, string> | string => {
+  const errs: ErrorProp = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+  };
 
-    if (!customer) return 'Customer data is not properly loaded';
+  if (!customer.firstName) {
+    errs.first_name = "First name is required";
+  }
+  if (!customer.lastName) {
+    errs.last_name = "Last name is required";
+  }
 
-    if (!customer.first_name) errs.first_name = 'First name is required';
-    if (!customer.last_name) errs.last_name = 'Last name is required';
-
-    const emailTrimmed = customer.email?.trim() || '';
-    const phoneTrimmed = customer.phone?.trim() || '';
-    const phoneDigits = phoneTrimmed.replace(/\D/g, '');
-    if (emailTrimmed && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(emailTrimmed)) {
-        errs.email = 'Please enter a valid email address';
-    }
-    if (phoneTrimmed && phoneDigits.length !== 10) {
-        errs.phone = 'Phone number must be 10 digits';
-    }
-    return errs;
+  const emailTrimmed = customer.email?.trim() || "";
+  const phoneTrimmed = customer.phone?.trim() || "";
+  const phoneDigits = phoneTrimmed.replace(/\D/g, "");
+  if (emailTrimmed && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(emailTrimmed)) {
+    errs.email = "Please enter a valid email address";
+  }
+  if (phoneTrimmed && phoneDigits.length !== 10) {
+    errs.phone = "Phone number must be 10 digits";
+  }
+  return errs;
 };
 
 /**
@@ -40,9 +44,9 @@ const validateCustomerInfo = (customer: Partial<Customer>): Record<string, strin
  * @returns The document name string.
  */
 const getDocumentName = (id: number): string => {
-    const min = Math.floor((id - 1) / 100) * 100 + 1;
-    const max = min + 99;
-    return `${min}_min_${max}_max`;
+  const min = Math.floor((id - 1) / 100) * 100 + 1;
+  const max = min + 99;
+  return `${min}_min_${max}_max`;
 };
 
 /**
@@ -51,9 +55,10 @@ const getDocumentName = (id: number): string => {
  * @returns The array of customers from the document.
  */
 const getCustomerDoc = async (arrayName: string): Promise<Customer[]> => {
-    const customerDoc = await getDoc(doc(db, 'customers', arrayName));
-    const currentCustomers = customerDoc.data()?.customers || [];
-    return currentCustomers;
+  const customerDoc = await getDoc(doc(db, "customers", arrayName));
+  const currentCustomers = customerDoc.data()?.customers || [];
+  return currentCustomers;
 };
 
+// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export { validateCustomerInfo, getDocumentName, getCustomerDoc };

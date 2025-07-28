@@ -1,63 +1,48 @@
-import js from '@eslint/js';
-import globals from 'globals';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
-import tseslint from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
+import js from "@eslint/js";
+import shopifyEslintPlugin from "@shopify/eslint-plugin";
+import importPlugin from "eslint-plugin-import";
 
-export default [
-  { ignores: ['dist'] },
+const shopifyConfig = [
+  ...shopifyEslintPlugin.configs.typescript,
+  ...shopifyEslintPlugin.configs["typescript-type-checking"],
+  ...shopifyEslintPlugin.configs.react,
+  js.configs.recommended,
+  importPlugin.flatConfigs.recommended, 
+  importPlugin.flatConfigs.typescript,
   {
-    files: ['**/*.{js,jsx}'],
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
       parserOptions: {
-        ecmaVersion: 'latest',
-        ecmaFeatures: { jsx: true },
-        sourceType: 'module',
+        project: "./tsconfig.eslint.json",
       },
     },
-    plugins: {
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
-    },
     rules: {
-      ...js.configs.recommended.rules,
-      ...reactHooks.configs.recommended.rules,
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]', argsIgnorePattern: '^_' }],
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
+      "@shopify/strict-component-boundaries": "off",
+      "react-hooks/exhaustive-deps": "off",
+      "no-process-env": "off",
+      "react/react-in-jsx-scope": "off",
+      "@typescript-eslint/no-confusing-void-expression": "off",
+      "@typescript-eslint/no-misused-promises": "off",
+      "quotes": ["error", "double", { avoidEscape: true }],
+      "import/order": [
+        "error",
+        {
+          groups: [
+            ["builtin", "external"],
+            "internal",
+            ["parent", "sibling", "index"],
+            "object",
+            "type"
+          ],
+          alphabetize: { order: "asc", caseInsensitive: true },
+          "newlines-between": "always"
+        }
       ],
-      'quotes': ['error', 'single'],
-      'semi': ['error', 'always'],
-      'react/react-in-jsx-scope': 'off',
-    },
-  },
-  {
-    files: ['**/*.{ts,tsx}'],
-    languageOptions: {
-      ecmaVersion: 2020,
-      parser: tsParser,
-      parserOptions: {
-        project: './tsconfig.json',
-        sourceType: 'module',
-        ecmaFeatures: { jsx: true },
-      },
-      globals: globals.browser,
-    },
-    plugins: {
-      '@typescript-eslint': tseslint,
-    },
-    rules: {
-      ...js.configs.recommended.rules,
-      ...tseslint.configs.recommended.rules,
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]', argsIgnorePattern: '^_' }],
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-      'quotes': ['error', 'single'],
-      'semi': ['error', 'always'],
-      'react/react-in-jsx-scope': 'off',
-    },
-  },
+      "import-x/order": "off",
+      "@shopify/import-order": "off",
+      "shopify/import-order": "off",
+      "max-len": ["error", { code: 100 }],
+    }
+  }
 ];
+
+export default shopifyConfig;

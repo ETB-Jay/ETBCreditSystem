@@ -1,78 +1,84 @@
-@import url('https://fonts.googleapis.com/css2?family=Asul:wght@400;700&family=Faustina:ital,wght@0,300..800;1,300..800&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap');
-@import 'tailwindcss';
+/* ===== IMPORTS ===== */
+@import url("https://fonts.googleapis.com/css2?family=Asul:wght@400;700&family=Faustina:ital,wght@0,300..800;1,300..800&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap");
+@import "tailwindcss";
 
-.container-snap::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-}
-
-.container-snap::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 2px;
-}
-
-.container-snap::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 2px;
-}
-
-.container-snap::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-.container-snap::-webkit-scrollbar-corner {
-    background: transparent;
-    display: none;
-}
-
-.no-scroll::-webkit-scrollbar {
-    display: none;
-}
-
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+/* ===== BASE STYLES ===== */
+body {
+  font-family: "Source Serif 4", serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
 }
 
 .base {
-    font-family: "Asul", serif;
-    font-weight: 300;
-    font-style: semibold;
+  font-family: "Asul", serif;
+  font-weight: 300;
+  font-style: semibold;
 }
 
-body {
-    font-family: "Source Serif 4", serif;
-    font-optical-sizing: auto;
-    font-weight: 300;
-    font-style: normal;
+/* ===== SCROLLBAR STYLES ===== */
+.container-snap::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
 }
 
+.container-snap::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+}
+
+.container-snap::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+.container-snap::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.container-snap::-webkit-scrollbar-corner {
+  background: transparent;
+  display: none;
+}
+
+.no-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* ===== INPUT STYLES ===== */
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ===== ANIMATIONS ===== */
 @keyframes fade-in {
-    0% {
-        opacity: 0;
-        transform: translateY(20px) scale(0.98);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.prompt-animate {
-    animation: fade-in 0.35s cubic-bezier(0.33, 1, 0.68, 1);
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @keyframes fade-out {
-    0% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(20px) scale(0.98);
-    }
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+}
+
+/* ===== ANIMATION CLASSES ===== */
+.prompt-animate {
+  animation: fade-in 0.35s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .prompt-leave {
-    animation: fade-out 0.35s cubic-bezier(0.33, 1, 0.68, 1);
+  animation: fade-out 0.35s cubic-bezier(0.33, 1, 0.68, 1);
 }

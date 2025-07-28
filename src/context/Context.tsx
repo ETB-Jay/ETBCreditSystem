@@ -1,20 +1,20 @@
-import React from 'react';
-import { createContext } from 'react';
-import { Customer, Display, Filters, Transaction } from '../types';
+import { createContext, Dispatch, SetStateAction } from "react";
+
+import { Customer, Display, Filters, Transaction } from "../types";
 
 /**
- * @description Context for the Customer's Name. This is used for 
+ * @description Context for the Customer's Name. This is used for
  * controlling the state of the table relative to the selected name on the list.
  */
 interface CustomerContextType {
   customer: Customer | null;
-  setCustomer: React.Dispatch<React.SetStateAction<Customer | null>>;
+  setCustomer: Dispatch<SetStateAction<Customer | null>>;
 }
 const CustomerContext = createContext<CustomerContextType | undefined>(undefined);
-CustomerContext.displayName = 'CustomerContext';
+CustomerContext.displayName = "CustomerContext";
 
 /**
- * @description Context for the current Display. 
+ * @description Context for the current Display.
  * There are 6 unique displays:
  * - "default" - the default display when the app loads in
  * - "user" - the display when adding a new user
@@ -25,51 +25,51 @@ CustomerContext.displayName = 'CustomerContext';
  */
 interface DisplayContextType {
   display: Display;
-  setDisplay: React.Dispatch<React.SetStateAction<Display>>;
+  setDisplay: Dispatch<SetStateAction<Display>>;
 }
 
 const DisplayContext = createContext<DisplayContextType | undefined>(undefined);
-DisplayContext.displayName = 'DisplayContext';
+DisplayContext.displayName = "DisplayContext";
 
 /** @description Context for the Customer Names. */
 interface CustomerNamesContextType {
   customers: Customer[];
-  setCustomers: React.Dispatch<React.SetStateAction<Customer[]>>;
+  setCustomers: Dispatch<SetStateAction<Customer[]>>;
 }
 const CustomerNamesContext = createContext<CustomerNamesContextType | undefined>(undefined);
-CustomerNamesContext.displayName = 'CustomerNamesContext';
+CustomerNamesContext.displayName = "CustomerNamesContext";
 
 /** @description Context to store the Transactional Data. */
 interface TransactionContextType {
   transactions: Transaction[];
-  setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>;
+  setTransactions: Dispatch<SetStateAction<Transaction[]>>;
 }
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
-TransactionContext.displayName = 'TransactionContext';
+TransactionContext.displayName = "TransactionContext";
 
 /** @description Context to store the Filter Data. */
 interface FilterContextType {
   filters: Filters;
-  setFilters: React.Dispatch<React.SetStateAction<Filters>>;
+  setFilters: Dispatch<SetStateAction<Filters>>;
 }
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
-FilterContext.displayName = 'FilterContext';
+FilterContext.displayName = "FilterContext";
 
 /** @description Context to store the total number of customers. */
 interface TotalContextType {
   total: number;
-  setTotal: React.Dispatch<React.SetStateAction<number>>;
+  setTotal: Dispatch<SetStateAction<number>>;
 }
 
 const TotalContext = createContext<TotalContextType | undefined>(undefined);
-TotalContext.displayName = 'TotalContext';
+TotalContext.displayName = "TotalContext";
 
-export { 
-    CustomerContext, 
-    DisplayContext, 
-    CustomerNamesContext, 
-    TransactionContext,
-    FilterContext,
-    TotalContext
+export {
+  CustomerContext,
+  DisplayContext,
+  CustomerNamesContext,
+  TransactionContext,
+  FilterContext,
+  TotalContext,
 };

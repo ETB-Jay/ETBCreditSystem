@@ -1,23 +1,30 @@
-import React from 'react';
-import { useMemo, useState } from 'react';
-import { CustomerContext, DisplayContext, CustomerNamesContext, TransactionContext, FilterContext, TotalContext } from './Context';
-import PropTypes from 'prop-types';
-import { Customer, Display, Filters, Transaction } from '../types';
+import PropTypes from "prop-types";
+import React, { PropsWithChildren, useMemo, useState } from "react";
+
+import {
+  CustomerContext,
+  DisplayContext,
+  CustomerNamesContext,
+  TransactionContext,
+  FilterContext,
+  TotalContext,
+} from "./Context";
+import { Customer, Display, Filters, Transaction } from "../types";
 
 /**
  * Groups all context providers for the application to reduce nesting and context switching.
  * @param props The children to be wrapped by providers.
  * @returns The wrapped children with all providers.
  */
-const AppProviders = ({ children }: {children: React.ReactElement}) => {
+const AppProviders = ({ children }: PropsWithChildren) => {
   const [customer, setCustomer] = useState<Customer | null>(null);
-  const [display, setDisplay] = useState<Display>('login');
+  const [display, setDisplay] = useState<Display>("login");
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filters, setFilters] = useState<Filters>({
-    date: { startDate: '', endDate: '' },
-    amount: { minAmount: '', maxAmount: '' },
-    employee: { searchTerm: '' }
+    date: { startDate: "", endDate: "" },
+    amount: { minAmount: "", maxAmount: "" },
+    employee: { searchTerm: "" },
   });
   const [total, setTotal] = useState(0);
 
@@ -34,9 +41,7 @@ const AppProviders = ({ children }: {children: React.ReactElement}) => {
         <CustomerNamesContext.Provider value={customersValue}>
           <TransactionContext.Provider value={transactionsValue}>
             <FilterContext.Provider value={filtersValue}>
-              <TotalContext.Provider value={totalValue}>
-                {children}
-              </TotalContext.Provider>
+              <TotalContext.Provider value={totalValue}>{children}</TotalContext.Provider>
             </FilterContext.Provider>
           </TransactionContext.Provider>
         </CustomerNamesContext.Provider>
@@ -46,7 +51,7 @@ const AppProviders = ({ children }: {children: React.ReactElement}) => {
 };
 
 AppProviders.propTypes = {
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
 };
 
 export default AppProviders;

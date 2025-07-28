@@ -1,37 +1,53 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import { useDisplay } from '../context/useContext';
-import AddCustomer from './components/AddCustomer';
-import ListDisplay from './components/ListDisplay';
-import InfoIcon from '@mui/icons-material/Info';
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
+import InfoIcon from "@mui/icons-material/Info";
+import React, { useState, ReactElement } from "react";
+
+import { useDisplay } from "../context/useContext";
+import AddCustomer from "./components/AddCustomer";
+import ListDisplay from "./components/ListDisplay";
+import cn from "../components/utils";
+
+// ─ Constants ────────────────────────────────────────────────────────────────────────────────────
+const SEARCH_PLACEHOLDER = "search customer...";
 
 /**
- * Renders the customer search grid, including the search bar, add customer button, info icon, and customer list.
+ * Renders the customer search grid with the search bar, add customer, report, and customer list.
  * @returns The Search component.
  */
-function Search(): React.ReactElement {
-    const [search, setSearch] = useState<string>('');
-    const { setDisplay } = useDisplay();
+function Search(): ReactElement {
+  const [search, setSearch] = useState<string>("");
+  const { setDisplay } = useDisplay();
 
-    useEffect(() => {
-        setSearch('');
-    }, []);
-
-    return (
-        <div className="flex flex-col bg-gray-800 p-2 overflow-y-scroll container-snap select-none rounded-2xl my-2 mx-1 border border-gray-700">
-            <div className="flex flex-row items-center mb-1.5">
-                <input
-                    className="rounded-sm w-full h-full text-xs font-bold bg-gray-900 text-gray-100 px-1 md:px-2 border border-gray-700 placeholder-gray-500 outline-none focus:ring-1 focus:ring-blue-500 "
-                    type="text"
-                    placeholder="search customer..."
-                    onChange={(e) => setSearch(e.target.value)}
-                />
-                <AddCustomer />
-                <InfoIcon className="cursor-pointer hover:brightness-50" onClick={() => setDisplay('report')} sx={{ color: 'white', fontSize: '20px' }} />
-            </div>
-            <ListDisplay filter={search} />
-        </div>
-    );
+  return (
+    <div
+      className={cn(
+        "container-snap mx-1 my-2 flex flex-col overflow-y-scroll rounded-2xl",
+        "border border-gray-700 bg-gray-800 p-2 text-white select-none"
+      )}
+    >
+      <div className="mb-1.5 flex flex-row items-center">
+        <input
+          className={cn(
+            "h-full w-full rounded-sm border border-gray-700 bg-gray-900 px-1 text-xs font-bold",
+            "placeholder-gray-500 outline-none focus:ring-1 focus:ring-blue-500 md:px-2"
+          )}
+          type="text"
+          placeholder={SEARCH_PLACEHOLDER}
+          onChange={(ev) => setSearch(ev.target.value)}
+          aria-label={SEARCH_PLACEHOLDER}
+          autoComplete="no"
+        />
+        <AddCustomer />
+        <InfoIcon
+          className="cursor-pointer hover:brightness-50"
+          onClick={() => setDisplay("report")}
+          fontSize="small"
+        />
+      </div>
+      <ListDisplay filter={search} />
+    </div>
+  );
 }
 
+// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default Search;

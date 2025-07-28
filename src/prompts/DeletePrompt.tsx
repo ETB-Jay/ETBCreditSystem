@@ -1,91 +1,98 @@
-import React from 'react';
-import { useState } from 'react';
-import { useDisplay, useCustomer, useCustomerNames } from '../context/useContext';
-import { Prompt, PromptField, PromptInput, PromptButton } from '../components';
-import { db } from '../firebase';
-import { doc, updateDoc } from 'firebase/firestore';
-import { getDocumentName, getCustomerDoc } from './scripts';
-import { Customer } from '../types';
+import { doc, updateDoc } from "firebase/firestore";
+import { ReactElement, useState } from "react";
+
+import { Prompt, PromptField, PromptInput, PromptButton } from "../components";
+import { useDisplay, useCustomer, useCustomerNames } from "../context/useContext";
+import { db } from "../firebase";
+import { getDocumentName, getCustomerDoc } from "./scripts";
+import { Customer } from "../types";
 
 /**
  * Displays a prompt for confirming and deleting a customer.
  * @returns The DeletePrompt component.
  */
-function DeletePrompt(): React.ReactElement {
-    const { setDisplay } = useDisplay();
-    const { customer, setCustomer } = useCustomer();
-    const { customers, setCustomers } = useCustomerNames();
-    const [confirm, setConfirm] = useState('');
-    const [error, setError] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
+function DeletePrompt(): ReactElement {
+  const { setDisplay } = useDisplay();
+  const { customer, setCustomer } = useCustomer();
+  const { customers, setCustomers } = useCustomerNames();
+  const [confirm, setConfirm] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleDelete = async () => {
-        try {
-            setIsSubmitting(true);
-            const arrayName = getDocumentName(customer?.customer_id ?? 0);
-            const currentCustomers = await getCustomerDoc(arrayName);
-            const customerIndex = currentCustomers.findIndex((c: Customer) => c.customer_id === customer?.customer_id);
+  const handleDelete = async () => {
+    try {
+      setIsSubmitting(true);
+      const arrayName = getDocumentName(customer?.customerID ?? 0);
+      const currentCustomers = await getCustomerDoc(arrayName);
+      const customerIndex = currentCustomers.findIndex(
+        (cust: Customer) => cust.customerID === customer?.customerID
+      );
 
-            if (customerIndex === -1) {
-                setError('Customer not found in database');
-                return;
-            }
+      if (customerIndex === -1) {
+        setError("Customer not found in database");
+        return;
+      }
 
-            currentCustomers.splice(customerIndex, 1);
-            await updateDoc(doc(db, 'customers', arrayName), {
-                customers: currentCustomers,
-                count: currentCustomers.length
-            });
+      currentCustomers.splice(customerIndex, 1);
+      await updateDoc(doc(db, "customers", arrayName), {
+        customers: currentCustomers,
+        count: currentCustomers.length,
+      });
 
-            const updatedCustomers = customers.filter((c: Customer) => c.customer_id !== customer?.customer_id);
-            setCustomers(updatedCustomers);
-            setCustomer(null);
-            setDisplay('default');
-        } catch (err) {
-            setError('Failed to delete customer: ' + (err instanceof Error ? err.message : 'Unknown error'));
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+      const updatedCustomers = customers.filter(
+        (cust: Customer) => cust.customerID !== customer?.customerID
+      );
+      setCustomers(updatedCustomers);
+      setCustomer(null);
+      setDisplay("default");
+    } catch (err) {
+      setError(
+        `Failed to delete customer: ${err instanceof Error ? err.message : "Unknown error"}`
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-    const handleCancel = () => {
-        setConfirm('');
-        setError('');
-        setDisplay('default');
-    };
+  const handleCancel = () => {
+    setConfirm("");
+    setError("");
+    setDisplay("default");
+  };
 
-    const labelText = (
-        <span className="flex justify-center items-center w-full">
-            Type <span className="mx-1 bg-red-900 text-white px-2 py-0.5 rounded">{customer ? customer.first_name + ' ' + customer.last_name : ''}</span> To Delete This Customer
-        </span>
-    );
+  const customerName = customer ? `${customer.firstName} ${customer.lastName}` : "";
+  const deleteButtonLabel = isSubmitting ? "Processing..." : "Delete";
+  const instructionText = "Type";
+  const confirmationText = "To Delete This Customer";
 
-    return (
-        <Prompt title="Delete Customer">
-            <PromptField error={error}>
-                <PromptInput
-                    label={labelText}
-                    value={confirm}
-                    onChange={e => setConfirm(e.target.value)}
-                    disabled={isSubmitting}
-                />
-            </PromptField>
-            <div className="flex flex-row gap-5 justify-end">
-                <PromptButton
-                    onClick={handleDelete}
-                    disabled={isSubmitting || !customer || confirm !== `${customer.first_name} ${customer.last_name}`}
-                    label={isSubmitting ? 'Processing...' : 'Delete'}
-                    icon={null}
-                />
-                <PromptButton
-                    onClick={handleCancel}
-                    disabled={isSubmitting}
-                    label="Cancel"
-                    icon={null}
-                />
-            </div>
-        </Prompt>
-    );
+  return (
+    <Prompt title="Delete Customer">
+      <PromptField error={error}>
+        <div className="mb-2 flex w-full items-center justify-center gap-1 text-xs text-gray-200">
+          {instructionText}
+          <span className="mx-1 rounded bg-red-900/60 px-2 py-0.5 text-white ring-2 ring-rose-800">
+            {customerName}
+          </span>
+          {confirmationText}
+        </div>
+        <PromptInput
+          value={confirm}
+          onChange={(ev) => setConfirm(ev.target.value)}
+          disabled={isSubmitting}
+          placeholder="Enter customer name to confirm"
+        />
+      </PromptField>
+      <div className="flex flex-row justify-end gap-5">
+        <PromptButton
+          onClick={handleDelete}
+          disabled={isSubmitting || !customer || confirm !== customerName}
+          label={deleteButtonLabel}
+          icon={null}
+        />
+        <PromptButton onClick={handleCancel} disabled={isSubmitting} label="Cancel" icon={null} />
+      </div>
+    </Prompt>
+  );
 }
 
 export default DeletePrompt;
