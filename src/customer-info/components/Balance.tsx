@@ -1,14 +1,12 @@
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import WarningIcon from "@mui/icons-material/Warning";
 import { KeyboardEvent, ReactElement, useEffect, useState } from "react";
 
-import cn from "../../components/utils";
 import { useCustomer, useCustomerNames, useDisplay } from "../../context/useContext";
+import { cn } from "../../prompts/scripts";
 
-/**
- * Displays the current customer's balance in a styled container.
- * @returns The Balance component.
- */
+/** Displays the current customer's balance in a styled container. */
 function Balance(): ReactElement {
   const { customer } = useCustomer();
   const { customers } = useCustomerNames();
@@ -49,4 +47,5 @@ function Balance(): ReactElement {
   );
 }
 
+// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default Balance;

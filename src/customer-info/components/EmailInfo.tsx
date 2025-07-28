@@ -1,13 +1,11 @@
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import EmailIcon from "@mui/icons-material/Email";
 import { ReactElement } from "react";
 
-import cn from "../../components/utils";
 import { useCustomer } from "../../context/useContext";
+import { cn } from "../../prompts/scripts";
 
-/**
- * Displays the customer's email in a formatted style with an email icon.
- * @returns The EmailInfo component.
- */
+/** Displays the customer's email in a formatted style with an email icon. */
 function EmailInfo(): ReactElement {
   const { customer } = useCustomer();
   return (
@@ -23,4 +21,5 @@ function EmailInfo(): ReactElement {
   );
 }
 
+// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default EmailInfo;

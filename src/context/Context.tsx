@@ -1,3 +1,4 @@
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import { createContext, Dispatch, SetStateAction } from "react";
 
 import { Customer, Display, Filters, Transaction } from "../types";
@@ -65,6 +66,7 @@ interface TotalContextType {
 const TotalContext = createContext<TotalContextType | undefined>(undefined);
 TotalContext.displayName = "TotalContext";
 
+// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export {
   CustomerContext,
   DisplayContext,

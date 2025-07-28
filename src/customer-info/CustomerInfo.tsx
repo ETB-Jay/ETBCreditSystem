@@ -1,3 +1,4 @@
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import { ReactElement } from "react";
 
 import { MainContainer } from "../components";
@@ -8,12 +9,9 @@ import EmailInfo from "./components/EmailInfo";
 import Notes from "./components/Notes";
 import PhoneInfo from "./components/PhoneInfo";
 import TableDisplay from "./components/TableDisplay";
-import cn from "../components/utils";
+import { cn } from "../prompts/scripts";
 
-/**
- * Displays the customer information and transaction history.
- * @returns The CustomerInfo component.
- */
+/** Displays the customer information and transaction history. */
 function CustomerInfo(): ReactElement {
   const { customer } = useCustomer();
   if (!customer) {
@@ -44,4 +42,5 @@ function CustomerInfo(): ReactElement {
   );
 }
 
+// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default CustomerInfo;

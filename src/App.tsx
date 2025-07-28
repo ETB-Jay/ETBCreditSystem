@@ -1,7 +1,6 @@
 // ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import { ReactElement, useEffect, useState } from "react";
 
-import cn from "./components/utils";
 import { useDisplay, useCustomerNames, useTotal } from "./context/useContext";
 import CustomerInfo from "./customer-info/CustomerInfo";
 import { fetchCustomers } from "./firebase";
@@ -10,6 +9,7 @@ import DeletePrompt from "./prompts/DeletePrompt";
 import EditCustomer from "./prompts/EditCustomer";
 import LoginPrompt from "./prompts/LoginPrompt";
 import Report from "./prompts/Report";
+import { cn } from "./prompts/scripts";
 import TransactionPrompt from "./prompts/TransactionPrompt";
 import Search from "./search/Search";
 

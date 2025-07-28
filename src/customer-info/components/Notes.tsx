@@ -1,18 +1,15 @@
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import CheckIcon from "@mui/icons-material/Check";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { doc, updateDoc } from "firebase/firestore";
 import { ReactElement, useCallback, useEffect, useState } from "react";
 
-import cn from "../../components/utils";
 import { useCustomer } from "../../context/useContext";
 import { db } from "../../firebase";
-import { getDocumentName, getCustomerDoc } from "../../prompts/scripts";
+import { getDocumentName, getCustomerDoc, cn } from "../../prompts/scripts";
 import { Customer } from "../../types";
 
-/**
- * Displays and allows editing of the customer's notes field.
- * @returns The Notes component.
- */
+/** Displays and allows editing of the customer's notes field. */
 function Notes(): ReactElement {
   const { customer } = useCustomer();
   const [tempNote, setTempNote] = useState<string>(customer?.notes || "");
@@ -86,4 +83,5 @@ function Notes(): ReactElement {
   );
 }
 
+// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default Notes;

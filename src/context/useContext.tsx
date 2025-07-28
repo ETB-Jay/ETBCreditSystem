@@ -1,3 +1,4 @@
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import { useContext } from "react";
 
 import {
@@ -87,4 +88,5 @@ const useTotal = () => {
   return context;
 };
 
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 export { useCustomer, useDisplay, useCustomerNames, useTransactions, useFilters, useTotal };

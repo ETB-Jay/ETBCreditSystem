@@ -1,12 +1,10 @@
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import { ReactElement } from "react";
 
 import { FilterContainer, FilterField, FilterInput } from "../../../components";
 import { useFilters } from "../../../context/useContext";
 
-/**
- * Filter component for searching transactions by employee name.
- * @returns The EmployeeName filter component.
- */
+/** Filter component for searching transactions by employee name. */
 function EmployeeName(): ReactElement {
   const { filters, setFilters } = useFilters();
 
@@ -34,4 +32,5 @@ function EmployeeName(): ReactElement {
   );
 }
 
+// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default EmployeeName;

@@ -1,5 +1,7 @@
 // ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
-import { getDoc, doc } from "firebase/firestore";
+import { clsx } from "clsx";
+import { doc, getDoc } from "firebase/firestore";
+import { twMerge } from "tailwind-merge";
 
 import { db } from "../firebase";
 import { Customer } from "../types";
@@ -60,5 +62,15 @@ const getCustomerDoc = async (arrayName: string): Promise<Customer[]> => {
   return currentCustomers;
 };
 
+/**
+ * Utility function for merging class names using clsx and tailwind-merge.
+ * @param inputs - List of class names (strings, undefined, null, or false)
+ * @returns A single merged class name string
+ */
+function cn(...inputs: (string | undefined | null | false)[]): string {
+  return twMerge(clsx(inputs));
+}
+
 // ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
-export { validateCustomerInfo, getDocumentName, getCustomerDoc };
+export { cn, getCustomerDoc, getDocumentName, validateCustomerInfo };
+

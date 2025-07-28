@@ -1,16 +1,14 @@
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import AddCardIcon from "@mui/icons-material/AddCard";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { ElementType, ReactElement } from "react";
 
-import cn from "../../components/utils";
 import { useDisplay } from "../../context/useContext";
+import { cn } from "../../prompts/scripts";
 import { Display } from "../../types";
 
-/**
- * Displays action buttons for customer-related actions (transaction, edit, delete).
- * @returns The Actions component.
- */
+/** Displays action buttons for customer-related actions (transaction, edit, delete). */
 interface ActionsProps {
   icon: ElementType;
   display: Display;
@@ -41,4 +39,5 @@ function Actions(): ReactElement {
   );
 }
 
+// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default Actions;

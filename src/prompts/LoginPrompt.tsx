@@ -1,3 +1,4 @@
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import KeyIcon from "@mui/icons-material/Key";
 import LockIcon from "@mui/icons-material/Lock";
 import PersonIcon from "@mui/icons-material/Person";
@@ -7,10 +8,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { Prompt, PromptButton, PromptField, PromptInput } from "../components";
 import { useDisplay } from "../context/useContext";
 
-/**
- * Displays a login prompt for user authentication.
- * @returns The LoginPrompt component.
- */
+/** Displays a login prompt for user authentication. */
 function LoginPrompt() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -92,4 +90,5 @@ function LoginPrompt() {
   );
 }
 
+// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default LoginPrompt;

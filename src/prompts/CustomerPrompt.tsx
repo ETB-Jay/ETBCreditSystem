@@ -15,7 +15,6 @@ import type { Customer } from "../types";
 /**
  * Checks if an object is empty (has no own properties and is a plain object).
  * @param obj The object to check.
- * @returns True if the object is empty, false otherwise.
  */
 const isEmptyObject = (obj: object) => Object.keys(obj).length === 0 && obj.constructor === Object;
 
@@ -94,7 +93,7 @@ function CustomerPrompt() {
         console.warn(error);
       }
       setDisplay("default");
-    } catch  {
+    } catch {
       setErrors({ submit: "Failed to add customer. Please try again." });
     } finally {
       setIsSubmitting(false);

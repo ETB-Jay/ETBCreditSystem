@@ -3,10 +3,7 @@ import { ReactElement } from "react";
 
 import { useDisplay } from "../../context/useContext";
 
-/**
- * Renders a button that allows the user to add a new customer.
- * @returns The AddCustomer button component.
- */
+/** Renders a button that allows the user to add a new customer */
 function AddCustomer(): ReactElement {
   const { setDisplay } = useDisplay();
   return (

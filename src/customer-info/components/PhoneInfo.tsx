@@ -2,8 +2,8 @@
 import PhoneIcon from "@mui/icons-material/Phone";
 import { ReactElement } from "react";
 
-import cn from "../../components/utils";
 import { useCustomer } from "../../context/useContext";
+import { cn } from "../../prompts/scripts";
 
 /**
  * Displays the customer's phone number in a formatted style with a phone icon.
@@ -17,14 +17,10 @@ function PhoneInfo(): ReactElement {
    * @returns The formatted phone number or the original string if invalid.
    */
   const formatPhoneNumber = (phone: string): string => {
-    if (!phone) {
-      return "N/A";
-    }
+    if (!phone) { return "N/A"; }
     const cleaned = `${phone}`.replace(/\D/g, "");
     const match = /^(\d{3})(\d{3})(\d{4})$/.exec(cleaned);
-    if (match) {
-      return `(${match[1]}) ${match[2]}-${match[3]}`;
-    }
+    if (match) { return `(${match[1]}) ${match[2]}-${match[3]}`; }
     return phone;
   };
   return (

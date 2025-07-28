@@ -2,8 +2,8 @@
 import WarningIcon from "@mui/icons-material/Warning";
 import { useState, memo, useMemo, useCallback, ReactElement, KeyboardEvent } from "react";
 
-import cn from "../../components/utils";
 import { useCustomer, useCustomerNames } from "../../context/useContext";
+import { cn } from "../../prompts/scripts";
 import { Customer } from "../../types";
 
 /**

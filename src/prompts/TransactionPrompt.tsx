@@ -9,11 +9,10 @@ import { doc, updateDoc, Timestamp } from "firebase/firestore";
 import { useState, useEffect, ReactElement } from "react";
 
 import { Prompt, PromptButton, PromptField, PromptInput } from "../components";
-import cn from "../components/utils";
 import { useDisplay, useCustomer } from "../context/useContext";
 import { db } from "../firebase";
 import { Customer } from "../types";
-import { getDocumentName, getCustomerDoc } from "./scripts";
+import { cn, getDocumentName, getCustomerDoc  } from "./scripts";
 
 // ─ Constants ────────────────────────────────────────────────────────────────────────────────────
 const LABELS = {
@@ -25,11 +24,21 @@ const LABELS = {
   SELECT_EMPLOYEE: "Select employee",
 };
 
+
+// ─ Interfaces ───────────────────────────────────────────────────────────────────────────────────
 interface TransactionInput {
   changeBalance: string;
   employeeName: string;
   notes: string;
 }
+interface SideButtonProps {
+  label: ReactElement;
+  color: string;
+  onClick: () => void;
+  disabled?: boolean;
+  title?: string;
+}
+
 
 /**
  * A prompt that allows the user to add a new transaction to the system.
@@ -152,14 +161,6 @@ function TransactionPrompt(): ReactElement {
       setDisplay("default");
     }
   };
-
-  interface SideButtonProps {
-    label: ReactElement;
-    color: string;
-    onClick: () => void;
-    disabled?: boolean;
-    title?: string;
-  }
 
   const SideButton = ({ label, color, onClick, disabled = false, title = "" }: SideButtonProps) => {
     const buttonClass = cn(

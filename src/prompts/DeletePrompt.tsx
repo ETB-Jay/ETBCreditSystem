@@ -1,3 +1,4 @@
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import { doc, updateDoc } from "firebase/firestore";
 import { ReactElement, useState } from "react";
 
@@ -7,10 +8,7 @@ import { db } from "../firebase";
 import { getDocumentName, getCustomerDoc } from "./scripts";
 import { Customer } from "../types";
 
-/**
- * Displays a prompt for confirming and deleting a customer.
- * @returns The DeletePrompt component.
- */
+/** Displays a prompt for confirming and deleting a customer. */
 function DeletePrompt(): ReactElement {
   const { setDisplay } = useDisplay();
   const { customer, setCustomer } = useCustomer();
@@ -95,4 +93,5 @@ function DeletePrompt(): ReactElement {
   );
 }
 
+// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default DeletePrompt;

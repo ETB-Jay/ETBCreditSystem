@@ -4,6 +4,7 @@ import { getFirestore, collection, getDocs, onSnapshot } from "firebase/firestor
 
 import { Customer } from "./types";
 
+// ─ Constants ────────────────────────────────────────────────────────────────────────────────────
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,

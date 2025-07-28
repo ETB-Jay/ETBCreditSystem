@@ -2,13 +2,13 @@
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import React, { useEffect, useState, useMemo, ReactElement, KeyboardEvent } from "react";
+import { useEffect, useState, useMemo, ReactElement, KeyboardEvent } from "react";
 
 import Amount from "./filters/Amount";
 import DateFilter from "./filters/DateFilter";
 import EmployeeName from "./filters/EmployeeName";
-import cn from "../../components/utils";
 import { useCustomer, useCustomerNames, useDisplay, useFilters } from "../../context/useContext";
+import { cn } from "../../prompts/scripts";
 import { Customer, Transaction } from "../../types";
 
 /** Displays a table containing the transactions made by the individual customer. */
@@ -20,9 +20,7 @@ function TableDisplay(): ReactElement {
   const [filteredRows, setFilteredRows] = useState<Transaction[]>([]);
 
   useEffect(() => {
-    if (display !== "default") {
-      setDisplay("default");
-    }
+    if (display !== "default") { setDisplay("default"); }
   }, [customer?.customerID, customer?.transactions.length]);
 
   const applyFilters = useMemo(

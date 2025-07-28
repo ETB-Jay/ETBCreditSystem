@@ -11,10 +11,7 @@ import { db } from "../firebase";
 import { getCustomerDoc, getDocumentName, validateCustomerInfo } from "./scripts";
 import { Customer } from "../types";
 
-/**
- * Displays a prompt for editing customer information.
- * @returns The EditCustomer component.
- */
+/** Displays a prompt for editing customer information. */
 function EditCustomer() {
   const { customer, setCustomer } = useCustomer();
   const { setDisplay } = useDisplay();

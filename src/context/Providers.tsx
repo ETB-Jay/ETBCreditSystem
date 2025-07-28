@@ -1,5 +1,5 @@
-import PropTypes from "prop-types";
-import React, { PropsWithChildren, useMemo, useState } from "react";
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
+import { PropsWithChildren, useMemo, useState } from "react";
 
 import {
   CustomerContext,
@@ -14,7 +14,6 @@ import { Customer, Display, Filters, Transaction } from "../types";
 /**
  * Groups all context providers for the application to reduce nesting and context switching.
  * @param props The children to be wrapped by providers.
- * @returns The wrapped children with all providers.
  */
 const AppProviders = ({ children }: PropsWithChildren) => {
   const [customer, setCustomer] = useState<Customer | null>(null);
@@ -50,8 +49,5 @@ const AppProviders = ({ children }: PropsWithChildren) => {
   );
 };
 
-AppProviders.propTypes = {
-  children: PropTypes.node.isRequired,
-};
-
+// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default AppProviders;

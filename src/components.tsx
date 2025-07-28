@@ -1,3 +1,4 @@
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -5,23 +6,21 @@ import {
   ChangeEvent,
   cloneElement,
   isValidElement,
+  PropsWithChildren,
   ReactElement,
   ReactNode,
   useMemo,
   useState,
 } from "react";
 
-import cn from "./components/utils";
+import { cn } from "./prompts/scripts";
 
-interface MainContainerProps {
-  children: ReactNode;
-}
 /**
  * Main container component for wrapping content in a styled div.
  * @param props The props for the MainContainer.
  * @returns The rendered container.
  */
-const MainContainer = ({ children }: MainContainerProps) => (
+const MainContainer = ({ children }: PropsWithChildren) => (
   <div
     className={cn(
       "container-snap mx-1 my-2 flex flex-col overflow-y-scroll",
@@ -259,6 +258,7 @@ const FilterInput = ({
   </div>
 );
 
+// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export { MainContainer };
 export { Prompt, PromptButton, PromptField, PromptInput };
 export { FilterContainer, FilterField, FilterInput };

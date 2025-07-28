@@ -1,3 +1,4 @@
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import DownloadIcon from "@mui/icons-material/Download";
 import { collection, onSnapshot } from "firebase/firestore";
 import JSZip from "jszip";
@@ -8,12 +9,14 @@ import { useDisplay, useCustomerNames, useTotal } from "../context/useContext";
 import { db } from "../firebase";
 import { Transaction } from "../types";
 
+// ─ Interfaces ───────────────────────────────────────────────────────────────────────────────────
 type TransactionWithCustomer = Transaction & {
   customerID: number;
   firstName: string;
   lastName: string;
 };
 
+// ─ Constants ────────────────────────────────────────────────────────────────────────────────────
 const GithubLink = "https://github.com/ETB-Jay/ETBCreditSystem";
 
 /**
@@ -188,4 +191,5 @@ function Report() {
   );
 }
 
+// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default Report;

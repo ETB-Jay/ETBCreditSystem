@@ -1,11 +1,11 @@
 // ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import InfoIcon from "@mui/icons-material/Info";
-import React, { useState, ReactElement } from "react";
+import { useState, ReactElement } from "react";
 
 import { useDisplay } from "../context/useContext";
 import AddCustomer from "./components/AddCustomer";
 import ListDisplay from "./components/ListDisplay";
-import cn from "../components/utils";
+import { cn } from "../prompts/scripts";
 
 // ─ Constants ────────────────────────────────────────────────────────────────────────────────────
 const SEARCH_PLACEHOLDER = "search customer...";

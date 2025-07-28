@@ -1,12 +1,10 @@
+// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import { ReactElement } from "react";
 
 import { FilterContainer, FilterField, FilterInput } from "../../../components";
 import { useFilters } from "../../../context/useContext";
 
-/**
- * Filter component for selecting a date range for transactions.
- * @returns The DateFilter filter component.
- */
+/** Filter component for selecting a date range for transactions. */
 function DateFilter(): ReactElement {
   const { filters, setFilters } = useFilters();
 
@@ -44,4 +42,5 @@ function DateFilter(): ReactElement {
   );
 }
 
+// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default DateFilter;
