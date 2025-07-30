@@ -26,7 +26,7 @@ type CustomersCallback = (_data: { customers: Customer[]; total: number; error?:
  * @param callback Callback to handle customer data and errors.
  * @returns Unsubscribe function for the Firestore listener.
  */
-const fetchCustomers = (callback: CustomersCallback) => {
+function fetchCustomers(callback: CustomersCallback) {
   return onSnapshot(
     customersCollection,
     (snapshot) => {
@@ -53,7 +53,7 @@ const fetchCustomers = (callback: CustomersCallback) => {
  * Fetches all customers once from Firestore.
  * @returns The customers and total count.
  */
-const fetchCustomersOnce = async () => {
+async function fetchCustomersOnce() {
   try {
     const customersDocuments = await getDocs(customersCollection);
     const customerData = customersDocuments.docs.flatMap((doc) => {
@@ -73,7 +73,7 @@ const fetchCustomersOnce = async () => {
  * Gets the highest customer ID from all customer documents.
  * @returns The highest customer ID found.
  */
-const getHighestCustomerId = async () => {
+async function getHighestCustomerId() {
   try {
     const customersDocuments = await getDocs(customersCollection);
     let highestId = 0;

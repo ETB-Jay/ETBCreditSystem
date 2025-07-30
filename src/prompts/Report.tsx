@@ -2,56 +2,57 @@
 import DownloadIcon from "@mui/icons-material/Download";
 import { collection, onSnapshot } from "firebase/firestore";
 import JSZip from "jszip";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-import { Prompt, PromptButton, PromptField } from "../components";
+import { GithubIcon, Prompt, PromptButton, PromptField } from "../components";
 import { useDisplay, useCustomerNames, useTotal } from "../context/useContext";
 import { db } from "../firebase";
 import { Transaction } from "../types";
+import { snapshot } from "node:test";
 
 // ─ Interfaces ───────────────────────────────────────────────────────────────────────────────────
-type TransactionWithCustomer = Transaction & {
+interface TransactionWithCustomer extends Transaction {
   customerID: number;
-  firstName: string;
-  lastName: string;
 };
 
-// ─ Constants ────────────────────────────────────────────────────────────────────────────────────
-const GithubLink = "https://github.com/ETB-Jay/ETBCreditSystem";
+// ─ Constants ───────────────────────────────────────────────────────────────────────────────────
+const REPORT_LABELS = {
+  NumberCustomer: "Number of Customers: ",
+  TotalCredit: "Total Credit: ",
+  Outstanding: "Number of Outstanding Individuals:"
+}
 
 /**
  * Displays a system information report
  * Allows downloading customer and transaction data as CSV files.
- * @returns The Report component.
  */
 function Report() {
   const { customers } = useCustomerNames();
   const { setDisplay } = useDisplay();
-  const [outstanding, setOutstanding] = useState(0);
-  const [totalCredit, setTotalCredit] = useState("0");
-  const [allTransactions, setAllTransactions] = useState<TransactionWithCustomer[]>([]);
   const { total } = useTotal();
+  const [outstanding, setOutstanding] = useState<number>(0);
+  const [totalCredit, setTotalCredit] = useState<string>("0");
+  const [allTransactions, setAllTransactions] = useState<TransactionWithCustomer[]>([]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "customers"), (snapshot) => {
+
       const transactions: TransactionWithCustomer[] = [];
       snapshot.forEach((doc) => {
         const data = doc.data();
-        if (data.customers && Array.isArray(data.customers)) {
-          data.customers.forEach((customer) => {
-            if (customer.transactions && Array.isArray(customer.transactions)) {
-              customer.transactions.forEach((transaction: Transaction) => {
-                transactions.push({
-                  ...transaction,
-                  customerID: customer.customer_id,
-                  firstName: customer.first_name,
-                  lastName: customer.last_name,
-                });
-              });
-            }
-          });
-        }
+        if (!data.customers || !Array.isArray(data.customers)) { return []; }
+
+        data.customers.forEach((customer) => {
+          if (!customer.transactions || !Array.isArray(customer.transactions)) { return [] };
+          customer.transactions.forEach((transaction: Transaction) => {
+            transactions.push({
+              ...transaction,
+              customerID: customer.customerID,
+            });
+          })
+        });
       });
+
       setAllTransactions(transactions);
     });
 
@@ -66,10 +67,10 @@ function Report() {
     setTotalCredit(total.toLocaleString("en-CA", { style: "currency", currency: "CAD" }));
   }, [customers]);
 
-  const dateInstance = (transaction: Transaction) =>
+  const dateInstance = useCallback((transaction: Transaction) =>
     transaction.date instanceof Date
       ? transaction.date.toLocaleString()
-      : ""
+      : "", [])
 
   const handleDownload = async () => {
     try {
@@ -102,16 +103,21 @@ function Report() {
           ),
       ].join("\n");
 
-      const transactionHeaders = ["customerID", "date", "changeBalance", "employeeName", "notes"];
+      const transactionHeaders = [
+        "customerID",
+        "date",
+        "changeBalance",
+        "employeeName",
+        "notes"
+      ];
       const transactionCsvContent = [
         transactionHeaders.join(","),
         ...allTransactions.map((transaction) =>
           [
             transaction.customerID || "",
-            typeof transaction.date === "object" &&
-              "seconds" in transaction.date
-              ? new Date(transaction.date.seconds * 1000).toLocaleString()
-              : dateInstance(transaction),
+            (typeof transaction.date === "object" && "seconds" in transaction.date
+              ? new Date(transaction.date.seconds * 1000).toLocaleString().replace(",", " ")
+              : dateInstance(transaction)),
             transaction.changeBalance || 0,
             transaction.employeeName || "",
             (transaction.notes || "").replace(/,/g, ""),
@@ -140,37 +146,24 @@ function Report() {
     }
   };
 
-  const reportLabels = {
-    NumberCustomer: "Number of Customers: ",
-    TotalCredit: "Total Credit: ",
-    Outstanding: "Number of Outstanding Individuals:"
-  }
-
   return (
     <Prompt title="SYSTEM INFORMATION">
-      <div className="absolute top-4 right-4">
-        <a href={GithubLink}>
-          <img
-            className="h-6 cursor-pointer transition-all hover:brightness-50 active:brightness-75"
-            draggable="false"
-            src="githubLogo.png"
-            alt={GithubLink}
-          />
-        </a>
+      <div className="absolute block top-3 right-3">
+        <GithubIcon />
       </div>
       <PromptField>
         <p className="rounded-2xl bg-white/5 p-3 font-bold text-white">
-          {reportLabels.NumberCustomer}<span className="ml-1 font-semibold">{total}</span>
+          {REPORT_LABELS.NumberCustomer}<span className="ml-1 font-semibold">{total}</span>
         </p>
       </PromptField>
       <PromptField>
         <p className="rounded-2xl bg-white/5 p-3 font-bold text-white">
-          {reportLabels.TotalCredit}<span className="ml-1 font-semibold">{totalCredit}</span>
+          {REPORT_LABELS.TotalCredit}<span className="ml-1 font-semibold">{totalCredit}</span>
         </p>
       </PromptField>
       <PromptField>
         <p className="rounded-2xl bg-white/5 p-3 font-semibold text-white">
-          {reportLabels.Outstanding}<span className="ml-1 font-semibold">{outstanding}</span>
+          {REPORT_LABELS.Outstanding}<span className="ml-1 font-semibold">{outstanding}</span>
         </p>
       </PromptField>
       <div className="flex flex-row gap-x-2">

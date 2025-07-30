@@ -1,6 +1,6 @@
 // ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import WarningIcon from "@mui/icons-material/Warning";
-import { useState, memo, useMemo, useCallback, ReactElement, KeyboardEvent } from "react";
+import { memo, useMemo, useCallback, ReactElement, KeyboardEvent } from "react";
 
 import { useCustomer, useCustomerNames } from "../../context/useContext";
 import { cn } from "../../prompts/scripts";
@@ -13,7 +13,6 @@ import { Customer } from "../../types";
 const ListDisplay = memo(({ filter }: { filter: string }): ReactElement => {
   const { setCustomer } = useCustomer();
   const { customers } = useCustomerNames();
-  const [, setSelectedIndex] = useState<number | null>(null);
 
   const filteredRows = useMemo(
     () =>
@@ -21,11 +20,11 @@ const ListDisplay = memo(({ filter }: { filter: string }): ReactElement => {
         .filter((customer) => {
           const firstName = customer.firstName || "";
           const lastName = customer.lastName || "";
-          const fullName = `${firstName} ${lastName}`.toLowerCase();
+          const fullName = `${firstName} ${lastName}`;
           return (
             firstName.toLowerCase().includes(filter.toLowerCase()) ||
             lastName.toLowerCase().includes(filter.toLowerCase()) ||
-            fullName.includes(filter.toLowerCase())
+            fullName.toLowerCase().includes(filter.toLowerCase())
           );
         })
         .sort((itemA, itemB) => {
@@ -39,19 +38,13 @@ const ListDisplay = memo(({ filter }: { filter: string }): ReactElement => {
     [customers, filter]
   );
 
-  const handleClick = useCallback(
-    (customer: Customer, index: number) => {
-      setCustomer(customer);
-      setSelectedIndex(index);
-    },
-    [setCustomer]
-  );
+  const handleClick = useCallback((customer: Customer) => { setCustomer(customer) }, [setCustomer]);
 
   const handleKeyDown = useCallback(
-    (event: KeyboardEvent, customer: Customer, index: number) => {
+    (event: KeyboardEvent, customer: Customer) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        handleClick(customer, index);
+        handleClick(customer);
       }
     },
     [handleClick]
@@ -65,7 +58,7 @@ const ListDisplay = memo(({ filter }: { filter: string }): ReactElement => {
   return (
     <div className="container-snap overflow-y-scroll text-gray-100">
       <ul className="list-none">
-        {filteredRows.map((customer, index) => {
+        {filteredRows.map((customer) => {
           const customerName = `${customer.lastName || ""}, ${customer.firstName || ""}`;
           const warningIcon = (Number(customer.balance) < 0) && <WarningIcon fontSize="inherit" />;
 
@@ -77,8 +70,8 @@ const ListDisplay = memo(({ filter }: { filter: string }): ReactElement => {
               <button
                 type="button"
                 className={cn(baseClasses)}
-                onClick={() => handleClick(customer, index)}
-                onKeyDown={(event) => handleKeyDown(event, customer, index)}
+                onClick={() => handleClick(customer)}
+                onKeyDown={(event) => handleKeyDown(event, customer)}
                 aria-labelledby={`customer-name-${customer.customerID}`}
               >
                 <span

@@ -109,7 +109,6 @@ function TableDisplay(): ReactElement {
           }
         }}
       >
-
         {label}
         <FilterListIcon
           sx={{
@@ -170,23 +169,23 @@ function TableDisplay(): ReactElement {
     >
       <div className="absolute">
         {display === "DateFilter" && (
-          <div className="absolute left-[2vw] z-50 mt-8 select-none">
+          <div className="z-50 select-none">
             <DateFilter />
           </div>
         )}
         {display === "AmountFilter" && (
-          <div className="absolute left-[16vw] z-50 mt-8 select-none">
+          <div className="z-50 select-none">
             <Amount />
           </div>
         )}
         {display === "EmployeeFilter" && (
-          <div className="absolute left-[34vw] z-50 mt-8 select-none">
+          <div className="z-50 select-none">
             <EmployeeName />
           </div>
         )}
       </div>
       <table className="lg:text-md w-full text-xs text-gray-200 select-none md:text-sm">
-        <thead className="sticky top-0 z-10">
+        <thead className="sticky top-0">
           <tr className="text-left">
             <HeaderField label="Date" />
             <HeaderField label="Amount" />

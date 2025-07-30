@@ -10,10 +10,7 @@ import { cn } from "../prompts/scripts";
 // ─ Constants ────────────────────────────────────────────────────────────────────────────────────
 const SEARCH_PLACEHOLDER = "search customer...";
 
-/**
- * Renders the customer search grid with the search bar, add customer, report, and customer list.
- * @returns The Search component.
- */
+/** Renders the customer search grid with the search bar, add customer, report, and customer list */
 function Search(): ReactElement {
   const [search, setSearch] = useState<string>("");
   const { setDisplay } = useDisplay();
