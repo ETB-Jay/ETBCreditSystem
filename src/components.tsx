@@ -64,7 +64,7 @@ interface PromptFieldProps {
  * @returns The rendered field with error display.
  */
 const PromptField = ({ children, error = undefined }: PromptFieldProps) => (
-  <div className="mb-3 flex w-full flex-col gap-2 text-white">
+  <div className="mb-3 flex w-full flex-col gap-2 text-white relative">
     {children}
     {error && <div className="mt-1 ml-1 text-xs text-red-500">{error}</div>}
   </div>
@@ -142,8 +142,8 @@ const PromptInput = ({
           disabled={disabled}
           name={name}
           placeholder={placeholder}
-          autoComplete="on"
           aria-label={placeholder}
+          autoComplete="no"
         />
         {icon && FormattedIcon}
         {type === "password" && !sideButtons && ShowPassword}

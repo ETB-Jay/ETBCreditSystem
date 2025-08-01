@@ -8,7 +8,6 @@ import { GithubIcon, Prompt, PromptButton, PromptField } from "../components";
 import { useDisplay, useCustomerNames, useTotal } from "../context/useContext";
 import { db } from "../firebase";
 import { Transaction } from "../types";
-import { snapshot } from "node:test";
 
 // ─ Interfaces ───────────────────────────────────────────────────────────────────────────────────
 interface TransactionWithCustomer extends Transaction {
