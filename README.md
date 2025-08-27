@@ -1,4 +1,4 @@
-# 💰 | crETBle
+# 💰 | ETB Credit System
 The Enter the Battlefield (ETB) credit system originally designed by Michael Zhang using [React.js](https://react.dev/), [Electron.js](https://www.electronjs.org/), and [tailwindcss](https://tailwindcss.com/). It is primarily written in [Typescript](https://www.typescriptlang.org/).
 
 [Firebase (Firestore)](https://firebase.google.com/) is used as the backend for this project. The app was built and packaged with [Electron-Builder](https://www.electron.build/index.html).
@@ -39,9 +39,9 @@ The Report contains a download button that allows the user to download a zip fil
 2. If necessary, allow permissions to install the `.exe`. The credit system is be 100% safe (assuming no one has touched it). 
 
 # 🐛 | UPDATES AND BUG FIXING
-From 2025-05-05 to 2025-08-29, Michael Zhang will be conducting preliminary updates and bug fixing as the store adapts to the system. Please ask either Jay or Kris to get his contact information.
+From 2025-05-05 to 2025-08-29, I (Michael Zhang) will be conducting preliminary updates and bug fixing as the store adapts to the system. Please ask either Jay or Kris to get his contact information.
 
-After this period, it will be the responsibility of the new "tech guy" to manage the system. For additional information regarding the repository and any creditionals (i.e. Environment Variables, API Keys), please either create new ones for the system or contact Michael through Jay or Kris to obtain the old ones.
+After this period, it will be the responsibility of someone else (probably you) to manage the system. For additional information regarding the repository and any creditionals (i.e. Environment Variables, API Keys), please either create new ones for the system or contact Michael through Jay or Kris to obtain the old ones.
 
 ## 📓 | Notes on Firebase
 As of 2025-06-27, firestore offers two payment plans: spark and blaze. ETB is currently on the spark plan, which limits the number of API calls that we can make to firestore. Please make sure to update the system to the blaze plan once the store reaches the spark plan limits. 
