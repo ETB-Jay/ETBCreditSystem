@@ -1,11 +1,12 @@
-// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import { ReactElement } from "react";
 
-import { FilterContainer, FilterField, FilterInput } from "../../../components";
-import { useFilters } from "../../../context/useContext";
+import FilterContainer from "../../../components/containers/FilterContainer";
+import FilterField from "../../../components/ui/FilterField";
+import FilterInput from "../../../components/ui/FilterInput";
+import { useFilters } from "../../../context/Context";
 
 /** Filter component for selecting a date range for transactions. */
-function DateFilter(): ReactElement {
+const DateFilter = (): ReactElement => {
   const { filters, setFilters } = useFilters();
 
   const handleDateChange = (type: string, value: string) => {
@@ -40,7 +41,6 @@ function DateFilter(): ReactElement {
       </FilterField>
     </FilterContainer>
   );
-}
+};
 
-// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default DateFilter;

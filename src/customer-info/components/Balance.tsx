@@ -1,13 +1,11 @@
-// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import WarningIcon from "@mui/icons-material/Warning";
-import { KeyboardEvent, ReactElement, useEffect, useState } from "react";
+import { ReactElement, useState, useEffect, KeyboardEvent, useCallback, memo } from "react";
 
-import { useCustomer, useCustomerNames, useDisplay } from "../../context/useContext";
-import { cn } from "../../prompts/scripts";
+import { CashIcon, WarningIcon } from "../../components";
+import { useCustomer, useCustomerNames, useDisplay } from "../../context/Context";
+import { cn } from "../../modals/scripts";
 
 /** Displays the current customer's balance in a styled container. */
-function Balance(): ReactElement {
+const Balance = memo((): ReactElement => {
   const { customer } = useCustomer();
   const { customers } = useCustomerNames();
   const { setDisplay } = useDisplay();
@@ -23,29 +21,34 @@ function Balance(): ReactElement {
     updateBalance();
   }, [customers, customer?.customerID]);
 
+  const isNegative = Number(formattedBalance) < 0;
+
   return (
     <div
       className={cn(
-        "flex h-full w-fit cursor-pointer flex-row items-center justify-between",
-        "rounded-2xl bg-gray-400 ring-2 select-none hover:bg-gray-500 md:min-w-30"
+        "flex cursor-pointer items-center gap-2 select-none",
+        "rounded border px-2 py-1 transition-all duration-200",
+        "font-mono text-xs",
+        isNegative ? "danger-bg-dark danger-ring icon-danger" : "gray-border gray-bg-medium"
       )}
       role="button"
       tabIndex={0}
-      onClick={() => setDisplay("transaction")}
-      onKeyDown={(ev: KeyboardEvent<HTMLDivElement>) => {
-        if (ev.key === "Enter" || ev.key === " ") {
-          setDisplay("transaction");
-        }
-      }}
+      onClick={useCallback(() => setDisplay("transaction"), [setDisplay])}
+      onKeyDown={useCallback(
+        (ev: KeyboardEvent<HTMLDivElement>) => {
+          if (ev.key === "Enter" || ev.key === " ") {
+            setDisplay("transaction");
+          }
+        },
+        [setDisplay]
+      )}
     >
-      <div className="flex flex-row items-center justify-start pr-2 md:gap-2 md:pl-2">
-        <AttachMoneyIcon sx={{ fontSize: "25px" }} />
-        <p className="overflow text-sm font-bold text-black">{formattedBalance}</p>
-      </div>
-      {Number(formattedBalance) < 0 && <WarningIcon fontSize="small" className="mr-2" />}
+      <CashIcon sx={{ width: 16, height: 16 }} />
+      <span className="leading-none font-bold">{formattedBalance}</span>
+      {isNegative && <WarningIcon sx={{ width: 16, height: 16 }} />}
     </div>
   );
-}
+});
+Balance.displayName = "Balance";
 
-// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default Balance;

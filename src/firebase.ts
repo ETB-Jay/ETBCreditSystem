@@ -1,10 +1,8 @@
-// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, onSnapshot } from "firebase/firestore";
 
 import { Customer } from "./types";
 
-// ─ Constants ────────────────────────────────────────────────────────────────────────────────────
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -47,7 +45,7 @@ function fetchCustomers(callback: CustomersCallback) {
       callback({ customers: [], total: 0, error });
     }
   );
-};
+}
 
 /**
  * Fetches all customers once from Firestore.
@@ -67,7 +65,7 @@ async function fetchCustomersOnce() {
   } catch (err) {
     throw new Error(err as string);
   }
-};
+}
 
 /**
  * Gets the highest customer ID from all customer documents.
@@ -91,8 +89,7 @@ async function getHighestCustomerId() {
   } catch (err) {
     throw new Error(err as string);
   }
-};
+}
 
-// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export { db, fetchCustomers, fetchCustomersOnce, getHighestCustomerId };
 export type { CustomersCallback };

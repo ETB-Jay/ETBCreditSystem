@@ -1,46 +1,56 @@
-// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
-import { ReactElement } from "react";
+import { ReactElement, useMemo } from "react";
 
-import { MainContainer } from "../components";
-import { useCustomer } from "../context/useContext";
+import { useCustomer } from "../context/Context";
 import Actions from "./components/Actions";
 import Balance from "./components/Balance";
 import EmailInfo from "./components/EmailInfo";
 import Notes from "./components/Notes";
 import PhoneInfo from "./components/PhoneInfo";
 import TableDisplay from "./components/TableDisplay";
-import { cn } from "../prompts/scripts";
+import { cn } from "../modals/scripts";
 
 /** Displays the customer information and transaction history. */
-function CustomerInfo(): ReactElement {
+const CustomerInfo = (): ReactElement => {
   const { customer } = useCustomer();
+
+  const containerClasses = useMemo(
+    () =>
+      cn(
+        "container-snap flex flex-col overflow-y-scroll",
+        "theme-panel theme-text theme-border border rounded-2xl p-2"
+      ),
+    []
+  );
+
   if (!customer) {
     return (
-      <MainContainer>
-        <div className="flex h-full flex-row items-center justify-center">
-          <img src="./ETBBanner.png" alt="" className="h-auto w-2/3 opacity-50" />
-        </div>
-      </MainContainer>
+      <div className={containerClasses}>
+        <img src="./ETBBanner.png" alt="" className="m-auto w-2/3 opacity-50" />
+      </div>
     );
   }
+
   return (
-    <MainContainer>
+    <div className={containerClasses}>
       <div
-        className={cn("z-10 flex flex-row justify-between gap-5 bg-gray-800 pb-2",
-          "sm:mb-[2vh] md:mb-[1vw] md:h-1/12 xl:mb-[0.5vw]")}
+        className={cn(
+          "theme-panel relative flex min-h-fit flex-col gap-2 pb-2",
+          "sm:mb-[2vh] md:mb-[1vw] md:h-1/12 xl:mb-[0.5vw]"
+        )}
       >
-        <div className="mt-1 ml-2 flex w-full flex-row items-center gap-x-3 py-0.5 lg:gap-x-4">
-          <EmailInfo />
-          <PhoneInfo />
-          <Balance />
-          <Notes />
+        <div className="flex w-full flex-col items-center gap-2 p-1 sm:gap-x-3 md:flex-row md:justify-between lg:gap-x-4">
+          <div className="flex flex-row items-center gap-x-3 lg:gap-x-4">
+            <EmailInfo />
+            <PhoneInfo />
+            <Balance />
+          </div>
+          <Actions />
         </div>
-        <Actions />
+        <Notes />
       </div>
       <TableDisplay />
-    </MainContainer>
+    </div>
   );
-}
+};
 
-// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default CustomerInfo;

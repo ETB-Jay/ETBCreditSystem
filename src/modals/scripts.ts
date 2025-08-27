@@ -1,4 +1,3 @@
-// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import { clsx } from "clsx";
 import { doc, getDoc } from "firebase/firestore";
 import { twMerge } from "tailwind-merge";
@@ -71,6 +70,4 @@ function cn(...inputs: (string | undefined | null | false)[]): string {
   return twMerge(clsx(inputs));
 }
 
-// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export { cn, getCustomerDoc, getDocumentName, validateCustomerInfo };
-

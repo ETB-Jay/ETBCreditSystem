@@ -1,11 +1,12 @@
-// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import { ReactElement } from "react";
 
-import { FilterContainer, FilterField, FilterInput } from "../../../components";
-import { useFilters } from "../../../context/useContext";
+import FilterContainer from "../../../components/containers/FilterContainer";
+import FilterField from "../../../components/ui/FilterField";
+import FilterInput from "../../../components/ui/FilterInput";
+import { useFilters } from "../../../context/Context";
 
 /** Filter component for searching transactions by employee name. */
-function EmployeeName(): ReactElement {
+const EmployeeName = (): ReactElement => {
   const { filters, setFilters } = useFilters();
 
   const handleSearchChange = (value: string) => {
@@ -30,7 +31,6 @@ function EmployeeName(): ReactElement {
       </FilterField>
     </FilterContainer>
   );
-}
+};
 
-// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default EmployeeName;

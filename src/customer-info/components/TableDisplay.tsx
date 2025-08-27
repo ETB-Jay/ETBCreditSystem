@@ -1,18 +1,15 @@
-// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import { useEffect, useState, useMemo, ReactElement, KeyboardEvent } from "react";
 
+import { ArrowDropDownIcon, ArrowDropUpIcon, FilterListIcon, LockIcon } from "../../components";
 import Amount from "./filters/Amount";
 import DateFilter from "./filters/DateFilter";
 import EmployeeName from "./filters/EmployeeName";
-import { useCustomer, useCustomerNames, useDisplay, useFilters } from "../../context/useContext";
-import { cn } from "../../prompts/scripts";
+import { useCustomer, useCustomerNames, useDisplay, useFilters } from "../../context/Context";
+import { cn } from "../../modals/scripts";
 import { Customer, Transaction } from "../../types";
 
 /** Displays a table containing the transactions made by the individual customer. */
-function TableDisplay(): ReactElement {
+const TableDisplay = (): ReactElement => {
   const { customer } = useCustomer();
   const { customers } = useCustomerNames();
   const { display, setDisplay } = useDisplay();
@@ -20,7 +17,9 @@ function TableDisplay(): ReactElement {
   const [filteredRows, setFilteredRows] = useState<Transaction[]>([]);
 
   useEffect(() => {
-    if (display !== "default") { setDisplay("default"); }
+    if (display !== "default") {
+      setDisplay("default");
+    }
   }, [customer?.customerID, customer?.transactions.length]);
 
   const applyFilters = useMemo(
@@ -93,44 +92,41 @@ function TableDisplay(): ReactElement {
   interface HeaderFieldProps {
     label: "Date" | "Amount" | "Employee";
   }
-  const HeaderField = ({ label }: HeaderFieldProps) => (
-    <th
-      className={cn("group relative cursor-pointer bg-gray-800 px-3 py-1 text-sm font-semibold",
-        "whitespace-nowrap text-gray-100 transition-all duration-200 hover:bg-gray-700")}
-    >
-      <div
-        className="flex items-center gap-1"
-        onClick={() =>
-          setDisplay(display === `${label}Filter` ? "default" : `${label}Filter`)
-        }
-        onKeyDown={(ev: KeyboardEvent<HTMLDivElement>) => {
-          if (ev.key === "Enter") {
-            setDisplay(display === `${label}Filter` ? "default" : `${label}Filter`);
-          }
-        }}
-      >
-        {label}
-        <FilterListIcon
-          sx={{
-            fontSize: "0.9rem",
-            verticalAlign: "middle",
-            color: display === `${label}Filter` ? "#60a5fa" : "#9ca3af",
-            transition: "color 0.2s ease",
-          }}
-        />
-      </div>
-    </th>
-  );
+  const HeaderField = ({ label }: HeaderFieldProps) => {
+    const filterIconClass = display === `${label}Filter` ? "filter-active" : "filter-inactive";
 
-  if ((filteredRows.length === 0) && !hasActiveFilters()) {
     return (
-      <div className="flex h-full w-full items-center justify-center text-white">
+      <th
+        className={cn(
+          "group theme-panel relative cursor-pointer px-3 py-1 text-sm font-semibold",
+          "theme-text hover:bg-hover whitespace-nowrap transition-all duration-200"
+        )}
+      >
+        <div
+          className="flex items-center gap-1"
+          onClick={() => setDisplay(display === `${label}Filter` ? "default" : `${label}Filter`)}
+          onKeyDown={(ev: KeyboardEvent<HTMLDivElement>) => {
+            if (ev.key === "Enter") {
+              setDisplay(display === `${label}Filter` ? "default" : `${label}Filter`);
+            }
+          }}
+        >
+          {label}
+          <FilterListIcon className={filterIconClass} />
+        </div>
+      </th>
+    );
+  };
+
+  if (filteredRows.length === 0 && !hasActiveFilters()) {
+    return (
+      <div className="theme-text flex items-center justify-center">
         <img
-          className="mx-auto max-h-4/5 w-auto object-contain brightness-30 select-none"
+          className="mx-auto max-h-2/5 w-auto object-contain brightness-30 select-none"
           src="./ETBBanner.png"
           alt=""
         />
-        <p className="absolute z-10 rounded-xl bg-black/50 p-5 text-2xl font-bold select-none">
+        <p className="overlay absolute rounded-xl p-5 text-2xl font-bold select-none">
           {noTransaction}
         </p>
       </div>
@@ -146,26 +142,26 @@ function TableDisplay(): ReactElement {
       seconds = row.date.seconds;
     }
 
-    if (seconds === null) { return "Invalid date" };
+    if (seconds === null) {
+      return "Invalid date";
+    }
 
-    return new Date(seconds * 1000)
-      .toLocaleString()
-      .replace("T", " ")
-      .slice(0, 19);
+    return new Date(seconds * 1000).toLocaleString().replace("T", " ").slice(0, 19);
   };
 
   const BalanceIcon = (row: Transaction) =>
     row.changeBalance < 0 ? (
-      <ArrowDropDownIcon sx={{ color: "#f87171", transition: "transform 0.2s ease" }} />
+      <ArrowDropDownIcon className="icon-danger" sx={{ width: 14, height: 14 }} />
     ) : (
-      <ArrowDropUpIcon sx={{ color: "#4ade80", transition: "transform 0.2s ease" }} />
-    )
-
+      <ArrowDropUpIcon className="icon-success" sx={{ width: 14, height: 14 }} />
+    );
 
   return (
     <div
-      className={cn("container-snap overflow-y-scroll rounded-xl border",
-        "border-gray-700 bg-gray-900 shadow-lg")}
+      className={cn(
+        "container-snap overflow-y-scroll rounded-xl border",
+        "theme-border theme-bg shadow-lg"
+      )}
     >
       <div className="absolute">
         {display === "DateFilter" && (
@@ -184,17 +180,22 @@ function TableDisplay(): ReactElement {
           </div>
         )}
       </div>
-      <table className="lg:text-md w-full text-xs text-gray-200 select-none md:text-sm">
+      <table className="lg:text-md theme-text w-full text-xs select-none md:text-sm">
         <thead className="sticky top-0">
           <tr className="text-left">
             <HeaderField label="Date" />
             <HeaderField label="Amount" />
             <HeaderField label="Employee" />
             <th
-              className={cn("w-full max-w-[400px] bg-gray-800 px-3 py-1 text-sm",
-                "font-semibold transition-all duration-200 hover:bg-gray-700")}
+              className={cn(
+                "theme-panel w-full max-w-[400px] px-3 py-1 text-sm",
+                "hover:bg-hover font-semibold transition-all duration-200"
+              )}
             >
-              {notes}
+              <div className="flex items-center gap-1">
+                {notes}
+                <LockIcon className="icon-muted" sx={{ width: 14, height: 14 }} />
+              </div>
             </th>
           </tr>
         </thead>
@@ -202,34 +203,37 @@ function TableDisplay(): ReactElement {
           {filteredRows.map((row) => (
             <tr
               key={row.date.toString()}
-              className="transition-colors duration-150 ease-in-out hover:bg-gray-800/50"
+              className="hover:bg-hover/50 transition-colors duration-150 ease-in-out"
             >
               <td
-                className={
-                  cn("no-scroll container-snap max-w-[200px] overflow-x-scroll",
-                    "px-3 py-0.5 text-sm whitespace-nowrap")}
+                className={cn(
+                  "no-scroll container-snap max-w-[200px] overflow-x-scroll",
+                  "theme-text px-3 py-0.5 text-sm whitespace-nowrap"
+                )}
               >
                 {parsedDate(row)}
               </td>
               <td
-                className={
-                  cn("no-scroll container-snap max-w-[120px] overflow-x-scroll",
-                    "px-3 py-0.5 text-sm whitespace-nowrap")}
+                className={cn(
+                  "no-scroll container-snap inline-flex max-w-[120px] flex-row items-center gap-2 overflow-x-scroll",
+                  "theme-text px-3 py-0.5 text-sm whitespace-nowrap"
+                )}
                 title={String(row.changeBalance)}
               >
                 {BalanceIcon(row)}
                 {Number(Math.abs(row.changeBalance)).toFixed(2)}
               </td>
               <td
-                className={
-                  cn("no-scroll container-snap max-w-[120px] overflow-x-scroll",
-                    "px-3 py-0.5 text-sm whitespace-nowrap")}
+                className={cn(
+                  "no-scroll container-snap max-w-[120px] overflow-x-scroll",
+                  "theme-text px-3 py-0.5 text-sm whitespace-nowrap"
+                )}
                 title={row.employeeName}
               >
                 {row.employeeName}
               </td>
               <td className="px-3 py-1">
-                <div className="w-full text-sm text-gray-400" title={row.notes}>
+                <div className="theme-muted w-full text-sm" title={row.notes}>
                   {row.notes}
                 </div>
               </td>
@@ -239,7 +243,6 @@ function TableDisplay(): ReactElement {
       </table>
     </div>
   );
-}
+};
 
-// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default TableDisplay;

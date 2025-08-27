@@ -1,11 +1,12 @@
-// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import { ReactElement } from "react";
 
-import { FilterContainer, FilterField, FilterInput } from "../../../components";
-import { useFilters } from "../../../context/useContext";
+import FilterContainer from "../../../components/containers/FilterContainer";
+import FilterField from "../../../components/ui/FilterField";
+import FilterInput from "../../../components/ui/FilterInput";
+import { useFilters } from "../../../context/Context";
 
 /** Filter component for specifying minimum and maximum transaction amounts. */
-function Amount(): ReactElement {
+const Amount = (): ReactElement => {
   const { filters, setFilters } = useFilters();
 
   return (
@@ -18,7 +19,6 @@ function Amount(): ReactElement {
             setFilters({ ...filters, amount: { ...filters.amount, minAmount: ev.target.value } })
           }
           placeholder="0.00"
-          dollar
         />
       </FilterField>
       <FilterField label="Maximum Amount">
@@ -30,12 +30,10 @@ function Amount(): ReactElement {
           }
           placeholder="0.00"
           min={filters.amount.minAmount}
-          dollar
         />
       </FilterField>
     </FilterContainer>
   );
-}
+};
 
-// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default Amount;

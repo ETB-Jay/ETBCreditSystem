@@ -1,9 +1,8 @@
-// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
-import WarningIcon from "@mui/icons-material/Warning";
-import { memo, useMemo, useCallback, ReactElement, KeyboardEvent } from "react";
+import { memo, ReactElement, useMemo, useCallback, KeyboardEvent } from "react";
 
-import { useCustomer, useCustomerNames } from "../../context/useContext";
-import { cn } from "../../prompts/scripts";
+import { WarningIcon } from "../../components";
+import { useCustomer, useCustomerNames } from "../../context/Context";
+import { cn } from "../../modals/scripts";
 import { Customer } from "../../types";
 
 /**
@@ -11,7 +10,7 @@ import { Customer } from "../../types";
  * @param props The filter string used to match customer names.
  */
 const ListDisplay = memo(({ filter }: { filter: string }): ReactElement => {
-  const { setCustomer } = useCustomer();
+  const { customer: selectedCustomer, setCustomer } = useCustomer();
   const { customers } = useCustomerNames();
 
   const filteredRows = useMemo(
@@ -38,10 +37,15 @@ const ListDisplay = memo(({ filter }: { filter: string }): ReactElement => {
     [customers, filter]
   );
 
-  const handleClick = useCallback((customer: Customer) => { setCustomer(customer) }, [setCustomer]);
+  const handleClick = useCallback(
+    (customer: Customer) => {
+      setCustomer(customer);
+    },
+    [setCustomer]
+  );
 
   const handleKeyDown = useCallback(
-    (event: KeyboardEvent, customer: Customer) => {
+    (event: KeyboardEvent<HTMLButtonElement>, customer: Customer) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
         handleClick(customer);
@@ -51,32 +55,35 @@ const ListDisplay = memo(({ filter }: { filter: string }): ReactElement => {
   );
 
   const baseClasses = cn(
-    "base flex cursor-pointer flex-row items-center justify-between",
-    "px-2 py-1 text-xs hover:bg-gray-600 cursor-pointer w-full"
+    "base flex cursor-pointer flex-row items-center justify-between gap-1",
+    "px-2 py-1 text-xs w-full theme-text no-scroll text-left transition-colors"
   );
 
   return (
-    <div className="container-snap overflow-y-scroll text-gray-100">
-      <ul className="list-none">
+    <div className="container-snap overflow-y-scroll">
+      <ul className="alternating list-none rounded">
         {filteredRows.map((customer) => {
           const customerName = `${customer.lastName || ""}, ${customer.firstName || ""}`;
-          const warningIcon = (Number(customer.balance) < 0) && <WarningIcon fontSize="inherit" />;
+          const warningIcon = Number(customer.balance) < 0 && (
+            <WarningIcon sx={{ width: 16, height: 16 }} className="icon-danger" />
+          );
 
           return (
-            <li
-              key={customer.customerID}
-              className="rounded-sm transition-all odd:bg-gray-800 even:bg-gray-700/50"
-            >
+            <li key={customer.customerID}>
               <button
                 type="button"
-                className={cn(baseClasses)}
+                className={cn(
+                  baseClasses,
+                  selectedCustomer?.customerID === customer.customerID && "bg-accent"
+                )}
                 onClick={() => handleClick(customer)}
-                onKeyDown={(event) => handleKeyDown(event, customer)}
+                onKeyDown={(ev: KeyboardEvent<HTMLButtonElement>) => handleKeyDown(ev, customer)}
                 aria-labelledby={`customer-name-${customer.customerID}`}
               >
                 <span
-                  className="no-scroll overflow-x-scroll text-left transition-all hover:font-bold"
-                  id={`customer-name-${customer.customerID}`}
+                  className={cn(
+                    selectedCustomer?.customerID === customer.customerID && "font-bold"
+                  )}
                 >
                   {customerName}
                 </span>
@@ -91,5 +98,4 @@ const ListDisplay = memo(({ filter }: { filter: string }): ReactElement => {
 });
 ListDisplay.displayName = "ListDisplay";
 
-// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default ListDisplay;

@@ -1,15 +1,17 @@
-// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
 import { doc, updateDoc } from "firebase/firestore";
-import { ReactElement, useState } from "react";
+import { useState, ReactElement } from "react";
 
-import { Prompt, PromptField, PromptInput, PromptButton } from "../components";
-import { useDisplay, useCustomer, useCustomerNames } from "../context/useContext";
+import Modal from "../components/containers/Modal";
+import ModalButtonGroup from "../components/ui/ModalButtonGroup";
+import ModalField from "../components/ui/ModalField";
+import ModalInput from "../components/ui/ModalInput";
+import { useDisplay, useCustomer, useCustomerNames } from "../context/Context";
 import { db } from "../firebase";
 import { getDocumentName, getCustomerDoc } from "./scripts";
 import { Customer } from "../types";
 
-/** Displays a prompt for confirming and deleting a customer. */
-function DeletePrompt(): ReactElement {
+/** Displays a modal for confirming and deleting a customer. */
+const DeleteModal = (): ReactElement => {
   const { setDisplay } = useDisplay();
   const { customer, setCustomer } = useCustomer();
   const { customers, setCustomers } = useCustomerNames();
@@ -64,34 +66,39 @@ function DeletePrompt(): ReactElement {
   const confirmationText = "To Delete This Customer";
 
   return (
-    <Prompt title="Delete Customer">
-      <PromptField error={error}>
-        <div className="mb-2 flex w-full items-center justify-center gap-1 text-xs text-gray-200">
-          {instructionText}
-          <span className="mx-1 rounded bg-red-900/60 px-2 py-0.5 text-white ring-2 ring-rose-800">
-            {customerName}
-          </span>
-          {confirmationText}
-        </div>
-        <PromptInput
-          value={confirm}
-          onChange={(ev) => setConfirm(ev.target.value)}
-          disabled={isSubmitting}
-          placeholder="Enter customer name to confirm"
+    <Modal title="Delete Customer">
+      <form
+        className="flex w-full flex-col gap-4"
+        onSubmit={(event) => {
+          event.preventDefault();
+          handleDelete();
+        }}
+      >
+        <ModalField error={error}>
+          <div className="gray-text-light mb-4 flex w-full items-center justify-center gap-1 text-xs">
+            {instructionText}
+            <span className="danger-bg-dark white-text danger-ring mx-1 rounded px-2 py-0.5 ring-2">
+              {customerName}
+            </span>
+            {confirmationText}
+          </div>
+          <ModalInput
+            value={confirm}
+            onChange={(ev) => setConfirm(ev.target.value)}
+            disabled={isSubmitting}
+            placeholder="Enter customer name to confirm"
+          />
+        </ModalField>
+        <ModalButtonGroup
+          onSubmit={handleDelete}
+          onCancel={handleCancel}
+          submitLabel={deleteButtonLabel}
+          submitDisabled={!customer || confirm !== customerName}
+          isSubmitting={isSubmitting}
         />
-      </PromptField>
-      <div className="flex flex-row justify-end gap-5">
-        <PromptButton
-          onClick={handleDelete}
-          disabled={isSubmitting || !customer || confirm !== customerName}
-          label={deleteButtonLabel}
-          icon={null}
-        />
-        <PromptButton onClick={handleCancel} disabled={isSubmitting} label="Cancel" icon={null} />
-      </div>
-    </Prompt>
+      </form>
+    </Modal>
   );
-}
+};
 
-// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
-export default DeletePrompt;
+export default DeleteModal;

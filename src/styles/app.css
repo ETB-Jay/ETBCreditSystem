@@ -1,0 +1,378 @@
+/* ===== ETB CREDIT SYSTEM - COMPREHENSIVE CSS ===== */
+/* Consolidated styles for the ETB Credit System application */
+
+@import url("https://fonts.googleapis.com/css2?family=Asul:wght@400;700&family=Faustina:ital,wght@0,300..800;1,300..800&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap");
+@import "tailwindcss";
+
+/* ===== THEME CUSTOMIZATION ===== */
+@theme {
+  /* Essential ETB Colors */
+  --color-etb-primary: rgb(59, 130, 246); /* Blue */
+  --color-etb-success: rgb(34, 197, 94); /* Green */
+  --color-etb-danger: rgb(239, 68, 68); /* Red */
+  --color-etb-warning: rgb(251, 146, 60); /* Orange */
+
+  /* Custom shadows */
+  --shadow-credit: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-account: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-etb: 0 8px 25px -5px rgb(0 0 0 / 0.15), 0 4px 10px -2px rgb(0 0 0 / 0.1);
+}
+
+/* ===== CRITICAL BASE STYLES ===== */
+@layer base {
+  /* Typography */
+  body {
+    font-family: "Source Serif 4", serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+  }
+
+  .base {
+    font-family: "Asul", serif;
+    font-weight: 300;
+    font-style: semibold;
+  }
+
+  /* Root Variables */
+  :root {
+    /* Base Theme Colors */
+    --color-bg: theme(colors.slate.900);
+    --color-panel: theme(colors.slate.800);
+    --color-border: theme(colors.slate.600);
+    --color-text: theme(colors.white);
+    --color-muted: theme(colors.slate.400);
+    --color-overlay: theme(colors.black / 0.5);
+  }
+
+  /* Global focus styles - Critical for accessibility */
+  *:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Smooth transitions for theme switching - Critical for UX */
+  * {
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  /* Input styles */
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+/* ===== CRITICAL THEME VARIANTS ===== */
+[data-theme="credit"] {
+  /* Blue Theme (Credit) */
+  --color-bg: theme(colors.slate.900);
+  --color-panel: theme(colors.slate.800);
+  --color-border: theme(colors.slate.600);
+  --color-text: theme(colors.white);
+  --color-muted: theme(colors.slate.400);
+  --color-accent: var(--color-etb-primary);
+  --color-hover: theme(colors.slate.600);
+
+  /* Essential Colors */
+  --color-success: var(--color-etb-success);
+  --color-danger: var(--color-etb-danger);
+  --color-warning: var(--color-etb-warning);
+
+  /* UI Colors */
+  --color-input-bg: theme(colors.slate.700);
+  --color-input-border: theme(colors.slate.500);
+  --color-list-alt1: theme(colors.slate.800);
+  --color-list-alt2: theme(colors.white / 0.1);
+  --color-white-overlay: theme(colors.white / 0.05);
+  --color-white-overlay-hover: theme(colors.white / 0.1);
+
+  /* Button Colors */
+  --color-button-primary: var(--color-etb-primary);
+  --color-button-success: var(--color-etb-success);
+  --color-button-danger: var(--color-etb-danger);
+  --color-success-button: theme(colors.emerald.800);
+  --color-success-button-hover: theme(colors.emerald.800 / 0.6);
+  --color-danger-button: theme(colors.red.900);
+  --color-danger-button-hover: theme(colors.red.900 / 0.6);
+  --color-gray-button: theme(colors.gray.600);
+  --color-gray-button-hover: theme(colors.gray.900);
+}
+
+[data-theme="account"] {
+  /* Red Theme (Account) */
+  --color-bg: theme(colors.rose.950);
+  --color-panel: theme(colors.rose.900);
+  --color-border: theme(colors.rose.700);
+  --color-text: theme(colors.rose.50);
+  --color-muted: theme(colors.rose.300);
+  --color-accent: var(--color-etb-danger);
+  --color-hover: theme(colors.rose.800);
+
+  /* Essential Colors */
+  --color-success: var(--color-etb-success);
+  --color-danger: var(--color-etb-danger);
+  --color-warning: var(--color-etb-warning);
+
+  /* UI Colors */
+  --color-input-bg: theme(colors.rose.800);
+  --color-input-border: theme(colors.rose.600);
+  --color-list-alt1: theme(colors.rose.900);
+  --color-list-alt2: theme(colors.rose.50 / 0.1);
+  --color-white-overlay: theme(colors.rose.50 / 0.05);
+  --color-white-overlay-hover: theme(colors.rose.50 / 0.1);
+
+  /* Button Colors */
+  --color-button-primary: var(--color-etb-danger);
+  --color-button-success: var(--color-etb-success);
+  --color-button-danger: var(--color-etb-danger);
+  --color-success-button: theme(colors.emerald.800);
+  --color-success-button-hover: theme(colors.emerald.800 / 0.6);
+  --color-danger-button: theme(colors.rose.900);
+  --color-danger-button-hover: theme(colors.rose.900 / 0.6);
+  --color-gray-button: theme(colors.rose.600);
+  --color-gray-button-hover: theme(colors.rose.900);
+}
+
+/* ===== CRITICAL COMPONENT STYLES ===== */
+@layer components {
+  /* Button Components - Critical for main interactions */
+  .btn-primary {
+    @apply rounded-md px-4 py-2 font-medium transition-all duration-200;
+    background-color: var(--color-button-primary);
+    color: var(--color-text);
+    border: 1px solid var(--color-button-primary);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-button-primary-hover);
+    border-color: var(--color-button-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-credit);
+  }
+
+  .btn-secondary {
+    @apply rounded-md px-4 py-2 font-medium transition-all duration-200;
+    background-color: transparent;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--color-hover);
+    border-color: var(--color-accent);
+  }
+
+  .btn-danger {
+    @apply rounded-md px-4 py-2 font-medium transition-all duration-200;
+    background-color: var(--color-button-danger);
+    color: var(--color-text);
+    border: 1px solid var(--color-button-danger);
+  }
+
+  .btn-danger:hover {
+    background-color: var(--color-button-danger-hover);
+    border-color: var(--color-button-danger-hover);
+  }
+
+  .btn-success {
+    @apply rounded-md px-4 py-2 font-medium transition-all duration-200;
+    background-color: var(--color-button-success);
+    color: var(--color-text);
+    border: 2px solid var(--color-button-success);
+  }
+
+  .btn-success:hover {
+    background-color: var(--color-button-success-hover);
+    border-color: var(--color-button-success-hover);
+  }
+
+  /* Loading Components - Critical for loading states */
+  .loading-spinner {
+    border-color: var(--color-loading-primary);
+    border-top-color: var(--color-loading-secondary);
+  }
+
+  .loading-text {
+    color: var(--color-loading-text);
+  }
+}
+
+/* ===== CRITICAL UTILITY CLASSES ===== */
+@layer utilities {
+  /* ===== THEME UTILITIES ===== */
+  .theme-bg { background-color: var(--color-bg); }
+  .theme-panel { background-color: var(--color-panel); }
+  .theme-text { color: var(--color-text); }
+  .theme-muted { color: var(--color-muted); }
+  .theme-border { border-color: var(--color-border); }
+  .theme-accent { color: var(--color-accent); }
+  .bg-accent { background-color: var(--color-accent); }
+  .bg-hover { background-color: var(--color-hover); }
+
+  /* ===== ICON UTILITIES ===== */
+  .icon-success { color: var(--color-success); }
+  .icon-danger { color: var(--color-danger); }
+  .icon-warning { color: var(--color-warning); }
+  .icon-muted { color: var(--color-muted); }
+
+  /* ===== GRAY UTILITIES ===== */
+  .gray-bg-light { background-color: var(--color-panel); }
+  .gray-bg-medium { background-color: var(--color-bg); }
+  .gray-border { border-color: var(--color-border); }
+  .gray-text-light { color: var(--color-text); }
+  .gray-text-medium { color: var(--color-muted); }
+  .gray-hover:hover { background-color: var(--color-hover); }
+
+  /* ===== BUTTON UTILITIES ===== */
+  .btn-success { 
+    background-color: var(--color-success-button);
+    color: var(--color-text);
+    border-color: var(--color-success-button);
+  }
+  .btn-success:hover { 
+    background-color: var(--color-success-button-hover);
+    border-color: var(--color-success-button-hover);
+  }
+  .btn-danger { 
+    background-color: var(--color-danger-button);
+    color: var(--color-text);
+    border-color: var(--color-danger-button);
+  }
+  .btn-danger:hover { 
+    background-color: var(--color-danger-button-hover);
+    border-color: var(--color-danger-button-hover);
+  }
+
+  /* ===== OVERLAY UTILITIES ===== */
+  .overlay { background-color: var(--color-overlay); }
+  .white-overlay { background-color: var(--color-white-overlay); }
+  .white-overlay-hover:hover { background-color: var(--color-white-overlay-hover); }
+
+  /* ===== FORM UTILITIES ===== */
+  .theme-input-bg { background-color: var(--color-input-bg); }
+  .theme-input-border { border-color: var(--color-input-border); }
+
+  /* ===== TEXT UTILITIES ===== */
+  .white-text { color: var(--color-text); }
+
+  /* ===== BUTTON STATE UTILITIES ===== */
+  .success-button { background-color: var(--color-success-button); }
+  .success-button-hover:hover { background-color: var(--color-success-button-hover); }
+  .success-button-inactive { background-color: var(--color-success-button-hover); }
+
+  .danger-button { background-color: var(--color-danger-button); }
+  .danger-button-hover:hover { background-color: var(--color-danger-button-hover); }
+  .danger-button-inactive { background-color: var(--color-danger-button-hover); }
+
+  .gray-button { background-color: var(--color-gray-button); }
+  .gray-button-hover:hover { background-color: var(--color-gray-button-hover); }
+
+  /* ===== SCROLLBAR UTILITIES ===== */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-accent);
+  }
+
+  /* ===== CONTAINER SCROLLBAR STYLES ===== */
+  .container-snap::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  .container-snap::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+  }
+
+  .container-snap::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+  }
+
+  .container-snap::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .container-snap::-webkit-scrollbar-corner {
+    background: transparent;
+    display: none;
+  }
+
+  .no-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ===== TRANSITION UTILITIES ===== */
+  .transition-all {
+    transition: all 0.3s ease;
+  }
+
+  .transition-transform {
+    transition: transform 0.3s ease;
+  }
+
+  .transition-colors {
+    transition:
+      color 0.3s ease,
+      background-color 0.3s ease,
+      border-color 0.3s ease;
+  }
+}
+
+/* ===== THEME VARIANTS ===== */
+@custom-variant credit (&:where([data-theme="credit"] *));
+@custom-variant account (&:where([data-theme="account"] *));
+
+/* ===== THEME-SPECIFIC UTILITIES ===== */
+@layer utilities {
+  /* List Utilities - Critical for data display */
+  .alternating > li:nth-child(even) {
+    background-color: var(--color-list-alt1);
+  }
+
+  .alternating > li:nth-child(odd) {
+    background-color: var(--color-list-alt2);
+  }
+
+  .alternating > li > button:hover {
+    background-color: var(--color-hover) !important;
+  }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===== ANIMATION CLASSES ===== */
+.modal-animate {
+  animation: fade-in 0.35s cubic-bezier(0.33, 1, 0.68, 1);
+}

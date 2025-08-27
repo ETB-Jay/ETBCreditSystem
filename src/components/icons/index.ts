@@ -1,0 +1,22 @@
+// Direct exports of MUI icons for optimal tree-shaking
+export { Add as AddIcon } from "@mui/icons-material";
+export { VisibilityOff as VisibilityOffIcon } from "@mui/icons-material";
+export { Visibility as VisibilityOnIcon } from "@mui/icons-material";
+export { Clear as ClearIcon } from "@mui/icons-material";
+export { Info as InfoIcon } from "@mui/icons-material";
+export { Download as DownloadIcon } from "@mui/icons-material";
+export { Warning as WarningIcon } from "@mui/icons-material";
+export { AttachMoney as CashIcon } from "@mui/icons-material";
+export { Email as EmailIcon } from "@mui/icons-material";
+export { Edit as EditIcon } from "@mui/icons-material";
+export { Key as KeyIcon } from "@mui/icons-material";
+export { KeyboardArrowDown as ArrowDropDownIcon } from "@mui/icons-material";
+export { KeyboardArrowUp as ArrowDropUpIcon } from "@mui/icons-material";
+export { Phone as PhoneIcon } from "@mui/icons-material";
+export { Delete as DeleteIcon } from "@mui/icons-material";
+export { Remove as RemoveIcon } from "@mui/icons-material";
+export { Person as PersonIcon } from "@mui/icons-material";
+export { Check as CheckIcon } from "@mui/icons-material";
+export { CreditCard as AddCardIcon } from "@mui/icons-material";
+export { FilterList as FilterListIcon } from "@mui/icons-material";
+export { Lock as LockIcon } from "@mui/icons-material";

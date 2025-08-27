@@ -1,50 +1,43 @@
-// ─ Imports ──────────────────────────────────────────────────────────────────────────────────────
-import InfoIcon from "@mui/icons-material/Info";
-import { useState, ReactElement } from "react";
+import { ReactElement, memo, useState, useCallback } from "react";
 
-import { useDisplay } from "../context/useContext";
+import { InfoIcon, ModalInput } from "../components";
+import { useDisplay } from "../context/Context";
+import { cn } from "../modals/scripts";
 import AddCustomer from "./components/AddCustomer";
 import ListDisplay from "./components/ListDisplay";
-import { cn } from "../prompts/scripts";
 
-// ─ Constants ────────────────────────────────────────────────────────────────────────────────────
 const SEARCH_PLACEHOLDER = "search customer...";
 
 /** Renders the customer search grid with the search bar, add customer, report, and customer list */
-function Search(): ReactElement {
+const Search = memo((): ReactElement => {
   const [search, setSearch] = useState<string>("");
   const { setDisplay } = useDisplay();
 
   return (
     <div
       className={cn(
-        "container-snap mx-1 my-2 flex flex-col overflow-y-scroll rounded-2xl",
-        "border border-gray-700 bg-gray-800 p-2 text-white select-none"
+        "container-snap flex flex-col overflow-y-scroll rounded-2xl",
+        "theme-panel theme-text theme-border gap-2 border p-2 select-none"
       )}
     >
-      <div className="mb-1.5 flex flex-row items-center">
-        <input
-          className={cn(
-            "h-full w-full rounded-sm border border-gray-700 bg-gray-900 px-1 text-xs font-bold",
-            "placeholder-gray-500 outline-none focus:ring-1 focus:ring-blue-500 md:px-2"
-          )}
-          type="text"
+      <div className="flex flex-row items-center gap-1">
+        <ModalInput
+          value={search}
+          onChange={useCallback((ev) => setSearch(ev.target.value), [])}
           placeholder={SEARCH_PLACEHOLDER}
-          onChange={(ev) => setSearch(ev.target.value)}
-          aria-label={SEARCH_PLACEHOLDER}
           autoComplete="no"
         />
         <AddCustomer />
         <InfoIcon
-          className="cursor-pointer hover:brightness-50"
-          onClick={() => setDisplay("report")}
-          fontSize="small"
+          className="theme-muted cursor-pointer hover:brightness-50"
+          sx={{ width: 20, height: 20 }}
+          onClick={useCallback(() => setDisplay("report"), [setDisplay])}
         />
       </div>
       <ListDisplay filter={search} />
     </div>
   );
-}
+});
+Search.displayName = "Search";
 
-// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export default Search;

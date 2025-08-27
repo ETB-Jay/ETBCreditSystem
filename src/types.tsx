@@ -57,5 +57,4 @@ type Display =
   | "AmountFilter"
   | "EmployeeFilter";
 
-// ─ Exports ──────────────────────────────────────────────────────────────────────────────────────
 export type { Customer, Transaction, CustomerList, Display, Filters };
