@@ -1,6 +1,6 @@
-import { ReactNode, memo } from "react";
+import { type ReactNode, memo } from "react";
 
-import { cn } from "../../modals/scripts";
+import { cn } from "../../credit/modals/scripts";
 
 interface ModalButtonProps {
   onClick?: () => void;
@@ -47,7 +47,6 @@ const ModalButton = memo(
         className={cn(baseClasses, variantClasses[buttonVariant], sizeClasses[size])}
         onClick={onClick}
         disabled={disabled}
-        // eslint-disable-next-line react/button-has-type
         type={type}
       >
         {icon && <span className="mr-2">{icon}</span>}

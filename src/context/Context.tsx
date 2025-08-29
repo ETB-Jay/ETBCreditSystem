@@ -1,14 +1,14 @@
 import {
-  Dispatch,
-  SetStateAction,
+  type Dispatch,
+  type SetStateAction,
   createContext,
   useContext,
-  PropsWithChildren,
+  type PropsWithChildren,
   useState,
   useMemo,
 } from "react";
 
-import { Customer, Display, Filters, Transaction } from "../types";
+import type { Customer, Display, Filters, Transaction } from "../types";
 
 /**
  * @description Context for the Customer's Name. This is used for

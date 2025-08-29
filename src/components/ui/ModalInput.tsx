@@ -1,14 +1,14 @@
 import {
-  ChangeEvent,
-  KeyboardEvent,
-  ReactElement,
+  type ChangeEvent,
+  type KeyboardEvent,
+  type ReactElement,
   useMemo,
   useState,
   isValidElement,
   cloneElement,
 } from "react";
 
-import { cn } from "../../modals/scripts";
+import { cn } from "../../credit/modals/scripts";
 import { VisibilityOnIcon, VisibilityOffIcon } from "../icons";
 
 interface ModalInputProps {

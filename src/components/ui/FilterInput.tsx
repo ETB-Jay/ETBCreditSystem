@@ -1,6 +1,6 @@
-import { ChangeEvent, FC, memo } from "react";
+import { type ChangeEvent, type FC, memo } from "react";
 
-import { cn } from "../../modals/scripts";
+import { cn } from "../../credit/modals/scripts";
 import { CashIcon } from "../icons";
 
 interface FilterInputProps {

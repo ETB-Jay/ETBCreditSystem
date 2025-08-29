@@ -1,6 +1,6 @@
-import { FC, ReactNode } from "react";
+import { cn } from "../../credit/modals/scripts";
 
-import { cn } from "../../modals/scripts";
+import type { FC, ReactNode } from "react";
 
 interface FilterContainerProps {
   children: ReactNode;

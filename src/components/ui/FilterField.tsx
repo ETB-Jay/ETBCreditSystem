@@ -1,6 +1,6 @@
-import React, { ReactNode, memo } from "react";
+import React, { type ReactNode, memo } from "react";
 
-import { cn } from "../../modals/scripts";
+import { cn } from "../../credit/modals/scripts";
 
 interface FilterFieldProps {
   label: string;

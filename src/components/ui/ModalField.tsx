@@ -1,4 +1,4 @@
-import React, { memo, ReactNode } from "react";
+import React, { memo, type ReactNode } from "react";
 
 interface ModalFieldProps {
   children: ReactNode;

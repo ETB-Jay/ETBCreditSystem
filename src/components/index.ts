@@ -29,4 +29,8 @@ export {
   AddCardIcon,
   FilterListIcon,
   LockIcon,
+  CalendarIcon,
+  TrendingUpIcon,
+  BarChartIcon,
+  LocationIcon,
 } from "./icons";

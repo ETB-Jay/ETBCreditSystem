@@ -1,3 +1,45 @@
+// =============================================================================
+// ACCOUNT TYPES
+// =============================================================================
+
+interface RawRow {
+  datelog: string;
+  cashamount: string;
+  credits: string[];
+  daytotal: string;
+  runningamount: string;
+  monthlyaverage: string;
+  [key: string]: string | string[];
+}
+
+interface Row {
+  datelog: Date;
+  cashamount: number;
+  credits: number[];
+  daytotal: number;
+  runningamount: number;
+  monthlyaverage: number;
+  location: string;
+  employeeName: string;
+  documentId?: string;
+}
+
+interface Column {
+  id: string;
+  name: string;
+  displayName?: string;
+}
+
+interface Location {
+  id: string;
+  name: string;
+  displayName?: string;
+}
+
+// =============================================================================
+// CREDIT TYPES
+// =============================================================================
+
 /** A Transaction as stored in Firebase */
 interface Transaction {
   /** @requires change_balance cannot have more than 2 decimal places */
@@ -57,4 +99,4 @@ type Display =
   | "AmountFilter"
   | "EmployeeFilter";
 
-export type { Customer, Transaction, CustomerList, Display, Filters };
+export type { Customer, Transaction, CustomerList, Display, Filters, RawRow, Row, Column, Location };

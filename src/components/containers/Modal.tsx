@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect } from "react";
+import { type FC, type ReactNode, useEffect } from "react";
 
 import { ClearIcon } from "../icons";
 
@@ -47,7 +47,7 @@ const Modal: FC<ModalProps> = ({
   const content = isLoading ? loadingContent : <div className="space-y-4">{children}</div>;
 
   return (
-    <div className="theme-backdrop fixed inset-0 flex min-h-screen items-center justify-center overflow-y-auto text-center backdrop-blur-md">
+    <div className="theme-backdrop fixed inset-0 flex min-h-screen items-center justify-center container-snap overflow-y-auto text-center backdrop-blur-md">
       <div className="modal-animate theme-bg theme-border relative z-100 min-w-1/2 rounded-2xl border p-6 shadow-2xl">
         <h3 className="white-text mb-3 inline-flex w-full items-center justify-center gap-2 text-xl font-semibold">
           {title}

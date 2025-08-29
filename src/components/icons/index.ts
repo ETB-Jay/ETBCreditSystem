@@ -20,3 +20,7 @@ export { Check as CheckIcon } from "@mui/icons-material";
 export { CreditCard as AddCardIcon } from "@mui/icons-material";
 export { FilterList as FilterListIcon } from "@mui/icons-material";
 export { Lock as LockIcon } from "@mui/icons-material";
+export { CalendarToday as CalendarIcon } from "@mui/icons-material";
+export { TrendingUp as TrendingUpIcon } from "@mui/icons-material";
+export { BarChart as BarChartIcon } from "@mui/icons-material";
+export { LocationOn as LocationIcon } from "@mui/icons-material";

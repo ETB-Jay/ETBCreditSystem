@@ -1,16 +1,24 @@
-import { ReactElement, useEffect, useState, useCallback, ChangeEvent } from "react";
+import { type ReactElement, useEffect, useState, useCallback, type ChangeEvent, lazy, Suspense } from "react";
 
 import { useDisplay, useCustomerNames, useTotal } from "./context/Context";
-import CustomerInfo from "./customer-info/CustomerInfo";
-import { fetchCustomers } from "./firebase";
-import CustomerModal from "./modals/CustomerModal";
-import DeleteModal from "./modals/DeleteModal";
-import EditCustomerModal from "./modals/EditCustomerModal";
-import LoginModal from "./modals/LoginModal";
-import ReportModal from "./modals/ReportModal";
-import { cn } from "./modals/scripts";
-import TransactionModal from "./modals/TransactionModal";
-import Search from "./search/Search";
+import CustomerModal from "./credit/modals/CustomerModal";
+import DeleteModal from "./credit/modals/DeleteModal";
+import EditCustomerModal from "./credit/modals/EditCustomerModal";
+import LoginModal from "./credit/modals/LoginModal";
+import ReportModal from "./credit/modals/ReportModal";
+import TransactionModal from "./credit/modals/TransactionModal";
+import { fetchCustomers, accountLogService } from "./firebase";
+
+// Lazy load the main components to reduce initial bundle size
+const Account = lazy(() => import("./account/Account"));
+const Credit = lazy(() => import("./credit/Credit"));
+
+// Loading component for lazy-loaded modules
+const LoadingSpinner = () => (
+  <div className="flex h-full w-full items-center justify-center">
+    <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
+  </div>
+);
 
 /**
  * Main application component. Renders the display grid and the main modals.
@@ -21,12 +29,40 @@ const App = (): ReactElement => {
   const { display } = useDisplay();
   const { setCustomers } = useCustomerNames();
   const [error, setError] = useState<string | null>(null);
-  const [currentTheme, setCurrentTheme] = useState<"credit" | "account">("credit");
+  const [currentTheme, setCurrentTheme] = useState<"credit" | "account">(() => {
+    const savedTheme = localStorage.getItem("currentTheme");
+    return savedTheme === "credit" || savedTheme === "account" ? savedTheme : "account";
+  });
 
-  const handleThemeChange = useCallback((theme: "credit" | "account") => {
+  const themeOptions = [
+    { value: "credit", label: "Credit" },
+    { value: "account", label: "Account" },
+  ] as const;
+
+  const handleThemeChange = useCallback(async (theme: "credit" | "account") => {
     setCurrentTheme(theme);
+    localStorage.setItem("currentTheme", theme);
     document.documentElement.setAttribute("data-theme", theme);
+
+    // Run cleanup when switching to account section
+    if (theme === "account") {
+      try {
+        console.log("Running cleanup when switching to account theme...");
+        await accountLogService.cleanupZeroColumns();
+        console.log("Theme switch cleanup completed");
+      } catch (cleanupError) {
+        console.warn("Failed to cleanup zero columns:", cleanupError);
+        // Don't show error to user as this is a background cleanup operation
+      }
+    }
   }, []);
+
+  const handleSelectChange = useCallback(
+    (ev: ChangeEvent<HTMLSelectElement>) => {
+      handleThemeChange(ev.target.value as "credit" | "account");
+    },
+    [handleThemeChange]
+  );
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", currentTheme);
@@ -41,11 +77,32 @@ const App = (): ReactElement => {
         });
         return () => unsubscribe();
       } catch (err) {
-        setError(`Failed to load data: ${err}`);
+        setError(`Failed to load data: ${err instanceof Error ? err.message : String(err)}`);
       }
     };
     loadData();
-  }, []);
+  }, []); // Add empty dependency array to run only once
+
+  // Run cleanup on app initialization if starting with account theme
+  useEffect(() => {
+    if (currentTheme === "account") {
+      const runInitialCleanup = async () => {
+        try {
+          console.log("Running initial cleanup for account theme...");
+
+          // Debug: Check if sep-2025 document exists
+          await accountLogService.debugMonthlyDocument("sep-2025");
+
+          await accountLogService.cleanupZeroColumns();
+          console.log("Initial cleanup completed");
+        } catch (cleanupError) {
+          console.warn("Failed to cleanup zero columns on app load:", cleanupError);
+          // Don't show error to user as this is a background cleanup operation
+        }
+      };
+      void runInitialCleanup();
+    }
+  }, []); // Run only once on app load
 
   const renderModalContent = useCallback(() => {
     switch (display) {
@@ -69,22 +126,25 @@ const App = (): ReactElement => {
   return (
     <div className="theme-bg flex h-screen w-full flex-col gap-3 overflow-hidden p-3">
       <select
-        className="theme-bg theme-border theme-text w-fit rounded border px-2 text-sm"
+        className="theme-bg theme-border theme-text w-fit rounded border px-2 text-xs"
         value={currentTheme}
-        onChange={useCallback(
-          (ev: ChangeEvent<HTMLSelectElement>) =>
-            handleThemeChange(ev.target.value as "credit" | "account"),
-          [handleThemeChange]
-        )}
+        onChange={handleSelectChange}
       >
-        <option value="credit">Credit</option>
-        <option value="account">Account</option>
+        {themeOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
       </select>
       {currentTheme === "credit" && (
-        <div className={cn("grid flex-1 grid-cols-[min(30%,200px)_1fr] gap-3 overflow-hidden")}>
-          <Search />
-          <CustomerInfo />
-        </div>
+        <Suspense fallback={<LoadingSpinner />}>
+          <Credit />
+        </Suspense>
+      )}
+      {currentTheme === "account" && (
+        <Suspense fallback={<LoadingSpinner />}>
+          <Account />
+        </Suspense>
       )}
       {display !== "default" && renderModalContent()}
       {error && <div className="error-message">{error}</div>}
