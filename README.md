@@ -4,6 +4,7 @@ The Enter the Battlefield (ETB) credit system originally designed by Michael Zha
 [Firebase (Firestore)](https://firebase.google.com/) is used as the backend for this project. The app was built and packaged with [Electron-Builder](https://www.electron.build/index.html).
 
 # 📝 | FEATURES AND USAGE
+## ETB Credit
 ![ETB Credit Display](https://github.com/user-attachments/assets/60b37b05-3f5a-41ec-9138-0baa79119deb)
 
 
@@ -18,6 +19,11 @@ The Enter the Battlefield (ETB) credit system originally designed by Michael Zha
 - **Customer Notes:** Customer notes for each individual. These are universal across all stores
 
 - **Customer Specific Changes:** Buttons that add a new transaction, edit the current customer, and delete the customer.
+
+## ETB Account
+- **Logging Daily Totals:** Daily totals are logged and preserved in Firebase
+- **Dynamic Accounting Systems:** Credit Systems are maintained by remove all columns with 0 entries in them.
+- **Location Specific:** Each System is Location Specific
 
 ### <ins>🤔 | Other Important Notes</ins>
 - The table of transactions is sorted by date with the most recent transactions at the top
